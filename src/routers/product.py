@@ -1,29 +1,53 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from src.core.config import db_session
 from src.core.file_storage import save_image, delete_image
 from src.schemas.product import ProductCreate, ProductOut
 from src.models.product import Product
+from src.models.category import Category
 
 router = APIRouter(prefix="/products", tags=["products"])
 
 @router.post("/", response_model=ProductOut, status_code=201)
 async def create_product(
     data: ProductCreate,
-    db: AsyncSession = Depends(db_session),):
+    db: AsyncSession = Depends(db_session),
+):
+
+    result = await db.execute(
+        select(Category).where(Category.id.in_(data.category_ids))
+    )
+
+    categories = result.scalars().all()
+
+    if len(categories) != len(data.category_ids):
+        raise HTTPException(
+            status_code=404,
+            detail="Категория не найдена"
+        )
 
     product = Product(
         name=data.name,
         price=data.price,
-        category_id=data.category_id,
-        image_url=None,
+        image_url=None
     )
+
+    product.categories.extend(categories)
 
     db.add(product)
     await db.commit()
     await db.refresh(product)
+
+    result = await db.execute(
+        select(Product)
+        .options(selectinload(Product.categories))
+        .where(Product.id == product.id)
+    )
+
+    product = result.scalar_one()
 
     return product
 

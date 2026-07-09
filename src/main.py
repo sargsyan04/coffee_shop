@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from routers.product import router as product_router
+from routers.category import router as category_router
 
 app = FastAPI(
     title="Coffee Shop API",
@@ -13,6 +14,7 @@ app = FastAPI(
 app.mount("/media", StaticFiles(directory="media"), name="media")
 
 app.include_router(product_router)
+app.include_router(category_router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8080, reload=True)

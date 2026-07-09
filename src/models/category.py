@@ -13,7 +13,7 @@ class Category(BaseModel):
 
     name: Mapped[str] = mapped_column(String(120))
 
-    products: Mapped[list["Product"]] = relationship(
+    products: Mapped[list["Product"] | None] = relationship(
         secondary=product_category_association,
         back_populates="categories",
     )

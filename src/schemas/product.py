@@ -1,17 +1,19 @@
 from pydantic import BaseModel, ConfigDict
+from src.schemas.category import CategoryOut
+from decimal import Decimal
 
 
 class ProductCreate(BaseModel):
     name: str
-    price: float
-    category_id: int
+    price: Decimal
+    category_ids: list[int]
 
 
 class ProductOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)  # позволяет строить схему прямо из ORM-объекта
+    model_config = ConfigDict(from_attributes=True)
 
     id: int
     name: str
-    price: float
-    category_id: int
+    price: Decimal
     image_url: str | None = None
+    categories: list[CategoryOut]
