@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coffee Shop — Меню</title>
+  <link rel="icon" type="image/png" href="../media/logo.png" class="site-logo">
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/catalog.css">
+</head>
+<body>
+
+  <div class="page-container">
+
+    <header class="catalog-header">
+      <div class="header-text">
+        <p class="header-eyebrow">Меню кофейни</p>
+        <h1>Наше меню</h1>
+        <p class="header-subtitle">Свежая выпечка, десерты и кофе — каждый день</p>
+      </div>
+
+      <div class="catalog-controls">
+        <label class="search-box" for="search-input">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+            <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <input type="text" id="search-input" placeholder="Найти в меню..." autocomplete="off">
+        </label>
+
+        <div class="filter-chips" id="filter-chips">
+          <button class="chip active" data-category="all">Всё</button>
+          <button class="chip" data-category="cakes">Торты</button>
+          <button class="chip" data-category="desserts">Десерты</button>
+          <button class="chip" data-category="coffee">Кофе</button>
+          <button class="chip" data-category="drinks">Напитки</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div id="products-container" class="products-grid">
+        <p id="loading-text">Загрузка меню...</p>
+      </div>
+    </main>
+
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/catalog.js" defer></script>
+</body>
+</html>

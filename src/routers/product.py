@@ -5,13 +5,13 @@ from sqlalchemy.orm import selectinload
 
 from src.core.config import db_session
 from src.core.file_storage import save_image, delete_image
-from src.schemas.product import ProductCreate, ProductOut
+from src.schemas.product import ProductCreate, ProductResponse
 from src.models.product import Product
 from src.models.category import Category
 
 router = APIRouter(prefix="/products", tags=["products"])
 
-@router.post("/", response_model=ProductOut, status_code=201)
+@router.post("/", response_model=ProductResponse, status_code=201)
 async def create_product(
     data: ProductCreate,
     db: AsyncSession = Depends(db_session),
@@ -51,7 +51,23 @@ async def create_product(
 
     return product
 
-@router.post("/{product_id}/image", response_model=ProductOut)
+@router.get("/", response_model=list[ProductResponse])
+async def get_products(db: AsyncSession = Depends(db_session)):
+    result = await db.execute(
+        select(Product).options(selectinload(Product.categories))
+    )
+    products = result.scalars().all()
+    return products
+
+@router.get("/{product_id}", response_model=ProductResponse)
+async def get_product(product_id: int, db: AsyncSession = Depends(db_session)):
+    result = await db.execute(select(Product).where(Product.id == product_id))
+    product = result.scalar_one_or_none()
+    if product is None:
+        raise HTTPException(404, "Товар не найден")
+    return product
+
+@router.post("/{product_id}/image", response_model=ProductResponse)
 async def upload_product_image(
     product_id: int,
     file: UploadFile = File(...),

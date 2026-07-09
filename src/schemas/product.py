@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from src.schemas.category import CategoryOut
+from src.schemas.category import CategoryResponse
 from decimal import Decimal
 
 
@@ -9,11 +9,11 @@ class ProductCreate(BaseModel):
     category_ids: list[int]
 
 
-class ProductOut(BaseModel):
+class ProductResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     name: str
     price: Decimal
     image_url: str | None = None
-    categories: list[CategoryOut]
+    categories: list[CategoryResponse]
