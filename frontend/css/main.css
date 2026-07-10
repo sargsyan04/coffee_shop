@@ -99,6 +99,10 @@ body {
 .button_s {
     flex: 1;
     height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
     font-family: 'Inter', sans-serif;
     font-size: 0.95rem;
     font-weight: 500;

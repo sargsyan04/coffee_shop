@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="../media/logo.png">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/auth.css">
+    <title>Coffee Shop — Регистрация</title>
+</head>
+<body>
+
+    <div class="central_block auth_block">
+        <div class="central_header">
+            <span class="eyebrow">Присоединяйтесь</span>
+            <img src="../media/site_logo.png" alt="Coffee Shop">
+            <h1>Регистрация</h1>
+        </div>
+
+        <form class="auth_form" id="register-form" novalidate>
+            <div class="form_group">
+                <label for="name">Имя</label>
+                <input type="text" id="name" name="name" placeholder="Как к вам обращаться" required>
+            </div>
+
+            <div class="form_group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+
+            <div class="form_group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            </div>
+
+            <div class="form_group">
+                <label for="password_confirm">Повторите пароль</label>
+                <input type="password" id="password_confirm" name="password_confirm" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="button_s sign_in full_width">Создать аккаунт</button>
+
+            <p class="form_status" id="form-status" hidden></p>
+        </form>
+
+        <p class="switch_text">Уже есть аккаунт? <a href="login.html">Войти</a></p>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/register.js"></script>
+</body>
+</html>

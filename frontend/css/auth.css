@@ -1,0 +1,119 @@
+/* ===== Расширенная карточка для форм (шире, чем стартовый экран) ===== */
+.auth_block {
+    width: 400px;
+}
+
+/* ===== Сама форма ===== */
+.auth_form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+}
+
+.form_group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.form_group label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.form_group input {
+    height: 46px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1.5px solid var(--color-border);
+    background-color: var(--color-bg);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form_group input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.form_group input:focus {
+    outline: none;
+    border-color: var(--color-primary-light);
+    box-shadow: 0 0 0 3px rgba(169, 124, 80, 0.15);
+}
+
+/* ===== Состояние ошибки поля (пока не используется, задел на будущее) ===== */
+.form_group.has_error input {
+    border-color: var(--color-danger);
+}
+
+.form_group .field_error {
+    display: none;
+    font-size: 0.8rem;
+    color: var(--color-danger);
+}
+
+.form_group.has_error .field_error {
+    display: block;
+}
+
+/* ===== Ссылка "забыли пароль" ===== */
+.forgot_link {
+    align-self: flex-end;
+    margin-top: -8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.forgot_link:hover {
+    color: var(--color-primary-dark);
+}
+
+/* ===== Узкая кнопка отправки формы, по центру ===== */
+.full_width {
+    align-self: center;
+    width: auto;
+    flex: none;
+    padding: 0 40px;
+}
+
+/* ===== Статус отправки формы (заглушка до подключения бэкенда) ===== */
+.form_status {
+    margin: 0;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+}
+
+/* ===== Переключение между входом и регистрацией ===== */
+.switch_text {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+
+.switch_text a {
+    color: var(--color-primary-dark);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.switch_text a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .auth_block {
+        width: 90%;
+    }
+}
