@@ -1,7 +1,8 @@
-from .config import engine
+from .config import engine, db_session, settings
 from .file_storage import save_image, trim_whitespace
-from .enums import OrderStatus, UserRole
+from .enums import OrderStatus, UserRole, VerificationTokenType
 
 __all__ = (
-    'UserRole', 'OrderStatus', 'save_image', 'trim_whitespace', 'engine',
+    'UserRole', 'OrderStatus', 'save_image', 'trim_whitespace', 'engine', 'VerificationTokenType',
+    'db_session', 'settings'
 )

@@ -1,17 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from src.core.config import db_session
+from src.core import db_session
 from src.core.file_storage import save_image, delete_image
 from src.schemas.product import ProductCreate, ProductResponse
 from src.models.product import Product
 from src.models.category import Category
 
-router = APIRouter(prefix="/products", tags=["products"])
+router = APIRouter(prefix="/products", tags=["Products"])
 
-@router.post("/", response_model=ProductResponse, status_code=201)
+@router.post("/", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
 async def create_product(
     data: ProductCreate,
     db: AsyncSession = Depends(db_session),

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="../media/logo.png">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/auth.css">
+    <title>Coffee Shop — Регистрация</title>
+</head>
+<body>
+
+    <div class="central_block auth_block">
+        <div class="central_header">
+            <span class="eyebrow">Шаг 2 из 3</span>
+            <img src="../media/site_logo.png" alt="Coffee Shop">
+            <h1>Расскажите о себе</h1>
+        </div>
+
+        <div class="step_indicator">
+            <span class="step_dot done"></span>
+            <span class="step_dot active"></span>
+            <span class="step_dot"></span>
+        </div>
+
+        <form class="auth_form" id="step2-form" novalidate>
+            <div class="form_group">
+                <label for="birth_date">Дата рождения <span class="optional_label">(необязательно)</span></label>
+                <input type="date" id="birth_date" name="birth_date">
+            </div>
+
+            <div class="form_group">
+                <label for="phone">Телефон <span class="optional_label">(необязательно)</span></label>
+                <input type="tel" id="phone" name="phone" placeholder="+374 XX XXX XXX">
+            </div>
+
+            <div class="form_group">
+                <label for="address">Адрес <span class="optional_label">(необязательно)</span></label>
+                <input type="text" id="address" name="address" placeholder="Понадобится при доставке">
+            </div>
+
+            <button type="submit" class="button_s sign_in full_width">Продолжить</button>
+            <button type="button" class="skip_link" id="skip-step2">Пропустить этот шаг</button>
+
+            <p class="form_status" id="form-status" hidden></p>
+        </form>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/register_step2.js"></script>
+</body>
+</html>

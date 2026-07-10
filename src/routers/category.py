@@ -1,5 +1,5 @@
 # src/routers/category.py
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,10 +7,10 @@ from src.core.config import db_session
 from src.models.category import Category
 from src.schemas.category import CategoryCreate, CategoryResponse
 
-router = APIRouter(prefix="/categories", tags=["categories"])
+router = APIRouter(prefix="/categories", tags=["Categories"])
 
 
-@router.post("/", response_model=CategoryResponse, status_code=201)
+@router.post("/", response_model=CategoryResponse, status_code=status.HTTP_201_CREATED)
 async def create_category(
     data: CategoryCreate,
     db: AsyncSession = Depends(db_session),

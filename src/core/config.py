@@ -1,3 +1,4 @@
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
@@ -6,11 +7,21 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 load_dotenv()
 
 class Settings(BaseSettings):
+    SECRET_KEY: SecretStr
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 15
+    MAIL_FROM: str = ""
+    MAIL_PORT: int = 465
+    SMTP_SERVER: str = "smtp.gmail.com"
+    SMTP_USERNAME: str
+    SMTP_PASSWORD: str
     DB_HOST: str
     DB_PORT: int = 5432
     DB_USER: str = "postgres"
     DB_PASSWORD: str
     DB_NAME: str
+
 
 
 settings = Settings()

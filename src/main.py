@@ -3,9 +3,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-
-from routers.product import router as product_router
-from routers.category import router as category_router
+from src.routers import routers
 
 app = FastAPI(
     title="Coffee Shop API",
@@ -28,8 +26,8 @@ app.mount("/media", StaticFiles(directory="media"), name="media")
 async def root():
     return {"status": "ok", "message": "Coffee Shop API is running"}
 
-app.include_router(product_router)
-app.include_router(category_router)
+for router in routers:
+    app.include_router(router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8080, reload=True)

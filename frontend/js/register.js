@@ -17,4 +17,5 @@ registerForm.addEventListener("submit", (event) => {
   // apiRequest("/auth/register", { method: "POST", body: JSON.stringify({ name, email, password }) })
   formStatus.textContent = "Регистрация пока не подключена к бэкенду — это только оформление формы.";
   formStatus.hidden = false;
+  window.location.href = "register_step2.html";
 });
