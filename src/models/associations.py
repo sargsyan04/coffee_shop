@@ -2,9 +2,9 @@ from sqlalchemy import Table, Column, ForeignKey, BIGINT
 
 from src.models.base import BaseModel
 
-product_category_association = Table(
-    "product_categories",
+product_tag_association = Table(
+    "product_tag",
     BaseModel.metadata,
-    Column("product_id", BIGINT, ForeignKey("products.id"), primary_key=True),
-    Column("category_id", BIGINT, ForeignKey("categories.id"), primary_key=True),
+    Column("product_id", ForeignKey("products.id"), primary_key=True),
+    Column("tag_id", ForeignKey("tags.id"), primary_key=True),
 )

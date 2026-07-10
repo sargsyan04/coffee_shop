@@ -54,14 +54,25 @@ async def create_product(
 @router.get("/", response_model=list[ProductResponse])
 async def get_products(db: AsyncSession = Depends(db_session)):
     result = await db.execute(
-        select(Product).options(selectinload(Product.categories))
+        select(Product).options(
+            selectinload(Product.category),
+            selectinload(Product.tags),
+        )
     )
     products = result.scalars().all()
     return products
 
+
 @router.get("/{product_id}", response_model=ProductResponse)
 async def get_product(product_id: int, db: AsyncSession = Depends(db_session)):
-    result = await db.execute(select(Product).where(Product.id == product_id))
+    result = await db.execute(
+        select(Product)
+        .options(
+            selectinload(Product.category),
+            selectinload(Product.tags),
+        )
+        .where(Product.id == product_id)
+    )
     product = result.scalar_one_or_none()
     if product is None:
         raise HTTPException(404, "Товар не найден")

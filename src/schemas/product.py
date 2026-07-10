@@ -1,12 +1,14 @@
 from pydantic import BaseModel, ConfigDict
-from src.schemas.category import CategoryResponse
-from decimal import Decimal
 
+from src.schemas.category import CategoryResponse
+from src.schemas.tag import TagResponse
+from decimal import Decimal
 
 class ProductCreate(BaseModel):
     name: str
     price: Decimal
-    category_ids: list[int]
+    category_id: int | None = None
+    tag_ids: list[int] = []
 
 
 class ProductResponse(BaseModel):
@@ -15,5 +17,6 @@ class ProductResponse(BaseModel):
     id: int
     name: str
     price: Decimal
+    category: CategoryResponse | None = None
+    tags: list["TagResponse"] = []
     image_url: str | None = None
-    categories: list[CategoryResponse]
