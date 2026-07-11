@@ -5,6 +5,7 @@ import bcrypt
 from pydantic import SecretStr
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 import jwt
@@ -33,10 +34,6 @@ def hash_password(password: str) -> bytes:
     return bcrypt.hashpw(password.encode("utf-8"), salt=bcrypt.gensalt())
 
 
-def validate_password(password: str, hashed_password: bytes) -> bool:
-    return bcrypt.checkpw(password.encode("utf-8"), hashed_password)
-
-
 def create_jwt(token_type: str, token_data: dict) -> str:
     jwt_payload = {"token_type": token_type}
     jwt_payload.update(token_data)
@@ -58,11 +55,7 @@ def verify_token(token: str, expected_type: str) -> dict:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
 
-# ===== Подтверждение email — код-based версия =====
-# Старые функции create_verification_token(email) и verify_email_token(token),
-# основанные на JWT-ссылке, удалены — заменены на версию с 6-значным кодом,
-# которая пишет запись в БД и согласована с фронтендом (register-step3.html).
-
+# ===== Подтверждение email=====
 async def create_verification_token(session: AsyncSession, user_id: int) -> str:
     """Создаёт 6-значный код подтверждения email и сохраняет его в БД."""
     code = f"{random.randint(0, 999999):06d}"
@@ -80,8 +73,6 @@ async def create_verification_token(session: AsyncSession, user_id: int) -> str:
 
 async def verify_email_code(session: AsyncSession, user_id: int, code: str) -> bool:
     """Проверяет введённый код и, если верен, помечает его использованным."""
-    from sqlalchemy import select
-
     result = await session.execute(
         select(VerificationToken).where(
             VerificationToken.user_id == user_id,

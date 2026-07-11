@@ -22,3 +22,14 @@ class UserResponse(UserBase):
     is_active: bool
     is_email_verified: bool
     bonus_points: int
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str
