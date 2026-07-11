@@ -14,8 +14,8 @@ class Settings(BaseSettings):
     MAIL_FROM: str = ""
     MAIL_PORT: int = 465
     SMTP_SERVER: str = "smtp.gmail.com"
-    SMTP_USERNAME: str
-    SMTP_PASSWORD: str
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
     DB_HOST: str
     DB_PORT: int = 5432
     DB_USER: str = "postgres"

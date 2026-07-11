@@ -4,12 +4,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas import UserResponse, UserCreate
 from src.models import User
 from src.core import db_session
+from src.services import create_verification_token, hash_password, send_verification_email
 from src.validators import check_email_uniqueness
 from src.core import UserRole
 
 router = APIRouter(prefix="/user", tags=["Users"])
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
+
+@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def create_user(
     body: UserCreate,
     background_tasks: BackgroundTasks,
@@ -23,22 +25,28 @@ async def create_user(
         )
 
     hashed_bytes = hash_password(body.password)
+    hashed_password = hashed_bytes.decode("utf-8")
 
     new_user = User(
-        first_name=body.first_name,
-        last_name=body.last_name,
+        name=body.name,
         email=body.email,
-        password=hashed_bytes,
-        is_active=False,
-        role=UserRole.CUSTOMER
+        hashed_password=hashed_password,
+        is_active=True,
+        role=UserRole.CUSTOMER,
     )
 
     session.add(new_user)
     await session.commit()
     await session.refresh(new_user)
 
-    token = create_verification_token(new_user.email)
-    background_tasks.add_task(send_verification_email, new_user.email, token)
+    # сохраняем нужные значения В ОБЫЧНЫЕ переменные,
+    # пока объект ещё не "протух" от следующего commit()
+    user_id = new_user.id
+    user_email = new_user.email
 
-    return {"detail": "Registration successful. Please check your email to verify your account."}
+    code = await create_verification_token(session, user_id)
+    background_tasks.add_task(send_verification_email, user_email, code)
 
+    await session.refresh(new_user)
+
+    return new_user

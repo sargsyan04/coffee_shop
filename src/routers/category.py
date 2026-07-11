@@ -15,6 +15,10 @@ async def create_category(
     data: CategoryCreate,
     db: AsyncSession = Depends(db_session),
 ):
+    existing = await db.execute(select(Category).where(Category.name == data.name))
+    if existing.scalar():
+        raise HTTPException(status_code=400, detail="Категория с таким названием уже существует")
+
     category = Category(name=data.name)
     db.add(category)
     await db.commit()

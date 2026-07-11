@@ -1,4 +1,3 @@
-# src/models/review.py
 from typing import TYPE_CHECKING
 from sqlalchemy import String, Integer, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -15,11 +14,14 @@ class Review(BaseModel):
         UniqueConstraint("user_id", "product_id", name="uq_user_product_review"),
     )
 
+    # --> Fields <--
     rating: Mapped[int] = mapped_column(Integer)   # 1–5
     comment: Mapped[str | None] = mapped_column(String(500))
 
+    # --> User <--
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
+    user: Mapped["User"] = relationship(back_populates="reviews")
 
-    user: Mapped["User"] = relationship()
+    # --> Product <--
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
     product: Mapped["Product"] = relationship(back_populates="reviews")

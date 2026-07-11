@@ -1,12 +1,15 @@
 from pydantic import BaseModel, ConfigDict
 
 
-class CategoryCreate(BaseModel):
+class CategoryBase(BaseModel):
     name: str
 
-class CategoryResponse(BaseModel):
+
+class CategoryCreate(CategoryBase):
+    pass
+
+
+class CategoryResponse(CategoryBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    name: str
-

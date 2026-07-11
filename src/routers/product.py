@@ -5,49 +5,41 @@ from sqlalchemy.orm import selectinload
 
 from src.core import db_session
 from src.core.file_storage import save_image, delete_image
+from src.models import Tag
 from src.schemas.product import ProductCreate, ProductResponse
 from src.models.product import Product
 from src.models.category import Category
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
-@router.post("/", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/create", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
 async def create_product(
     data: ProductCreate,
     db: AsyncSession = Depends(db_session),
 ):
+    if data.category_id is not None:
+        category = await db.get(Category, data.category_id)
+        if category is None:
+            raise HTTPException(status_code=404, detail="Категория не найдена")
 
-    result = await db.execute(
-        select(Category).where(Category.id.in_(data.category_ids))
-    )
-
-    categories = result.scalars().all()
-
-    if len(categories) != len(data.category_ids):
-        raise HTTPException(
-            status_code=404,
-            detail="Категория не найдена"
-        )
+    tags = []
+    if data.tag_ids:
+        result = await db.execute(select(Tag).where(Tag.id.in_(data.tag_ids)))
+        tags = result.scalars().all()
+        if len(tags) != len(data.tag_ids):
+            raise HTTPException(status_code=404, detail="Один или несколько тегов не найдены")
 
     product = Product(
         name=data.name,
         price=data.price,
-        image_url=None
+        category_id=data.category_id,
+        image_url=None,
     )
-
-    product.categories.extend(categories)
+    product.tags = tags
 
     db.add(product)
     await db.commit()
-    await db.refresh(product)
-
-    result = await db.execute(
-        select(Product)
-        .options(selectinload(Product.categories))
-        .where(Product.id == product.id)
-    )
-
-    product = result.scalar_one()
+    await db.refresh(product, attribute_names=["category", "tags"])
 
     return product
 

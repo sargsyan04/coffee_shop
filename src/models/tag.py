@@ -11,9 +11,11 @@ if TYPE_CHECKING:
 
 class Tag(BaseModel):
 
+    # --> Fields <--
     name: Mapped[str] = mapped_column(String(50), unique=True)
     slug: Mapped[str] = mapped_column(String(50), unique=True)
 
+    # --> Relationships <--
     products: Mapped[list["Product"]] = relationship(
         secondary=product_tag_association,
         back_populates="tags",

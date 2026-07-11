@@ -9,6 +9,7 @@ from src.core.enums import UserRole
 if TYPE_CHECKING:
     from src.models.order import Order
     from src.models.review import Review
+    from src.models.tokens import RefreshToken
 
 
 class User(BaseModel):
@@ -20,7 +21,7 @@ class User(BaseModel):
 
     # --> Step 2 — Optional Profile Information <--
     birth_date: Mapped[date | None] = mapped_column(Date)
-    phone: Mapped[str] = mapped_column(String(20), unique=True)
+    phone: Mapped[str | None] = mapped_column(String(20), unique=True)
     address: Mapped[str | None] = mapped_column(String(500))
 
     # --> Account Status <--
@@ -35,3 +36,4 @@ class User(BaseModel):
     # --> Relationships <--
     orders: Mapped[list["Order"]] = relationship(back_populates="user")
     reviews: Mapped[list["Review"]] = relationship(back_populates="user")
+    refresh_tokens: Mapped[list["RefreshToken"]] = relationship(back_populates="user")
