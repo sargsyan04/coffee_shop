@@ -23,7 +23,7 @@ class VerificationToken(BaseModel):
 
     # --> User <--
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user: Mapped["User"] = relationship()
+    user: Mapped["User"] = relationship(back_populates="verification_tokens")
 
 
 class RefreshToken(BaseModel, DateMixin):

@@ -1,9 +1,12 @@
 from src.services.auth import (
-    create_verification_token, verify_email_code, hash_password, generate_tokens
+    create_verification_token, verify_email_code, hash_password, generate_tokens, oauth2_scheme,
+    encode_jwt, decode_jwt, verify_token, ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE
 )
 from src.services.email import send_verification_email
+from src.services.admin_seed import seed_admin_user
 
 __all__ = (
-    'create_verification_token', 'hash_password', 'generate_tokens',
-    'verify_email_code', 'send_verification_email',
+    'create_verification_token', 'hash_password', 'generate_tokens', 'oauth2_scheme',
+    'verify_email_code', 'send_verification_email', 'encode_jwt', 'decode_jwt', 'verify_token',
+    'ACCESS_TOKEN_TYPE', 'REFRESH_TOKEN_TYPE', 'seed_admin_user'
 )

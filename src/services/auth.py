@@ -5,15 +5,13 @@ import bcrypt
 from pydantic import SecretStr
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 import jwt
 
 from src.core import settings
-from src.models import User
-from src.models import RefreshToken
-from src.models.tokens import VerificationToken
+from src.models import User, RefreshToken, VerificationToken
 from src.core.enums import VerificationTokenType
 
 ACCESS_TOKEN_TYPE = "access_token"
@@ -21,6 +19,10 @@ REFRESH_TOKEN_TYPE = "refresh_token"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/login")
 
+
+# ============================================================
+# --> JWT Encoding / Decoding <--
+# ============================================================
 
 def encode_jwt(payload: dict, key: SecretStr = settings.SECRET_KEY, algorithm: str = settings.ALGORITHM):
     return jwt.encode(payload=payload, key=key.get_secret_value(), algorithm=algorithm)
@@ -30,10 +32,6 @@ def decode_jwt(token: str, key: SecretStr = settings.SECRET_KEY, algorithm: str 
     return jwt.decode(jwt=token, key=key.get_secret_value(), algorithms=[algorithm])
 
 
-def hash_password(password: str) -> bytes:
-    return bcrypt.hashpw(password.encode("utf-8"), salt=bcrypt.gensalt())
-
-
 def create_jwt(token_type: str, token_data: dict) -> str:
     jwt_payload = {"token_type": token_type}
     jwt_payload.update(token_data)
@@ -41,6 +39,8 @@ def create_jwt(token_type: str, token_data: dict) -> str:
 
 
 def verify_token(token: str, expected_type: str) -> dict:
+    """Decodes the token and verifies its type (access vs refresh) matches
+    what the caller expects. Raises 401 on any decoding failure."""
     try:
         payload = decode_jwt(token)
         if payload.get("token_type") != expected_type:
@@ -55,9 +55,34 @@ def verify_token(token: str, expected_type: str) -> dict:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
 
-# ===== Подтверждение email=====
+# ============================================================
+# --> Password Hashing <--
+# ============================================================
+
+def hash_password(password: str) -> bytes:
+    return bcrypt.hashpw(password.encode("utf-8"), salt=bcrypt.gensalt())
+
+
+# ============================================================
+# --> Email Verification Codes (registration & reactivation) <--
+# ============================================================
+
 async def create_verification_token(session: AsyncSession, user_id: int) -> str:
-    """Создаёт 6-значный код подтверждения email и сохраняет его в БД."""
+    """Creates a 6-digit email verification code and stores it in the database."""
+
+    # --> Step 1: invalidate any previous, still-unused codes for this user
+    #     and this token type, before issuing a new one <--
+    await session.execute(
+        update(VerificationToken)
+        .where(
+            VerificationToken.user_id == user_id,
+            VerificationToken.token_type == VerificationTokenType.EMAIL_CONFIRMATION,
+            VerificationToken.is_used == False,
+        )
+        .values(is_used=True)
+    )
+
+    # --> Step 2: create the new code <--
     code = f"{random.randint(0, 999999):06d}"
 
     token = VerificationToken(
@@ -72,7 +97,7 @@ async def create_verification_token(session: AsyncSession, user_id: int) -> str:
 
 
 async def verify_email_code(session: AsyncSession, user_id: int, code: str) -> bool:
-    """Проверяет введённый код и, если верен, помечает его использованным."""
+    """Validates the submitted code and, if correct, marks it as used."""
     result = await session.execute(
         select(VerificationToken).where(
             VerificationToken.user_id == user_id,
@@ -84,17 +109,19 @@ async def verify_email_code(session: AsyncSession, user_id: int, code: str) -> b
     token = result.scalar_one_or_none()
 
     if token is None:
-        raise HTTPException(status_code=400, detail="Неверный код подтверждения")
+        raise HTTPException(status_code=400, detail="Invalid verification code")
 
     if token.expires_at < datetime.now(UTC):
-        raise HTTPException(status_code=400, detail="Код подтверждения истёк")
+        raise HTTPException(status_code=400, detail="Verification code has expired")
 
     token.is_used = True
     await session.commit()
     return True
 
 
-# ===== Access / Refresh токены =====
+# ============================================================
+# --> Access / Refresh Token Generation <--
+# ============================================================
 
 def create_access_token(user: User):
     now = datetime.now(UTC)
