@@ -83,3 +83,17 @@ async def require_admin(current_user: User = Depends(get_current_active_user)) -
         )
 
     return current_user
+
+
+async def require_staff(current_user: User = Depends(get_current_active_user)) -> User:
+    """Use this on staff-only endpoints (baristas and admins).
+    Broader than require_admin — lets baristas manage order statuses
+    without granting full admin privileges."""
+
+    if current_user.role not in (UserRole.BARISTA, UserRole.ADMIN):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Staff access required",
+        )
+
+    return current_user

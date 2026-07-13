@@ -35,7 +35,7 @@ class OrderItem(BaseModel):
 
     # --> Fields <--
     quantity: Mapped[int] = mapped_column(Integer, default=1)
-    price_at_order: Mapped[Decimal] = mapped_column(Numeric(10, 2))
+    price_at_order: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
 
     # --> Order <--
     order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"))
@@ -44,3 +44,4 @@ class OrderItem(BaseModel):
     # --> Product <--
     product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
     product: Mapped["Product"] = relationship()
+    
