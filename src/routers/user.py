@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas import (
     UserResponse, UserCreate, VerifyEmailRequest, TokenResponse, ReactivateRequest, MessageResponse,
-    UserPasswordChange, RefreshTokenRequest, ChangePasswordRequest
+    UserPasswordChange, RefreshTokenRequest, ChangePasswordRequest, ResendCodeRequest
 )
 from src.models import User, RefreshToken
 from src.core import db_session, settings
@@ -324,3 +324,30 @@ async def change_password(
     await session.commit()
 
     return {"detail": "Password changed successfully."}
+
+
+@router.post("/resend-code", response_model=MessageResponse, status_code=status.HTTP_200_OK)
+async def resend_verification_code(
+    payload: ResendCodeRequest,
+    background_tasks: BackgroundTasks,
+    session: AsyncSession = Depends(db_session),
+):
+    stmt = select(User).where(User.email == payload.email)
+    result = await session.execute(stmt)
+    user = result.scalar()
+
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user.is_email_verified:
+        raise HTTPException(status_code=400, detail="Your email address has already been confirmed")
+
+    # --> Save before create_verification_token, which commits internally
+    #     and expires all objects currently tracked by the session <--
+    user_id = user.id
+    user_email = user.email
+
+    code = await create_verification_token(session, user_id)
+    background_tasks.add_task(send_verification_email, user_email, code)
+
+    return {"detail": "A new verification code has been sent to your email."}

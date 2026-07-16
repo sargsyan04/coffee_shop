@@ -4,6 +4,8 @@ const formStatus = document.getElementById("form-status");
 registerForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const passwordConfirm = document.getElementById("password_confirm").value;
 
@@ -13,9 +15,9 @@ registerForm.addEventListener("submit", (event) => {
     return;
   }
 
-  // TODO: когда будет готов бэкенд — заменить на реальный запрос
-  // apiRequest("/auth/register", { method: "POST", body: JSON.stringify({ name, email, password }) })
-  formStatus.textContent = "Регистрация пока не подключена к бэкенду — это только оформление формы.";
-  formStatus.hidden = false;
+  // --> Step 1 only collects data — the account is actually created at the
+  //     end of step 2, once optional profile fields are known too <--
+  sessionStorage.setItem("registration_step1", JSON.stringify({ name, email, password }));
+
   window.location.href = "register_step2.html";
 });

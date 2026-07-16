@@ -1,11 +1,11 @@
-/* ===== Layout container ===== */
+/* --> Layout container <-- */
 .page-container {
   max-width: 1160px;
   margin: 0 auto;
   padding: 40px 24px 80px;
 }
 
-/* ===== Header ===== */
+/* --> Header <-- */
 .catalog-header {
   margin-bottom: 32px;
 }
@@ -33,7 +33,7 @@
   margin: 0 0 24px;
 }
 
-/* ===== Controls: search + filters ===== */
+/* --> Controls: search + filters <-- */
 .catalog-controls {
   display: flex;
   flex-wrap: wrap;
@@ -80,7 +80,7 @@
   color: var(--color-text-muted);
 }
 
-/* ===== Filter chips ===== */
+/* --> Filter chips <-- */
 .filter-chips {
   display: flex;
   flex-wrap: wrap;
@@ -111,7 +111,7 @@
   color: #fff;
 }
 
-/* ===== Products grid ===== */
+/* --> Products grid <-- */
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -205,7 +205,7 @@
   color: #fff;
 }
 
-/* ===== States: loading / empty / error ===== */
+/* --> States: loading / empty / error <-- */
 #loading-text,
 .empty-text {
   grid-column: 1 / -1;
@@ -223,7 +223,7 @@
   padding: 40px 0;
 }
 
-/* ===== Responsive ===== */
+/* --> Responsive <-- */
 @media (max-width: 480px) {
   .catalog-header h1 {
     font-size: 30px;

@@ -1,35 +1,35 @@
-/* ===== Шрифты ===== */
+/* --> Fonts <-- */
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  /* Основные "кофейные" цвета */
-  --color-primary: #6b4423;        /* тёмный кофе — заголовки, акценты */
-  --color-primary-light: #a97c50;  /* латте — кнопки, ссылки */
-  --color-primary-dark: #4a2f1c;   /* эспрессо — hover-состояния, текст на светлом фоне */
+  /* --> Core "coffee" colors <-- */
+  --color-primary: #6b4423;        /* dark coffee — headings, accents */
+  --color-primary-light: #a97c50;  /* latte — buttons, links */
+  --color-primary-dark: #4a2f1c;   /* espresso — hover states, text on light background */
 
-  /* Фоновые цвета */
-  --color-bg: #faf6f0;             /* основной фон страницы — тёплый молочный */
-  --color-bg-card: #ffffff;        /* фон карточек товаров */
-  --color-bg-accent: #f2ebe0;      /* акцентный фон — блоки, hover на карточках */
+  /* --> Background colors <-- */
+  --color-bg: #faf6f0;             /* main page background — warm milk tone */
+  --color-bg-card: #ffffff;        /* product card background */
+  --color-bg-accent: #f2ebe0;      /* accent background — blocks, card hover */
 
-  /* Текст */
-  --color-text-primary: #2b2018;   /* основной текст — почти чёрный с коричневым оттенком */
-  --color-text-secondary: #7a5c3e; /* второстепенный текст — цены, подписи */
-  --color-text-muted: #9a8a76;     /* блёклый текст — плейсхолдеры, футер */
+  /* --> Text <-- */
+  --color-text-primary: #2b2018;   /* primary text — near-black with a brown tint */
+  --color-text-secondary: #7a5c3e; /* secondary text — prices, captions */
+  --color-text-muted: #9a8a76;     /* muted text — placeholders, footer */
 
-  /* Границы и разделители */
+  /* --> Borders and dividers <-- */
   --color-border: #e5d9c8;
 
-  /* Статусы (для заказов, уведомлений) */
-  --color-success: #7a9c5e;        /* готово / выполнено */
-  --color-warning: #c9a876;        /* в процессе */
-  --color-danger: #c0392b;         /* ошибка / отмена */
+  /* --> Statuses (for orders, notifications) <-- */
+  --color-success: #7a9c5e;        /* done / completed */
+  --color-warning: #c9a876;        /* in progress */
+  --color-danger: #c0392b;         /* error / cancelled */
 
-  /* Тени */
+  /* --> Shadows <-- */
   --shadow-soft: 0 4px 12px rgba(74, 47, 28, 0.08);
 }
 
-/* ===== Базовый сброс — общий для всех страниц ===== */
+/* --> Base reset — shared across all pages <-- */
 * {
   box-sizing: border-box;
 }

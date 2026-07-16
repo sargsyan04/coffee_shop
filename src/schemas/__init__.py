@@ -1,7 +1,8 @@
 from src.schemas.tag import TagResponse, TagCreate
 from src.schemas.category import CategoryResponse, CategoryCreate
 from src.schemas.user import (
-    UserCreate, UserResponse, TokenResponse, ReactivateRequest, UserPasswordChange, ChangePasswordRequest
+    UserCreate, UserResponse, TokenResponse, ReactivateRequest, UserPasswordChange,
+    ChangePasswordRequest, ResendCodeRequest
 )
 from src.schemas.product import ProductResponse, ProductCreate
 from src.schemas.verification import VerifyEmailRequest
@@ -14,4 +15,5 @@ __all__ = (
     'UserResponse', 'UserCreate', 'VerifyEmailRequest', 'TokenResponse', 'ReactivateRequest',
     'MessageResponse', 'UserPasswordChange', 'RefreshTokenRequest', 'ChangePasswordRequest',
     'OrderResponse', 'OrderItemResponse', 'CartItemAdd', 'CartItemUpdate', 'OrderStatusUpdate',
+    'ResendCodeRequest'
 )

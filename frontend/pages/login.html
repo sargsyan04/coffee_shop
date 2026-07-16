@@ -14,10 +14,11 @@
     <div class="central_block auth_block">
         <div class="central_header">
             <span class="eyebrow">С возвращением</span>
-            <img src="../media/site_logo.png" alt="Coffee Shop">
+            <img src="../media/big_logo.png" alt="Coffee Shop">
             <h1>Вход</h1>
         </div>
 
+        <!-- Login form — handled client-side, see login.js -->
         <form class="auth_form" id="login-form" novalidate>
             <div class="form_group">
                 <label for="email">Email</label>
@@ -33,12 +34,14 @@
 
             <button type="submit" class="button_s sign_in full_width">Войти</button>
 
+            <!-- Filled in by login.js once the form is submitted -->
             <p class="form_status" id="form-status" hidden></p>
         </form>
 
         <p class="switch_text">Нет аккаунта? <a href="register.html">Зарегистрироваться</a></p>
     </div>
 
+    <!-- api.js must load before login.js — login.js relies on apiLoginRequest/storeTokens -->
     <script src="../js/api.js"></script>
     <script src="../js/login.js"></script>
 </body>

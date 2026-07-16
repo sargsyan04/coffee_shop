@@ -19,12 +19,14 @@
       Назад в меню
     </a>
 
+    <!-- --> Filled in by product.js — reads the product id from the URL query string <-- -->
     <div id="product-detail" class="product-detail">
       <p id="loading-text">Загрузка товара...</p>
     </div>
 
   </div>
 
+  <!-- --> api.js must load before product.js — product.js relies on API_BASE_URL <-- -->
   <script src="../js/api.js"></script>
   <script src="../js/product.js" defer></script>
 </body>

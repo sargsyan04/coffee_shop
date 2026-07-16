@@ -1,12 +1,14 @@
 from datetime import date
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, field_validator
+
+from src.schemas.common import EmailNormalizerMixin
 
 
 # ============================================================
 # --> Shared Fields <--
 # ============================================================
 
-class UserBase(BaseModel):
+class UserBase(BaseModel, EmailNormalizerMixin):
     name: str
     email: EmailStr
     birth_date: date | None = None
@@ -46,7 +48,7 @@ class TokenResponse(BaseModel):
 # --> Account Reactivation (soft-deleted accounts) <--
 # ============================================================
 
-class ReactivateRequest(BaseModel):
+class ReactivateRequest(BaseModel, EmailNormalizerMixin):
     email: EmailStr
 
 
@@ -67,3 +69,6 @@ class ChangePasswordRequest(BaseModel):
     #     proves the caller knows the temporary password. <--
     current_password: str | None = None
     new_password: str
+
+class ResendCodeRequest(BaseModel, EmailNormalizerMixin):
+    email: EmailStr

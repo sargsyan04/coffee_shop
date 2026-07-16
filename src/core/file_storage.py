@@ -5,11 +5,15 @@ from fastapi import UploadFile, HTTPException
 from PIL import Image, ImageChops, ImageOps
 
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
-
 MAX_SIZE = (256, 256)
 
+
+# ============================================================
+# --> Image Preprocessing Helpers <--
+# ============================================================
+
 def trim_whitespace(image: Image.Image, tolerance: int = 12) -> Image.Image:
-    """Обрезает однородные поля по краям (белый/бежевый фон вокруг продукта)."""
+    """Crops uniform padding around the edges (white/beige background around the product)."""
     background = Image.new(image.mode, image.size, image.getpixel((0, 0)))
     diff = ImageChops.difference(image, background)
     diff = ImageChops.add(diff, diff, 2.0, -tolerance)
@@ -17,42 +21,49 @@ def trim_whitespace(image: Image.Image, tolerance: int = 12) -> Image.Image:
     return image.crop(bbox) if bbox else image
 
 
+# ============================================================
+# --> Image Upload & Storage <--
+# ============================================================
+
 def save_image(file: UploadFile, folder: str, resize: tuple[int, int] = MAX_SIZE) -> str:
-    """Сохраняет файл на диск с изменением размера, возвращает веб-путь для БД."""
+    """Saves the uploaded file to disk after validating, cropping, and resizing it.
+    Returns the web-facing path to store in the database."""
+
     if file.content_type not in ALLOWED_TYPES:
-        raise HTTPException(400, "Разрешены только JPEG, PNG, WEBP")
+        raise HTTPException(400, "Only JPEG, PNG, and WEBP are allowed")
 
     media_dir = Path("media") / folder
     media_dir.mkdir(parents=True, exist_ok=True)
 
-    # Читаем файл в память
     raw_bytes = file.file.read()
 
+    # --> Step 1: validate that the file is actually a readable image <--
     try:
         image = Image.open(io.BytesIO(raw_bytes))
-        image.verify()  # проверка, что это валидная картинка
+        image.verify()
     except Exception:
-        raise HTTPException(400, "Файл повреждён или не является изображением")
+        raise HTTPException(400, "The file is corrupted or not a valid image")
 
-    # Открываем заново после verify() — Image.verify() "портит" объект для дальнейшей работы
+    # --> Image.verify() invalidates the object for further use — reopen it <--
     image = Image.open(io.BytesIO(raw_bytes))
 
-    # Конвертируем в RGB, если это PNG с прозрачностью и сохраняем в JPEG — иначе будет ошибка
+    # --> Step 2: convert to RGB if saving a transparent PNG as JPEG
+    #     (JPEG has no alpha channel and would otherwise fail to save) <--
     if image.mode in ("RGBA", "P") and file.content_type == "image/jpeg":
         image = image.convert("RGB")
 
     image = Image.open(io.BytesIO(raw_bytes))
 
-    # обрезаем пустые поля вокруг продукта
+    # --> Step 3: crop empty padding around the product <--
     image = trim_whitespace(image)
 
-    # вписываем в квадрат, заполняя рамку целиком (а не просто уменьшая)
+    # --> Step 4: fit into a square, filling the frame entirely (not just shrinking) <--
     image = ImageOps.fit(image, resize, Image.LANCZOS)
 
-    # Изменение размера с сохранением пропорций (не увеличивает маленькие картинки)
+    # --> Step 5: resize while preserving aspect ratio (never upscales small images) <--
     image.thumbnail(resize, Image.LANCZOS)
 
-    # Определяем расширение и формат для сохранения
+    # --> Step 6: determine the file extension and save format <--
     ext_map = {
         "image/jpeg": ("jpg", "JPEG"),
         "image/png": ("png", "PNG"),
@@ -70,7 +81,7 @@ def save_image(file: UploadFile, folder: str, resize: tuple[int, int] = MAX_SIZE
 
 
 def delete_image(image_url: str | None) -> None:
-    """Удаляет старый файл, если он был."""
+    """Deletes the old file from disk, if one existed."""
     if not image_url:
         return
     old_path = Path("media") / image_url.removeprefix("/media/")

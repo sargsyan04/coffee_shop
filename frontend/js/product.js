@@ -14,7 +14,7 @@ async function loadProduct() {
       if (response.status === 404) {
         throw new Error("Такой товар не найден");
       }
-      throw new Error(`Ошибка сервера: ${response.status}`);
+      throw new Error(`Server error: ${response.status}`);
     }
 
     const product = await response.json();
@@ -22,7 +22,7 @@ async function loadProduct() {
 
   } catch (error) {
     container.innerHTML = `<p class="error-text">Не удалось загрузить товар: ${error.message}</p>`;
-    console.error("Ошибка загрузки товара:", error);
+    console.error("Failed to load product:", error);
   }
 }
 
@@ -33,7 +33,7 @@ function renderProduct(product) {
     ? `${API_BASE_URL}${product.image_url}`
     : "../images/placeholder.png";
 
-  // описание — необязательное поле, показываем только если оно есть в ответе API
+  // --> Description is optional — only render it if the API response includes it <--
   const descriptionHtml = product.description
     ? `<p class="detail-description">${product.description}</p>`
     : "";

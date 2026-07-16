@@ -5,22 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="../media/logo.png">
     <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/home.css">
     <title>Coffee Shop</title>
 </head>
 <body>
 
-    <div class="central_block">
-        <div class="central_header">
-            <span class="eyebrow">Добро пожаловать</span>
-            <img src="../media/site_logo.png" alt="Coffee Shop">
-            <h1>Coffee Shop</h1>
+    <header class="site-nav">
+        <a href="index.html" class="nav-brand">
+            <img src="../media/logo.png" alt="" class="nav-logo">
+            <span>Coffee Shop</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="catalog.html" class="nav-link">Меню</a>
+        </nav>
+
+        <!-- Guest state — default, swapped by main.js if a valid session exists -->
+        <div class="nav-actions" id="nav-actions-guest">
+            <a href="login.html" class="btn-nav btn-nav-ghost">Войти</a>
+            <a href="register.html" class="btn-nav btn-nav-solid">Регистрация</a>
         </div>
-        <div class="cenrral_body">
-            <a href="login.html" class="button_s sign_in">Войти</a>
-            <a href="register.html" class="button_s sign_up">Регистрация</a>
+
+        <!-- Logged-in state — hidden until main.js confirms a valid session -->
+        <div class="nav-actions" id="nav-actions-account" hidden>
+            <a href="profile.html" class="btn-nav btn-nav-ghost">Профиль</a>
+            <button type="button" class="btn-nav btn-nav-solid" id="logout-button">Выйти</button>
         </div>
-    </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <span class="eyebrow">Кофейня в двух шагах от вас</span>
+            <h1>Кофе, который<br>стоит будильника</h1>
+            <p class="hero-subtitle">
+                Свежая обжарка, авторские напитки и выпечка каждое утро.
+                Закажите онлайн — заберите без очереди.
+            </p>
+
+            <!-- Guest state — default, swapped by main.js if a valid session exists -->
+            <div class="hero-actions" id="hero-actions-guest">
+                <a href="catalog.html" class="btn-hero btn-hero-solid">Смотреть меню</a>
+                <a href="register.html" class="btn-hero btn-hero-ghost">Создать аккаунт</a>
+            </div>
+
+            <!-- Logged-in state — hidden until main.js confirms a valid session -->
+            <div class="hero-actions" id="hero-actions-account" hidden>
+                <a href="catalog.html" class="btn-hero btn-hero-solid">Смотреть меню</a>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="feature-card">
+                <span class="feature-icon">☕</span>
+                <h3>Свежая обжарка</h3>
+                <p>Зерно обжаривается партиями каждую неделю — никогда не залёживается.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <h3>Без очереди</h3>
+                <p>Заказывайте заранее в приложении — заберёте готовый напиток за пару минут.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">★</span>
+                <h3>Бонусы за покупки</h3>
+                <p>Копите баллы с каждого заказа и обменивайте на любимые напитки.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© Coffee Shop, 2026</p>
+    </footer>
 
     <script src="../js/api.js"></script>
     <script src="../js/main.js"></script>

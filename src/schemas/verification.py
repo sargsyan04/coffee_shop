@@ -1,5 +1,8 @@
 from pydantic import BaseModel, EmailStr
 
-class VerifyEmailRequest(BaseModel):
+from src.schemas.common import EmailNormalizerMixin
+
+
+class VerifyEmailRequest(BaseModel, EmailNormalizerMixin):
     email: EmailStr
     code: str

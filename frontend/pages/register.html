@@ -14,10 +14,11 @@
     <div class="central_block auth_block">
         <div class="central_header">
             <span class="eyebrow">Присоединяйтесь</span>
-            <img src="../media/site_logo.png" alt="Coffee Shop">
+            <img src="../media/big_logo.png" alt="Coffee Shop">
             <h1>Регистрация</h1>
         </div>
 
+        <!-- Step 1 of 3 — required account fields, see register.js -->
         <form class="auth_form" id="register-form" novalidate>
             <div class="form_group">
                 <label for="name">Имя</label>
@@ -41,12 +42,14 @@
 
             <button type="submit" class="button_s sign_in full_width">Создать аккаунт</button>
 
+            <!-- Filled in by register.js — e.g. password mismatch -->
             <p class="form_status" id="form-status" hidden></p>
         </form>
 
         <p class="switch_text">Уже есть аккаунт? <a href="login.html">Войти</a></p>
     </div>
 
+    <!-- api.js must load before register.js -->
     <script src="../js/api.js"></script>
     <script src="../js/register.js"></script>
 </body>

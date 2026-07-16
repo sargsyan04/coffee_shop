@@ -4,7 +4,7 @@
   padding: 40px 24px 80px;
 }
 
-/* ===== Ссылка "назад" ===== */
+/* --> "Back" link <-- */
 .back-link {
   display: inline-flex;
   align-items: center;
@@ -27,7 +27,7 @@
   color: var(--color-primary-dark);
 }
 
-/* ===== Карточка товара ===== */
+/* --> Product card <-- */
 .product-detail {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -109,7 +109,7 @@
   transform: scale(0.98);
 }
 
-/* ===== Состояния загрузки / ошибки ===== */
+/* --> Loading / error states <-- */
 #loading-text,
 .error-text {
   text-align: center;
@@ -125,7 +125,7 @@
   color: var(--color-text-muted);
 }
 
-/* ===== Адаптив ===== */
+/* --> Responsive <-- */
 @media (max-width: 720px) {
   .product-detail {
     grid-template-columns: 1fr;

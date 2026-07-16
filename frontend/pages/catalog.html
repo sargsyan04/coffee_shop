@@ -19,6 +19,7 @@
         <p class="header-subtitle">Свежая выпечка, десерты и кофе — каждый день</p>
       </div>
 
+      <!-- --> Search + category filters — handled client-side, see catalog.js <-- -->
       <div class="catalog-controls">
         <label class="search-box" for="search-input">
           <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,6 +29,8 @@
           <input type="text" id="search-input" placeholder="Найти в меню..." autocomplete="off">
         </label>
 
+        <!-- --> TODO: category filtering is only toggled visually for now —
+             real filtering will be wired up once the API exposes a category field <-- -->
         <div class="filter-chips" id="filter-chips">
           <button class="chip active" data-category="all">Всё</button>
           <button class="chip" data-category="cakes">Торты</button>
@@ -38,6 +41,7 @@
       </div>
     </header>
 
+    <!-- --> Filled in by catalog.js — loaded from the API on page load <-- -->
     <main>
       <div id="products-container" class="products-grid">
         <p id="loading-text">Загрузка меню...</p>
@@ -46,6 +50,7 @@
 
   </div>
 
+  <!-- --> api.js must load before catalog.js — catalog.js relies on API_BASE_URL <-- -->
   <script src="../js/api.js"></script>
   <script src="../js/catalog.js" defer></script>
 </body>

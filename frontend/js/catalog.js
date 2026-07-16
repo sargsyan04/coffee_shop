@@ -1,4 +1,4 @@
-let allProducts = []; // храним все загруженные товары, чтобы фильтровать на клиенте
+let allProducts = []; // --> Keeps all loaded products so we can filter them client-side <--
 
 async function loadProducts() {
   const container = document.getElementById("products-container");
@@ -7,7 +7,7 @@ async function loadProducts() {
     const response = await fetch(`${API_BASE_URL}/products/`);
 
     if (!response.ok) {
-      throw new Error(`Ошибка сервера: ${response.status}`);
+      throw new Error(`Server error: ${response.status}`);
     }
 
     allProducts = await response.json();
@@ -15,7 +15,7 @@ async function loadProducts() {
 
   } catch (error) {
     container.innerHTML = `<p class="error-text">Не удалось загрузить меню: ${error.message}</p>`;
-    console.error("Ошибка загрузки товаров:", error);
+    console.error("Failed to load products:", error);
   }
 }
 
@@ -38,7 +38,7 @@ function createProductCard(product) {
   const card = document.createElement("div");
   card.className = "product-card";
 
-  // если картинки нет — используем заглушку
+  // --> Fall back to a placeholder image when the product has none <--
   const imageUrl = product.image_url
     ? `${API_BASE_URL}${product.image_url}`
     : "../images/placeholder.png";
@@ -59,7 +59,9 @@ function createProductCard(product) {
   return card;
 }
 
-// ===== Поиск (работает уже сейчас, фильтрует загруженные товары по названию) =====
+// ============================================================
+// --> Search (already functional — filters loaded products by name) <--
+// ============================================================
 function setupSearch() {
   const searchInput = document.getElementById("search-input");
   if (!searchInput) return;
@@ -73,9 +75,11 @@ function setupSearch() {
   });
 }
 
-// ===== Фильтр по категориям =====
-// Пока просто переключает активную кнопку — реальная фильтрация
-// подключится, когда в API появится поле категории.
+// ============================================================
+// --> Category filter chips <--
+// --> For now this only toggles the active button — real filtering
+//     will be wired up once the API exposes a category field <--
+// ============================================================
 function setupFilterChips() {
   const chips = document.querySelectorAll(".chip");
 
@@ -83,8 +87,8 @@ function setupFilterChips() {
     chip.addEventListener("click", () => {
       chips.forEach((c) => c.classList.remove("active"));
       chip.classList.add("active");
-      // TODO: когда бэкенд будет отдавать категорию товара,
-      // здесь нужно фильтровать allProducts по chip.dataset.category
+      // TODO: once the backend returns a product category,
+      // filter allProducts here by chip.dataset.category
     });
   });
 }
