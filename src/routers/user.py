@@ -64,8 +64,8 @@ async def create_user(
         existing_user.email = f"deleted-{existing_user.id}@removed.local"
         await session.commit()
 
-    hashed_bytes = hash_password(payload.password)
-    hashed_password = hashed_bytes.decode("utf-8")
+    # --> Check password valid <--
+    hashed_password = hash_password(payload.password).decode("utf-8")
 
     new_user = User(
         name=payload.name,

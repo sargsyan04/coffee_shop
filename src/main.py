@@ -19,9 +19,7 @@ async def lifespan(app: FastAPI):
     async with session_factory() as session:
         await seed_admin_user(session)
 
-    yield   # --> application runs here <--
-
-    # --> Shutdown: nothing to clean up yet, but this is where it would go <--
+    yield
 
 
 # ============================================================

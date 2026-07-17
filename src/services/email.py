@@ -1,7 +1,6 @@
-from pathlib import Path
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 
-from src.core import settings
+from src.core import settings, LOGO_PATH
 
 # ============================================================
 # --> SMTP Configuration <--
@@ -18,10 +17,6 @@ conf = ConnectionConfig(
     USE_CREDENTIALS=True,
     VALIDATE_CERTS=True
 )
-
-# --> Resolve the logo path relative to the project root, regardless of the working directory <--
-PROJECT_ROOT = Path(__file__).resolve().parents[2]   # src/services/email.py -> up 2 levels -> project root
-LOGO_PATH = PROJECT_ROOT / "frontend" / "media" / "logo.png"
 
 
 # ============================================================
