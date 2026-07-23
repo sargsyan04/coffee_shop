@@ -27,3 +27,4 @@ logoutButton?.addEventListener("click", () => {
 });
 
 reflectAuthState();
+consumeFlashMessage();

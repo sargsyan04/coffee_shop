@@ -1,14 +1,21 @@
 /* --> Wider card for forms (bigger than the start screen) <-- */
 .auth_block {
-    width: 400px;
+    width: 640px;
 }
 
-/* --> The form itself <-- */
+/* --> The form itself — 2-column grid so more fields fit without
+       the card growing too tall and causing page scroll <-- */
 .auth_form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 24px;
     width: 100%;
+}
+
+/* --> Makes an element span both columns (buttons, status text,
+       or any field you want on its own full-width row) <-- */
+.full_row {
+    grid-column: 1 / -1;
 }
 
 .form_group {
@@ -112,12 +119,6 @@
     text-decoration: underline;
 }
 
-@media (max-width: 480px) {
-    .auth_block {
-        width: 90%;
-    }
-}
-
 /* --> Registration step indicator <-- */
 .step_indicator {
     display: flex;
@@ -174,4 +175,39 @@
     font-size: 0.9rem;
     color: var(--color-text-secondary);
     margin: 0;
+}
+
+
+/* --> "Back" link, top-left of the auth card <-- */
+.back_link {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    margin-bottom: -8px;
+    transition: color 0.2s ease;
+}
+
+.back_link svg {
+    width: 16px;
+    height: 16px;
+}
+
+.back_link:hover {
+    color: var(--color-primary-dark);
+}
+
+/* --> Responsive: collapse back to a single column on narrow screens <-- */
+@media (max-width: 480px) {
+    .auth_block {
+        width: 90%;
+    }
+
+    .auth_form {
+        grid-template-columns: 1fr;
+    }
 }

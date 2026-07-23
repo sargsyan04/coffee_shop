@@ -7,50 +7,42 @@
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/auth.css">
-    <title>Coffee Shop — Регистрация</title>
+    <title>Coffee Shop — Подтверждение</title>
 </head>
 <body>
 
     <div class="central_block auth_block">
         <div class="central_header">
-            <span class="eyebrow">Шаг 2 из 3</span>
+            <span class="eyebrow" id="verify-eyebrow">Шаг 2 из 2</span>
             <img src="../media/big_logo.png" alt="Coffee Shop">
-            <h1>Расскажите о себе</h1>
+            <h1>Подтвердите email</h1>
         </div>
 
-        <!-- Progress dots — step 2 of 3 is active -->
-        <div class="step_indicator">
+        <!--  Progress dots — final step (2 of 2) is active  -->
+        <div class="step_indicator" id="step-indicator">
             <span class="step_dot done"></span>
             <span class="step_dot active"></span>
-            <span class="step_dot"></span>
         </div>
 
-        <!-- Step 2 of 3 — optional profile fields, all can be skipped, see register_step2.js -->
-        <form class="auth_form" id="step2-form" novalidate>
+        <!--  Filled in by register_step2.js from sessionStorage  -->
+        <p class="confirm_text">Мы отправили 6-значный код на <strong id="user-email">вашу почту</strong></p>
+
+        <!--  Step 2 of 2 — email verification code, see register_step2.js  -->
+        <form class="auth_form" id="step3-form" novalidate>
             <div class="form_group">
-                <label for="birth_date">Дата рождения <span class="optional_label">(необязательно)</span></label>
-                <input type="date" id="birth_date" name="birth_date">
+                <label for="code">Код подтверждения</label>
+                <input type="text" id="code" name="code" maxlength="6" placeholder="000000" inputmode="numeric" required>
             </div>
 
-            <div class="form_group">
-                <label for="phone">Телефон <span class="optional_label">(необязательно)</span></label>
-                <input type="tel" id="phone" name="phone" placeholder="+374 XX XXX XXX">
-            </div>
-
-            <div class="form_group">
-                <label for="address">Адрес <span class="optional_label">(необязательно)</span></label>
-                <input type="text" id="address" name="address" placeholder="Понадобится при доставке">
-            </div>
-
-            <button type="submit" class="button_s sign_in full_width">Продолжить</button>
-            <!-- Skips this step entirely — goes straight to step 3 -->
-            <button type="button" class="skip_link" id="skip-step2">Пропустить этот шаг</button>
+            <button type="submit" class="button_s sign_in full_width">Подтвердить</button>
+            <!--  Triggers a new verification code to be sent -->
+            <button type="button" class="skip_link" id="resend-code">Отправить код повторно</button>
 
             <p class="form_status" id="form-status" hidden></p>
         </form>
     </div>
 
-    <!-- api.js must load before register_step2.js -->
+    <!--  api.js must load before register_step2.js -->
     <script src="../js/api.js"></script>
     <script src="../js/register_step2.js"></script>
 </body>

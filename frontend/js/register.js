@@ -1,23 +1,32 @@
 const registerForm = document.getElementById("register-form");
 const formStatus = document.getElementById("form-status");
 
-registerForm.addEventListener("submit", (event) => {
+registerForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const passwordConfirm = document.getElementById("password_confirm").value;
+  const payload = {
+    name: document.getElementById("name").value,
+    email: document.getElementById("email").value,
+    password: document.getElementById("password").value,
+    password_confirm: document.getElementById("password_confirm").value,
+    birth_date: document.getElementById("birth_date").value || null,
+    phone: document.getElementById("phone").value || null,
+    address: document.getElementById("address").value || null,
+  };
 
-  if (password !== passwordConfirm) {
-    formStatus.textContent = "Пароли не совпадают.";
+  formStatus.hidden = true;
+
+  try {
+    const user = await apiRequest("/user/register", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+
+    sessionStorage.setItem("pending_verification_email", user.email);
+    sessionStorage.setItem("verification_context", "registration");
+    window.location.href = "register_step2.html";
+  } catch (error) {
+    formStatus.textContent = error.message;
     formStatus.hidden = false;
-    return;
   }
-
-  // --> Step 1 only collects data — the account is actually created at the
-  //     end of step 2, once optional profile fields are known too <--
-  sessionStorage.setItem("registration_step1", JSON.stringify({ name, email, password }));
-
-  window.location.href = "register_step2.html";
 });

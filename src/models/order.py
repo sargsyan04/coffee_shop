@@ -44,4 +44,3 @@ class OrderItem(BaseModel):
     # --> Product <--
     product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
     product: Mapped["Product"] = relationship()
-    

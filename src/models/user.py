@@ -4,7 +4,7 @@ from sqlalchemy import String, Integer, Boolean, Date, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.models.base import BaseModel
-from src.core.enums import UserRole
+from src.core import UserRole
 
 if TYPE_CHECKING:
     from src.models.order import Order

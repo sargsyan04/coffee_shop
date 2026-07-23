@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class Category(BaseModel):
-    __tablename__ = 'categories'
+    __tablename__ = "categories"
 
     # --> Fields <--
     name: Mapped[str] = mapped_column(String(120), unique=True)

@@ -23,6 +23,7 @@ class ProductResponse(ProductBase):
     tags: list["TagResponse"] = []
     image_url: str | None = None
 
+
 class ProductUpdate(BaseModel):
     name: str | None = None
     price: Decimal | None = Field(None, gt=0)

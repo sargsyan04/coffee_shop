@@ -10,6 +10,16 @@ from src.models.tokens import VerificationToken, RefreshToken
 from src.models.mixins import DateMixin
 
 __all__ = (
-    'BaseModel', 'Product', 'Category', 'Tag', 'product_tag_association', 'DateMixin',
-    'Review', 'User', 'Order', 'OrderItem', 'VerificationToken', 'RefreshToken',
+    "BaseModel",
+    "Product",
+    "Category",
+    "Tag",
+    "product_tag_association",
+    "DateMixin",
+    "Review",
+    "User",
+    "Order",
+    "OrderItem",
+    "VerificationToken",
+    "RefreshToken",
 )

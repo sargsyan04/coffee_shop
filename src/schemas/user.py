@@ -1,12 +1,12 @@
 from datetime import date
-from pydantic import BaseModel, EmailStr, ConfigDict, field_validator
+from pydantic import BaseModel, EmailStr, ConfigDict, model_validator
 
 from src.schemas.common import EmailNormalizerMixin
-
 
 # ============================================================
 # --> Shared Fields <--
 # ============================================================
+
 
 class UserBase(BaseModel, EmailNormalizerMixin):
     name: str
@@ -20,8 +20,16 @@ class UserBase(BaseModel, EmailNormalizerMixin):
 # --> Registration & Profile <--
 # ============================================================
 
+
 class UserCreate(UserBase):
     password: str
+    password_confirm: str
+
+    @model_validator(mode="after")
+    def passwords_match(self):
+        if self.password != self.password_confirm:
+            raise ValueError("Passwords do not match")
+        return self
 
 
 class UserResponse(UserBase):
@@ -38,6 +46,7 @@ class UserResponse(UserBase):
 # --> Token Responses <--
 # ============================================================
 
+
 class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str
@@ -47,6 +56,7 @@ class TokenResponse(BaseModel):
 # ============================================================
 # --> Account Reactivation (soft-deleted accounts) <--
 # ============================================================
+
 
 class ReactivateRequest(BaseModel, EmailNormalizerMixin):
     email: EmailStr
@@ -63,12 +73,30 @@ class UserPasswordChange(ReactivateRequest):
 # --> Password Change (for already-logged-in users) <--
 # ============================================================
 
+
 class ChangePasswordRequest(BaseModel):
-    # --> current_password is optional: skipped when the account has
-    #     must_change_password=True, since a valid access token already
-    #     proves the caller knows the temporary password. <--
     current_password: str | None = None
     new_password: str
+    new_password_confirm: str
+
+    @model_validator(mode="after")
+    def passwords_match(self):
+        if self.new_password != self.new_password_confirm:
+            raise ValueError("Passwords do not match")
+        return self
+
+
+# ============================================================
+# --> Verification Code Resend & Account Status <--
+# ============================================================
+
 
 class ResendCodeRequest(BaseModel, EmailNormalizerMixin):
     email: EmailStr
+
+
+class UserStatusResponse(BaseModel):
+    role: str
+    is_active: bool
+    is_email_verified: bool
+    must_change_password: bool

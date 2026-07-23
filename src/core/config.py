@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from pathlib import Path
 
-
 # --> Resolve the logo path relative to the project root, regardless of the working directory <--
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 LOGO_PATH = PROJECT_ROOT / "frontend" / "media" / "logo.png"
@@ -44,10 +43,7 @@ class Settings(BaseSettings):
 settings = Settings()
 
 # --> Database Engine & Session Setup <--
-database_url = (
-    f"postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASSWORD}@"
-    f"{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
-)
+database_url = f"postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASSWORD}@" f"{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
 
 engine = create_async_engine(database_url)
 session_factory = async_sessionmaker(engine)

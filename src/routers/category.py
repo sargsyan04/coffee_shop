@@ -1,4 +1,3 @@
-# src/routers/category.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,7 +16,7 @@ async def create_category(
 ):
     existing = await db.execute(select(Category).where(Category.name == data.name))
     if existing.scalar():
-        raise HTTPException(status_code=400, detail="Категория с таким названием уже существует")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="A category with that name already exists")
 
     category = Category(name=data.name)
     db.add(category)
@@ -37,5 +36,5 @@ async def get_category(category_id: int, db: AsyncSession = Depends(db_session))
     result = await db.execute(select(Category).where(Category.id == category_id))
     category = result.scalar_one_or_none()
     if category is None:
-        raise HTTPException(status_code=404, detail="Категория не найдена")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found")
     return category

@@ -1,43 +1,59 @@
-const step2Form = document.getElementById("step2-form");
-const skipButton = document.getElementById("skip-step2");
+const step3Form = document.getElementById("step3-form");
+const resendButton = document.getElementById("resend-code");
 const formStatus = document.getElementById("form-status");
+const emailLabel = document.getElementById("user-email");
+const eyebrow = document.getElementById("verify-eyebrow");
+const stepIndicator = document.getElementById("step-indicator");
 
-async function submitRegistration(extraFields) {
-  const step1Raw = sessionStorage.getItem("registration_step1");
-  if (!step1Raw) {
-    window.location.href = "register.html";
-    return;
+const pendingEmail = sessionStorage.getItem("pending_verification_email");
+const context = sessionStorage.getItem("verification_context");
+
+if (pendingEmail) {
+  emailLabel.textContent = pendingEmail;
+
+  // --> Adjust the copy depending on how the user got here <--
+  if (context === "login") {
+    eyebrow.textContent = "Подтверждение входа";
+    stepIndicator.hidden = true;
   }
+} else {
+  window.location.href = "register.html";
+}
 
-  const step1 = JSON.parse(step1Raw);
-  const payload = { ...step1, ...extraFields };
+step3Form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const code = document.getElementById("code").value;
 
   try {
-    const user = await apiRequest("/user/register", {
+    await apiRequest("/user/verify-email", {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ email: pendingEmail, code }),
     });
 
-    sessionStorage.setItem("pending_verification_email", user.email);
-    sessionStorage.removeItem("registration_step1");
-    sessionStorage.setItem("verification_context", "registration");
-    window.location.href = "register_step3.html";
+    sessionStorage.removeItem("pending_verification_email");
+    sessionStorage.removeItem("verification_context");
+    formStatus.textContent = "Email подтверждён! Перенаправляем на вход...";
+    formStatus.hidden = false;
+
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1200);
   } catch (error) {
     formStatus.textContent = error.message;
     formStatus.hidden = false;
   }
-}
-
-step2Form.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  submitRegistration({
-    birth_date: document.getElementById("birth_date").value || null,
-    phone: document.getElementById("phone").value || null,
-    address: document.getElementById("address").value || null,
-  });
 });
 
-skipButton.addEventListener("click", () => {
-  submitRegistration({ birth_date: null, phone: null, address: null });
+resendButton.addEventListener("click", async () => {
+  try {
+    await apiRequest("/user/resend-code", {
+      method: "POST",
+      body: JSON.stringify({ email: pendingEmail }),
+    });
+    formStatus.textContent = "Код отправлен повторно.";
+    formStatus.hidden = false;
+  } catch (error) {
+    formStatus.textContent = error.message;
+    formStatus.hidden = false;
+  }
 });

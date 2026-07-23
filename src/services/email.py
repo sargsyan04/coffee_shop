@@ -15,13 +15,14 @@ conf = ConnectionConfig(
     MAIL_STARTTLS=False,
     MAIL_SSL_TLS=True,
     USE_CREDENTIALS=True,
-    VALIDATE_CERTS=True
+    VALIDATE_CERTS=True,
 )
 
 
 # ============================================================
 # --> Email Templates <--
 # ============================================================
+
 
 def build_verification_email_html(code: str) -> str:
     return f"""
@@ -85,6 +86,7 @@ def build_verification_email_html(code: str) -> str:
 # ============================================================
 # --> Email Sending <--
 # ============================================================
+
 
 async def send_verification_email(email_to: str, code: str):
     print(f"[DEV] Verification code for {email_to}: {code}")

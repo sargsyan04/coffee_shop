@@ -12,6 +12,7 @@ MAX_SIZE = (256, 256)
 # --> Image Preprocessing Helpers <--
 # ============================================================
 
+
 def trim_whitespace(image: Image.Image, tolerance: int = 12) -> Image.Image:
     """Crops uniform padding around the edges (white/beige background around the product)."""
     background = Image.new(image.mode, image.size, image.getpixel((0, 0)))
@@ -24,6 +25,7 @@ def trim_whitespace(image: Image.Image, tolerance: int = 12) -> Image.Image:
 # ============================================================
 # --> Image Upload & Storage <--
 # ============================================================
+
 
 def save_image(file: UploadFile, folder: str, resize: tuple[int, int] = MAX_SIZE) -> str:
     """Saves the uploaded file to disk after validating, cropping, and resizing it.

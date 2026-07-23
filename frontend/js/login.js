@@ -19,7 +19,7 @@ loginForm.addEventListener("submit", async (event) => {
       //     registration, but flag the context so the copy makes sense <--
       sessionStorage.setItem("pending_verification_email", email);
       sessionStorage.setItem("verification_context", "login");
-      window.location.href = "register_step3.html";
+      window.location.href = "register_step2.html";
       return;
     }
 

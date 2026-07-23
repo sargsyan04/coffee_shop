@@ -51,15 +51,8 @@ async def create_review(
 
 async def recalculate_product_rating(db: AsyncSession, product_id: int) -> None:
     """Пересчитывает средний рейтинг и количество отзывов товара после изменений."""
-    result = await db.execute(
-        select(func.avg(Review.rating), func.count(Review.id))
-        .where(Review.product_id == product_id)
-    )
+    result = await db.execute(select(func.avg(Review.rating), func.count(Review.id)).where(Review.product_id == product_id))
     avg_rating, count = result.one()
 
-    await db.execute(
-        update(Product)
-        .where(Product.id == product_id)
-        .values(average_rating=avg_rating or 0, review_count=count)
-    )
+    await db.execute(update(Product).where(Product.id == product_id).values(average_rating=avg_rating or 0, review_count=count))
     await db.commit()

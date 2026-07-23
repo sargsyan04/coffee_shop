@@ -16,7 +16,7 @@ async def seed_admin_user(session: AsyncSession) -> None:
     existing_admin = result.scalar()
 
     if existing_admin is not None:
-        return   # an admin already exists — nothing to do
+        return  # an admin already exists — nothing to do
 
     hashed_bytes = hash_password(settings.ADMIN_PASSWORD)
 
@@ -26,8 +26,8 @@ async def seed_admin_user(session: AsyncSession) -> None:
         hashed_password=hashed_bytes.decode("utf-8"),
         role=UserRole.ADMIN,
         is_active=True,
-        is_email_verified=True,       # skip email verification for the seeded admin
-        must_change_password=True,    # force a password change on first login
+        is_email_verified=True,  # skip email verification for the seeded admin
+        must_change_password=True,  # force a password change on first login
     )
 
     session.add(admin)

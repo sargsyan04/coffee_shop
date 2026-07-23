@@ -24,6 +24,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/login")
 # --> JWT Encoding / Decoding <--
 # ============================================================
 
+
 def encode_jwt(payload: dict, key: SecretStr = settings.SECRET_KEY, algorithm: str = settings.ALGORITHM):
     return jwt.encode(payload=payload, key=key.get_secret_value(), algorithm=algorithm)
 
@@ -44,10 +45,7 @@ def verify_token(token: str, expected_type: str) -> dict:
     try:
         payload = decode_jwt(token)
         if payload.get("token_type") != expected_type:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f"Invalid token type. Expected {expected_type}"
-            )
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Invalid token type. Expected {expected_type}")
         return payload
     except ExpiredSignatureError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
@@ -59,6 +57,7 @@ def verify_token(token: str, expected_type: str) -> dict:
 # --> Password Hashing <--
 # ============================================================
 
+
 def hash_password(password: str) -> bytes:
     return bcrypt.hashpw(password.encode("utf-8"), salt=bcrypt.gensalt())
 
@@ -66,6 +65,7 @@ def hash_password(password: str) -> bytes:
 # ============================================================
 # --> Email Verification Codes (registration & reactivation) <--
 # ============================================================
+
 
 async def create_verification_token(session: AsyncSession, user_id: int) -> str:
     """Creates a 6-digit email verification code and stores it in the database."""
@@ -77,7 +77,7 @@ async def create_verification_token(session: AsyncSession, user_id: int) -> str:
         .where(
             VerificationToken.user_id == user_id,
             VerificationToken.token_type == VerificationTokenType.EMAIL_CONFIRMATION,
-            VerificationToken.is_used == False,
+            VerificationToken.is_used.is_(False),
         )
         .values(is_used=True)
     )
@@ -103,7 +103,7 @@ async def verify_email_code(session: AsyncSession, user_id: int, code: str) -> b
             VerificationToken.user_id == user_id,
             VerificationToken.code == code,
             VerificationToken.token_type == VerificationTokenType.EMAIL_CONFIRMATION,
-            VerificationToken.is_used == False,
+            VerificationToken.is_used.is_(False),
         )
     )
     token = result.scalar_one_or_none()
@@ -122,6 +122,7 @@ async def verify_email_code(session: AsyncSession, user_id: int, code: str) -> b
 # ============================================================
 # --> Access / Refresh Token Generation <--
 # ============================================================
+
 
 def create_access_token(user: User):
     now = datetime.now(UTC)

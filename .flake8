@@ -1,0 +1,17 @@
+[flake8]
+exclude =
+    venv,
+    alembic,
+    .git,
+    .tox,
+    dist,
+    doc,
+    *openstack/common/*,
+    *lib/python*,
+    *egg,
+    build,
+    tools/xenserver*,
+    releasenotes
+
+max-line-length = 150
+ignore = E203, W503

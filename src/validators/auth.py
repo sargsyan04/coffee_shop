@@ -5,12 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core import db_session, UserRole
 from src.models import User
-from src.services import oauth2_scheme, decode_jwt, verify_token, ACCESS_TOKEN_TYPE
-
+from src.services import oauth2_scheme, verify_token, ACCESS_TOKEN_TYPE
 
 # ============================================================
 # --> Registration Helpers <--
 # ============================================================
+
 
 async def check_email_uniqueness(session: AsyncSession, email: str) -> User | None:
     stmt = select(User).where(User.email == email)
@@ -25,6 +25,7 @@ def validate_password(password: str, hashed_password: bytes) -> bool:
 # ============================================================
 # --> Authentication Dependencies (stacked, each builds on the previous) <--
 # ============================================================
+
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
@@ -66,7 +67,7 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
             detail={
                 "message": "You must change your password before accessing this resource.",
                 "must_change_password": True,
-            }
+            },
         )
     return current_user
 

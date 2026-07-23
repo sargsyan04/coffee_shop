@@ -11,6 +11,7 @@ router = APIRouter(prefix="/admin", tags=["Admin"])
 #     (user management, product/category management, analytics, etc.) <--
 # ============================================================
 
+
 @router.get("/dashboard")
 async def admin_dashboard(current_admin: User = Depends(require_admin)):
     return {

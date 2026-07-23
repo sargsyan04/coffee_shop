@@ -13,12 +13,27 @@
 
     <div class="central_block auth_block">
         <div class="central_header">
-            <span class="eyebrow">Присоединяйтесь</span>
+            <span class="eyebrow">Шаг 1 из 2</span>
             <img src="../media/big_logo.png" alt="Coffee Shop">
             <h1>Регистрация</h1>
         </div>
 
-        <!-- Step 1 of 3 — required account fields, see register.js -->
+    <a href="index.html" class="back_link">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Назад
+    </a>
+
+        <!-- Progress dots — step 1 of 2 is active -->
+        <div class="step_indicator">
+            <span class="step_dot active"></span>
+            <span class="step_dot"></span>
+        </div>
+
+        <!-- Single-step registration form: required account fields +
+             optional profile fields, laid out in a 2-column grid,
+             see register.js -->
         <form class="auth_form" id="register-form" novalidate>
             <div class="form_group">
                 <label for="name">Имя</label>
@@ -40,10 +55,25 @@
                 <input type="password" id="password_confirm" name="password_confirm" placeholder="••••••••" required>
             </div>
 
-            <button type="submit" class="button_s sign_in full_width">Создать аккаунт</button>
+            <div class="form_group">
+                <label for="birth_date">Дата рождения <span class="optional_label">(необязательно)</span></label>
+                <input type="date" id="birth_date" name="birth_date">
+            </div>
+
+            <div class="form_group">
+                <label for="phone">Телефон <span class="optional_label">(необязательно)</span></label>
+                <input type="tel" id="phone" name="phone" placeholder="+374 XX XXX XXX">
+            </div>
+
+            <div class="form_group full_row">
+                <label for="address">Адрес <span class="optional_label">(необязательно)</span></label>
+                <input type="text" id="address" name="address" placeholder="Понадобится при доставке">
+            </div>
+
+            <button type="submit" class="button_s sign_in full_width full_row">Создать аккаунт</button>
 
             <!-- Filled in by register.js — e.g. password mismatch -->
-            <p class="form_status" id="form-status" hidden></p>
+            <p class="form_status full_row" id="form-status" hidden></p>
         </form>
 
         <p class="switch_text">Уже есть аккаунт? <a href="login.html">Войти</a></p>

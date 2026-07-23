@@ -22,6 +22,30 @@ function clearTokens() {
   localStorage.removeItem("refresh_token");
 }
 
+// --> Turns FastAPI's "detail" field (a string, an object, or an array
+//     of Pydantic validation errors) into a single readable string for the UI <--
+function extractErrorMessage(errorData, status) {
+  const detail = errorData?.detail;
+
+  if (!detail) return `Request error: ${status}`;
+
+  // --> Pydantic validation errors (422) — an array of { msg, loc, ... } objects <--
+  if (Array.isArray(detail)) {
+    return detail
+      .map((item) => (item.msg || "").replace(/^Value error,\s*/i, ""))
+      .filter(Boolean)
+      .join(" ");
+  }
+
+  // --> Custom detail as an object, e.g. { message: "...", ... } <--
+  if (typeof detail === "object") {
+    return detail.message || JSON.stringify(detail);
+  }
+
+  // --> Plain string <--
+  return detail;
+}
+
 // ============================================================
 // --> Generic JSON Requests (with automatic token refresh on 401) <--
 // ============================================================
@@ -48,10 +72,7 @@ async function apiRequest(endpoint, options = {}, _isRetry = false) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
-    const message =
-      (errorData && (errorData.detail?.message || errorData.detail)) ||
-      `Request error: ${response.status}`;
-    throw new Error(typeof message === "string" ? message : JSON.stringify(message));
+    throw new Error(extractErrorMessage(errorData, response.status));
   }
 
   if (response.status === 204) return null;

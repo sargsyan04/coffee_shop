@@ -10,12 +10,10 @@ if TYPE_CHECKING:
 
 
 class Review(BaseModel):
-    __table_args__ = (
-        UniqueConstraint("user_id", "product_id", name="uq_user_product_review"),
-    )
+    __table_args__ = (UniqueConstraint("user_id", "product_id", name="uq_user_product_review"),)
 
     # --> Fields <--
-    rating: Mapped[int] = mapped_column(Integer)   # 1–5
+    rating: Mapped[int] = mapped_column(Integer)  # 1–5
     comment: Mapped[str | None] = mapped_column(String(500))
 
     # --> User <--

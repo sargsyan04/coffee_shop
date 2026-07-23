@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="../media/logo.png">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/toast.css">
+    <link rel="stylesheet" href="../css/profile.css">
+    <title>Coffee Shop — Профиль</title>
+</head>
+<body>
+
+    <header class="site-nav">
+        <a href="index.html" class="nav-brand">
+            <img src="../media/logo.png" alt="" class="nav-logo">
+            <span>Coffee Shop</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="catalog.html" class="nav-link">Меню</a>
+        </nav>
+
+        <div class="nav-actions">
+            <a href="profile.html" class="btn-nav btn-nav-ghost">Профиль</a>
+            <button type="button" class="btn-nav btn-nav-solid" id="logout-button">Выйти</button>
+        </div>
+    </header>
+
+    <main class="profile-main">
+
+        <p class="profile-loading" id="profile-loading">Загрузка профиля...</p>
+
+        <!-- Filled in by profile.js once GET /user/profile responds -->
+        <section class="profile-card" id="profile-card" hidden>
+            <div class="profile-avatar" id="profile-avatar">A</div>
+            <div class="profile-heading">
+                <h1 id="profile-name">—</h1>
+                <p class="profile-email" id="profile-email">—</p>
+                <div class="profile-badges">
+                    <span class="badge badge-role" id="profile-role">customer</span>
+                    <span class="badge badge-verified" id="profile-verified">Email подтверждён</span>
+                </div>
+            </div>
+            <div class="profile-bonus">
+                <span class="bonus-value" id="profile-bonus">0</span>
+                <span class="bonus-label">бонусных баллов</span>
+            </div>
+        </section>
+
+        <section class="profile-details" id="profile-details" hidden>
+            <h2>Контактные данные</h2>
+            <dl class="details-list">
+                <div class="details-row">
+                    <dt>Телефон</dt>
+                    <dd id="detail-phone">—</dd>
+                </div>
+                <div class="details-row">
+                    <dt>Адрес</dt>
+                    <dd id="detail-address">—</dd>
+                </div>
+                <div class="details-row">
+                    <dt>Дата рождения</dt>
+                    <dd id="detail-birth-date">—</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="profile-section" id="password-section" hidden>
+            <h2>Изменить пароль</h2>
+            <form class="auth_form" id="password-form" novalidate>
+                <div class="form_group">
+                    <label for="current_password">Текущий пароль</label>
+                    <input type="password" id="current_password" name="current_password" placeholder="••••••••" required>
+                </div>
+                <div class="form_group">
+                    <label for="new_password">Новый пароль</label>
+                    <input type="password" id="new_password" name="new_password" placeholder="••••••••" required>
+                </div>
+                <div class="form_group">
+                    <label for="new_password_confirm">Повторите новый пароль</label>
+                    <input type="password" id="new_password_confirm" name="new_password_confirm" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="button_s sign_in">Сохранить пароль</button>
+            </form>
+        </section>
+
+        <section class="profile-section danger-zone" id="danger-zone" hidden>
+            <h2>Деактивация аккаунта</h2>
+            <p class="danger-text">
+                Аккаунт можно восстановить в течение 30 дней после деактивации.
+                История заказов и отзывов сохранится.
+            </p>
+            <button type="button" class="btn-danger" id="deactivate-button">Деактивировать аккаунт</button>
+        </section>
+
+    </main>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/profile.js"></script>
+</body>
+</html>
