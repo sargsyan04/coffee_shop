@@ -1,22 +1,22 @@
-from typing import TYPE_CHECKING
 from decimal import Decimal
-from sqlalchemy import String, Numeric, Boolean, ForeignKey, Integer
+from typing import TYPE_CHECKING
+
+from sqlalchemy import Boolean, ForeignKey, Integer, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.base import BaseModel
 from src.models.associations import product_tag_association
+from src.models.base import BaseModel
 
 if TYPE_CHECKING:
     from src.models.category import Category
-    from src.models.tag import Tag
     from src.models.review import Review
+    from src.models.tag import Tag
 
 
 class Product(BaseModel):
-
     # --> Fields <--
     name: Mapped[str] = mapped_column(String(255))
-    description: Mapped[str | None] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     is_available: Mapped[bool] = mapped_column(Boolean(), default=False)
     image_url: Mapped[str | None] = mapped_column(String(255))

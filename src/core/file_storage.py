@@ -1,7 +1,8 @@
 import io
 import uuid
 from pathlib import Path
-from fastapi import UploadFile, HTTPException
+
+from fastapi import HTTPException, UploadFile
 from PIL import Image, ImageChops, ImageOps
 
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}

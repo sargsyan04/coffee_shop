@@ -3,9 +3,9 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core import db_session, UserRole
+from src.core import UserRole, db_session
 from src.models import User
-from src.services import oauth2_scheme, verify_token, ACCESS_TOKEN_TYPE
+from src.services import ACCESS_TOKEN_TYPE, oauth2_scheme, verify_token
 
 # ============================================================
 # --> Registration Helpers <--
@@ -56,7 +56,9 @@ async def get_current_user(
     return current_user
 
 
-async def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
+async def get_current_active_user(
+    current_user: User = Depends(get_current_user),
+) -> User:
     """Same as get_current_user, but additionally blocks access for accounts
     that must change their password first. Use this on every protected endpoint
     EXCEPT the password-change endpoint itself."""

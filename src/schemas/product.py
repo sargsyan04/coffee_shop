@@ -1,5 +1,6 @@
-from pydantic import BaseModel, ConfigDict, Field
 from decimal import Decimal
+
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.schemas.category import CategoryResponse
 from src.schemas.tag import TagResponse

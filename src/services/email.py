@@ -1,6 +1,6 @@
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
+from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 
-from src.core import settings, LOGO_PATH
+from src.core import LOGO_PATH, settings
 
 # ============================================================
 # --> SMTP Configuration <--

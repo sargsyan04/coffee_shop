@@ -1,36 +1,40 @@
-from datetime import datetime, timedelta, UTC
-from fastapi import APIRouter, status, Depends, BackgroundTasks, HTTPException
+from datetime import UTC, datetime, timedelta
+
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
+from src.core import UserRole, db_session, settings
+from src.models import RefreshToken, User
 from src.schemas import (
-    UserResponse,
-    UserCreate,
-    VerifyEmailRequest,
-    TokenResponse,
-    ReactivateRequest,
-    MessageResponse,
-    UserPasswordChange,
-    RefreshTokenRequest,
     ChangePasswordRequest,
+    MessageResponse,
+    ReactivateRequest,
+    RefreshTokenRequest,
     ResendCodeRequest,
+    TokenResponse,
+    UserCreate,
+    UserPasswordChange,
+    UserResponse,
     UserStatusResponse,
+    VerifyEmailRequest,
 )
-from src.models import User, RefreshToken
-from src.core import db_session, settings
 from src.services import (
+    REFRESH_TOKEN_TYPE,
     create_verification_token,
+    generate_tokens,
     hash_password,
     send_verification_email,
     verify_email_code,
-    generate_tokens,
     verify_token,
-    REFRESH_TOKEN_TYPE,
 )
-from src.validators import check_email_uniqueness, validate_password, get_current_user, get_current_active_user
-from src.core import UserRole
+from src.validators import (
+    check_email_uniqueness,
+    get_current_active_user,
+    get_current_user,
+    validate_password,
+)
 
 router = APIRouter(prefix="/user", tags=["Users"])
 
@@ -41,13 +45,20 @@ router = APIRouter(prefix="/user", tags=["Users"])
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def create_user(payload: UserCreate, background_tasks: BackgroundTasks, session: AsyncSession = Depends(db_session)):
+async def create_user(
+    payload: UserCreate,
+    background_tasks: BackgroundTasks,
+    session: AsyncSession = Depends(db_session),
+):
     existing_user = await check_email_uniqueness(session, payload.email)
 
     if existing_user:
         # --> Case 1: an active account already owns this email <--
         if existing_user.is_active:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="An account with this email address already exists.")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="An account with this email address already exists.",
+            )
 
         # --> Case 2: a deactivated account exists <--
         grace_period_end = existing_user.deactivated_at + timedelta(days=settings.DEACTIVATION_GRACE_PERIOD_DAYS)
@@ -110,7 +121,10 @@ async def verify_email(
 
     # --> Only block re-verification for accounts that are already active <--
     if user.is_active and user.is_email_verified:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Your email address has already been confirmed")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Your email address has already been confirmed",
+        )
 
     await verify_email_code(session, user.id, payload.code)
     await session.refresh(user)
@@ -133,17 +147,26 @@ async def verify_email(
 
 
 @router.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: AsyncSession = Depends(db_session)):
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    session: AsyncSession = Depends(db_session),
+):
     stmt = select(User).where(User.email == form_data.username)
     result = await session.execute(stmt)
     user = result.scalar()
 
     if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+        )
 
     is_valid = validate_password(form_data.password, user.hashed_password.encode("utf-8"))
     if not is_valid:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+        )
 
     # --> Password confirmed — now it's safe to reveal account status <--
     if not user.is_active:
@@ -153,7 +176,10 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Async
         )
 
     if not user.is_email_verified:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email address not confirmed")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Email address not confirmed",
+        )
 
     tokens = await generate_tokens(session, user)
     await session.commit()
@@ -180,7 +206,10 @@ async def refresh_token(
 
     # --> Step 4: reject if the record is missing or already revoked <--
     if db_token is None or db_token.is_revoked:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token has been revoked or does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token has been revoked or does not exist",
+        )
 
     # --> Step 5: extra expiry check at the database level <--
     if db_token.expires_at < datetime.now(UTC):
@@ -219,7 +248,10 @@ async def reactivate_account(
     user = result.scalar()
 
     if user is None or user.is_active:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No deactivated account found for this email")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No deactivated account found for this email",
+        )
 
     grace_period_end = user.deactivated_at + timedelta(days=settings.DEACTIVATION_GRACE_PERIOD_DAYS)
     if datetime.now(UTC) >= grace_period_end:
@@ -281,7 +313,10 @@ async def get_user_status(current_user: User = Depends(get_current_user)):
 
 
 @router.delete("/profile", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_profile(current_user: User = Depends(get_current_active_user), session: AsyncSession = Depends(db_session)):
+async def delete_profile(
+    current_user: User = Depends(get_current_active_user),
+    session: AsyncSession = Depends(db_session),
+):
     # --> Soft delete: deactivate instead of physically removing the row.
     #     Orders and reviews stay untouched — history is preserved for analytics. <--
     current_user.is_active = False
@@ -308,11 +343,17 @@ async def change_password(
     if not current_user.must_change_password:
         # --> Regular password change: current_password is mandatory here <--
         if not payload.current_password:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Current password is required.")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Current password is required.",
+            )
 
         is_valid = validate_password(payload.current_password, current_user.hashed_password.encode("utf-8"))
         if not is_valid:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Current password is incorrect")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Current password is incorrect",
+            )
 
     hashed_bytes = hash_password(payload.new_password)
     current_user.hashed_password = hashed_bytes.decode("utf-8")
@@ -342,7 +383,10 @@ async def resend_verification_code(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     if user.is_email_verified:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Your email address has already been confirmed")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Your email address has already been confirmed",
+        )
 
     # --> Save before create_verification_token, which commits internally
     #     and expires all objects currently tracked by the session <--

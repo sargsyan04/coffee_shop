@@ -1,5 +1,5 @@
-from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, declared_attr
 from sqlalchemy import BIGINT, MetaData
+from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
 
 class BaseModel(DeclarativeBase):

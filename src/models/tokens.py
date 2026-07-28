@@ -1,10 +1,11 @@
-from typing import TYPE_CHECKING
 from datetime import datetime
-from sqlalchemy import String, ForeignKey, DateTime, Boolean, func
+from typing import TYPE_CHECKING
+
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.base import BaseModel
 from src.core.enums import VerificationTokenType
+from src.models.base import BaseModel
 from src.models.mixins import DateMixin
 
 if TYPE_CHECKING:
@@ -16,7 +17,7 @@ class VerificationToken(BaseModel):
 
     # --> Fields <--
     code: Mapped[str] = mapped_column(String(10))
-    token_type: Mapped[VerificationTokenType] = mapped_column()
+    token_type: Mapped[VerificationTokenType] = mapped_column(String(30))
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     is_used: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

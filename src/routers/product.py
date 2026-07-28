@@ -1,14 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.core import db_session
-from src.core.file_storage import save_image, delete_image
+from src.core.file_storage import delete_image, save_image
 from src.models import Tag
-from src.schemas.product import ProductCreate, ProductResponse
-from src.models.product import Product
 from src.models.category import Category
+from src.models.product import Product
+from src.schemas.product import ProductCreate, ProductResponse
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
@@ -28,7 +28,10 @@ async def create_product(
         result = await db.execute(select(Tag).where(Tag.id.in_(data.tag_ids)))
         tags = result.scalars().all()
         if len(tags) != len(data.tag_ids):
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="One or more tags were not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="One or more tags were not found",
+            )
 
     product = Product(
         name=data.name,

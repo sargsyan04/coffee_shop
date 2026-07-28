@@ -1,11 +1,11 @@
 # src/services/review_service.py
-from sqlalchemy import select, func, update
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models.review import Review
+from src.core.enums import OrderStatus
 from src.models.order import Order, OrderItem
 from src.models.product import Product
-from src.core.enums import OrderStatus
+from src.models.review import Review
 
 
 async def can_leave_review(db: AsyncSession, user_id: int, product_id: int) -> bool:

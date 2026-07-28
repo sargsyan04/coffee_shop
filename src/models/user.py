@@ -1,10 +1,11 @@
-from typing import TYPE_CHECKING
 from datetime import date, datetime
-from sqlalchemy import String, Integer, Boolean, Date, DateTime, func
+from typing import TYPE_CHECKING
+
+from sqlalchemy import Boolean, Date, DateTime, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.base import BaseModel
 from src.core import UserRole
+from src.models.base import BaseModel
 
 if TYPE_CHECKING:
     from src.models.order import Order
@@ -13,7 +14,6 @@ if TYPE_CHECKING:
 
 
 class User(BaseModel):
-
     # --> Step 1 — Required Account Information <--
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     hashed_password: Mapped[str] = mapped_column(String(255))

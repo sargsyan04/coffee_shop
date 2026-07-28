@@ -1,18 +1,19 @@
-from datetime import UTC, datetime, timedelta
 import random
 import uuid
+from datetime import UTC, datetime, timedelta
+
 import bcrypt
-from pydantic import SecretStr
+import jwt
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
+from pydantic import SecretStr
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
-import jwt
 
 from src.core import settings
-from src.models import User, RefreshToken, VerificationToken
 from src.core.enums import VerificationTokenType
+from src.models import RefreshToken, User, VerificationToken
 
 ACCESS_TOKEN_TYPE = "access_token"
 REFRESH_TOKEN_TYPE = "refresh_token"
@@ -25,11 +26,19 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/login")
 # ============================================================
 
 
-def encode_jwt(payload: dict, key: SecretStr = settings.SECRET_KEY, algorithm: str = settings.ALGORITHM):
+def encode_jwt(
+    payload: dict,
+    key: SecretStr = settings.SECRET_KEY,
+    algorithm: str = settings.ALGORITHM,
+):
     return jwt.encode(payload=payload, key=key.get_secret_value(), algorithm=algorithm)
 
 
-def decode_jwt(token: str, key: SecretStr = settings.SECRET_KEY, algorithm: str = settings.ALGORITHM):
+def decode_jwt(
+    token: str,
+    key: SecretStr = settings.SECRET_KEY,
+    algorithm: str = settings.ALGORITHM,
+):
     return jwt.decode(jwt=token, key=key.get_secret_value(), algorithms=[algorithm])
 
 
@@ -45,7 +54,10 @@ def verify_token(token: str, expected_type: str) -> dict:
     try:
         payload = decode_jwt(token)
         if payload.get("token_type") != expected_type:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Invalid token type. Expected {expected_type}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"Invalid token type. Expected {expected_type}",
+            )
         return payload
     except ExpiredSignatureError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
@@ -77,7 +89,7 @@ async def create_verification_token(session: AsyncSession, user_id: int) -> str:
         .where(
             VerificationToken.user_id == user_id,
             VerificationToken.token_type == VerificationTokenType.EMAIL_CONFIRMATION,
-            VerificationToken.is_used.is_(False),
+            VerificationToken == False,
         )
         .values(is_used=True)
     )
@@ -103,7 +115,7 @@ async def verify_email_code(session: AsyncSession, user_id: int, code: str) -> b
             VerificationToken.user_id == user_id,
             VerificationToken.code == code,
             VerificationToken.token_type == VerificationTokenType.EMAIL_CONFIRMATION,
-            VerificationToken.is_used.is_(False),
+            VerificationToken.is_used == False,
         )
     )
     token = result.scalar_one_or_none()

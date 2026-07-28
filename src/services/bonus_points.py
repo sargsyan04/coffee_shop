@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.enums import OrderStatus
+from src.core import OrderStatus
 from src.models import Order
 
 # ============================================================

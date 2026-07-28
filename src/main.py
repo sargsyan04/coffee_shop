@@ -1,23 +1,28 @@
-import uvicorn
 from contextlib import asynccontextmanager
+
+import uvicorn
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
-from src.routers import routers
 from src.core import session_factory
-from src.services import seed_admin_user
-
+from src.fixtures import load_super_admin
+from src.routers import routers
 
 # ============================================================
 # --> Application Lifespan (startup / shutdown hooks) <--
 # ============================================================
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # --> Startup: seed the initial admin account if none exists yet <--
+    # --> Startup: ensure the default admin account exists.
+    #     Reuses the same fixture-based loader as `manage.py createsuperuser
+    #     --use-fixture`, so there is a single source of truth for how the
+    #     default admin is created (idempotent — skips if already present). <--
     async with session_factory() as session:
-        await seed_admin_user(session)
+        await load_super_admin(session)
+        await session.commit()
 
     yield
 
@@ -47,6 +52,7 @@ app.mount("/media", StaticFiles(directory="media"), name="media")
 # ============================================================
 # --> Root Endpoint & Router Registration <--
 # ============================================================
+
 
 @app.get("/")
 async def root():

@@ -1,8 +1,9 @@
+from pathlib import Path
+
+from dotenv import load_dotenv
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
-from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from pathlib import Path
 
 # --> Resolve the logo path relative to the project root, regardless of the working directory <--
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -12,7 +13,6 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
-
     # --> JWT & Auth <--
     SECRET_KEY: SecretStr
     ALGORITHM: str = "HS256"

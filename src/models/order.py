@@ -1,26 +1,30 @@
-from typing import TYPE_CHECKING
+from datetime import UTC, datetime
 from decimal import Decimal
-from datetime import datetime
-from sqlalchemy import ForeignKey, Numeric, Integer, DateTime, Enum as SAEnum, func
+from typing import TYPE_CHECKING
+
+from sqlalchemy import DateTime, ForeignKey, Integer, Numeric
+from sqlalchemy import Enum as SAEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.models.base import BaseModel
 from src.core.enums import OrderStatus
+from src.models.base import BaseModel
 
 if TYPE_CHECKING:
-    from src.models.user import User
     from src.models.product import Product
+    from src.models.user import User
 
 
 class Order(BaseModel):
-
     # --> Fields <--
     status: Mapped[OrderStatus] = mapped_column(
         SAEnum(OrderStatus, name="order_status"),
         default=OrderStatus.CREATED,
     )
     total_price: Mapped[Decimal] = mapped_column(Numeric(10, 2), default=0)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+    )
 
     # --> User <--
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))

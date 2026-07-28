@@ -2,12 +2,17 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models import Order, OrderItem, Product, User
 from src.core import db_session
 from src.core.enums import OrderStatus
+from src.models import Order, OrderItem, Product, User
 from src.schemas import OrderResponse, OrderStatusUpdate
 from src.services import calculate_bonus_points
-from src.validators import get_current_active_user, require_staff, get_order_or_404, validate_status_transition
+from src.validators import (
+    get_current_active_user,
+    get_order_or_404,
+    require_staff,
+    validate_status_transition,
+)
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 

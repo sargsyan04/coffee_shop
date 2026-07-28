@@ -1,5 +1,6 @@
 from datetime import date
-from pydantic import BaseModel, EmailStr, ConfigDict, model_validator
+
+from pydantic import BaseModel, ConfigDict, EmailStr, model_validator
 
 from src.schemas.common import EmailNormalizerMixin
 

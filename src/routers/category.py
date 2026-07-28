@@ -16,7 +16,10 @@ async def create_category(
 ):
     existing = await db.execute(select(Category).where(Category.name == data.name))
     if existing.scalar():
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="A category with that name already exists")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A category with that name already exists",
+        )
 
     category = Category(name=data.name)
     db.add(category)

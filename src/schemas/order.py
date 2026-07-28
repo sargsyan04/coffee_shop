@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
+
+from pydantic import BaseModel, Field
 
 from src.core.enums import OrderStatus
 
