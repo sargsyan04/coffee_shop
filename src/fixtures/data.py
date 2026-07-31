@@ -26,7 +26,7 @@ def get_users_fixtures() -> list[dict]:
         {
             "name": "John",
             "email": "john@yopmail.com",
-            "password": "johnbarista",  # plaintext — hashed by the loader
+            "password": "johnbarista",
             "phone": "+37477202020",
             "role": UserRole.BARISTA,
             "is_active": True,

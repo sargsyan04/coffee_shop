@@ -33,6 +33,23 @@ class UserCreate(UserBase):
         return self
 
 
+class UserSettingsUpdate(BaseModel):
+    name: str | None = None
+    phone: str | None = None
+    address: str | None = None
+    birth_date: date | None = None
+
+
+# --> Minimal user shape for embedding inside other responses
+#     (e.g. a review's or order's author) — no email/phone/bonus points needed there <--
+class UserBrief(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    image_url: str | None = None
+
+
 class UserResponse(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
@@ -41,6 +58,7 @@ class UserResponse(UserBase):
     is_active: bool
     is_email_verified: bool
     bonus_points: int
+    image_url: str | None = None
 
 
 # ============================================================
@@ -64,8 +82,6 @@ class ReactivateRequest(BaseModel, EmailNormalizerMixin):
 
 
 class UserPasswordChange(ReactivateRequest):
-    # --> Used by POST /user/new-password. Verifies the emailed code
-    #     AND sets a new password in a single step. <--
     code: str
     new_password: str
 

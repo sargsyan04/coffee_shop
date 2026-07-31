@@ -1,7 +1,7 @@
 const API_BASE_URL = "http://localhost:8080";
 
 // ============================================================
-// --> Token Storage <--
+// Token Storage
 // ============================================================
 
 function getAccessToken() {
@@ -22,14 +22,14 @@ function clearTokens() {
   localStorage.removeItem("refresh_token");
 }
 
-// --> Turns FastAPI's "detail" field (a string, an object, or an array
-//     of Pydantic validation errors) into a single readable string for the UI <--
+// Turns FastAPI's "detail" field (a string, an object, or an array
+// of Pydantic validation errors) into a single readable string for the UI
 function extractErrorMessage(errorData, status) {
   const detail = errorData?.detail;
 
   if (!detail) return `Request error: ${status}`;
 
-  // --> Pydantic validation errors (422) — an array of { msg, loc, ... } objects <--
+  // Pydantic validation errors (422) — an array of { msg, loc, ... } objects
   if (Array.isArray(detail)) {
     return detail
       .map((item) => (item.msg || "").replace(/^Value error,\s*/i, ""))
@@ -37,17 +37,17 @@ function extractErrorMessage(errorData, status) {
       .join(" ");
   }
 
-  // --> Custom detail as an object, e.g. { message: "...", ... } <--
+  // Custom detail as an object, e.g. { message: "...", ... }
   if (typeof detail === "object") {
     return detail.message || JSON.stringify(detail);
   }
 
-  // --> Plain string <--
+  // Plain string
   return detail;
 }
 
 // ============================================================
-// --> Generic JSON Requests (with automatic token refresh on 401) <--
+// Generic JSON Requests (with automatic token refresh on 401)
 // ============================================================
 
 async function apiRequest(endpoint, options = {}, _isRetry = false) {
@@ -95,7 +95,36 @@ async function tryRefreshToken() {
 }
 
 // ============================================================
-// --> Login uses OAuth2's form-urlencoded format, not JSON <--
+// File Upload (multipart/form-data) — apiRequest can't be reused here
+// since it always forces Content-Type: application/json
+// ============================================================
+
+async function apiUploadFile(endpoint, file, fieldName = "file") {
+  const token = getAccessToken();
+
+  const formData = new FormData();
+  formData.append(fieldName, file);
+
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    method: "POST",
+    headers: {
+      // No Content-Type here — the browser sets it itself with the
+      // correct multipart boundary when the body is a FormData
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(extractErrorMessage(errorData, response.status));
+  }
+
+  return response.json();
+}
+
+// ============================================================
+// Login uses OAuth2's form-urlencoded format, not JSON
 // ============================================================
 
 async function apiLoginRequest(email, password) {

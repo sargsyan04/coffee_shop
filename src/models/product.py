@@ -19,7 +19,7 @@ class Product(BaseModel):
     description: Mapped[str | None] = mapped_column(Text)
     price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     is_available: Mapped[bool] = mapped_column(Boolean(), default=False)
-    image_url: Mapped[str | None] = mapped_column(String(255))
+    image_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     # --> Aggregated Stats (denormalized for fast reads) <--
     average_rating: Mapped[float] = mapped_column(Numeric(3, 2), default=0)

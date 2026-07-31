@@ -3,8 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from src.core import db_session
-from src.core.file_storage import delete_image, save_image
+from src.core import db_session, delete_image, save_image
 from src.models import Tag
 from src.models.category import Category
 from src.models.product import Product
@@ -88,7 +87,8 @@ async def upload_product_image(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
 
     delete_image(product.image_url)
-    product.image_url = save_image(file, folder="products")
+    product.image_url = save_image(file, filename_prefix="Product", entity_id=product_id,
+                                   folder="products")
 
     await db.commit()
     await db.refresh(product)

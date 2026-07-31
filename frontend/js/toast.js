@@ -1,5 +1,5 @@
 // ============================================================
-// --> Toast Notifications — replaces native alert() everywhere <--
+// Toast Notifications — replaces native alert() everywhere
 // ============================================================
 
 function ensureToastContainer() {
@@ -22,8 +22,8 @@ function showToast(message, type = "info", duration = 4000) {
   const icon = { success: "✓", error: "!", info: "i" }[type] || "i";
 
   toast.innerHTML = `<span class="toast-icon">${icon}</span><span class="toast-message"></span>`;
-  // --> textContent, not innerHTML, for the message itself — avoids
-  //     rendering any HTML that might appear in a backend error string <--
+  // textContent, not innerHTML, for the message itself — avoids
+  // rendering any HTML that might appear in a backend error string
   toast.querySelector(".toast-message").textContent = message;
 
   container.appendChild(toast);
@@ -42,7 +42,7 @@ function showToast(message, type = "info", duration = 4000) {
 }
 
 // ============================================================
-// --> Flash Messages — survive a page redirect (e.g. after deactivation) <--
+// Flash Messages — survive a page redirect (e.g. after deactivation)
 // ============================================================
 
 function setFlashMessage(message, type = "info") {

@@ -36,10 +36,22 @@ async def get_cart(
     user_id = current_user.id
 
     stmt = select(Order).where(Order.user_id == user_id)
+    result = await session.scalar(stmt)
 
-    cart = await session.scalar(stmt)
+    if not result:
+        cart = Order(
+            user_id=user_id,
+            status=OrderStatus.CREATED,
+            items=[]
+        )
 
-    return cart
+        session.add(cart)
+        await session.commit()
+        await session.refresh(cart)
+
+        return cart
+
+    return result
 
 
 @router.post("/items", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)

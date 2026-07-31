@@ -3,6 +3,7 @@ from src.routers.cart import router as cart_router
 from src.routers.category import router as category_router
 from src.routers.order import router as order_router
 from src.routers.product import router as product_router
+from src.routers.review import router as review_router
 from src.routers.user import router as user_router
 
 routers = (
@@ -12,6 +13,7 @@ routers = (
     admin_router,
     order_router,
     cart_router,
+    review_router,
 )
 
 __all__ = ("routers",)

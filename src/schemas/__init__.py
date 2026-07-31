@@ -8,6 +8,7 @@ from src.schemas.order import (
     OrderStatusUpdate,
 )
 from src.schemas.product import ProductCreate, ProductResponse
+from src.schemas.review import ReviewCreate, ReviewResponse
 from src.schemas.tag import TagCreate, TagResponse
 from src.schemas.token import RefreshTokenRequest
 from src.schemas.user import (
@@ -18,6 +19,7 @@ from src.schemas.user import (
     UserCreate,
     UserPasswordChange,
     UserResponse,
+    UserSettingsUpdate,
     UserStatusResponse,
 )
 from src.schemas.verification import VerifyEmailRequest
@@ -37,12 +39,15 @@ __all__ = (
     "ReactivateRequest",
     "RefreshTokenRequest",
     "ResendCodeRequest",
+    "ReviewCreate",
+    "ReviewResponse",
     "TagCreate",
     "TagResponse",
     "TokenResponse",
     "UserCreate",
     "UserPasswordChange",
     "UserResponse",
+    "UserSettingsUpdate",
     "UserStatusResponse",
     "VerifyEmailRequest",
 )

@@ -1,6 +1,6 @@
-from .config import LOGO_PATH, db_session, engine, session_factory, settings
-from .enums import OrderStatus, UserRole, VerificationTokenType
-from .file_storage import save_image, trim_whitespace
+from src.core.config import LOGO_PATH, db_session, engine, session_factory, settings
+from src.core.enums import OrderStatus, UserRole, VerificationTokenType
+from src.core.file_storage import delete_image, save_image
 
 __all__ = (
     "LOGO_PATH",
@@ -8,9 +8,9 @@ __all__ = (
     "UserRole",
     "VerificationTokenType",
     "db_session",
+    "delete_image",
     "engine",
     "save_image",
     "session_factory",
-    "settings",
-    "trim_whitespace",
+    "settings"
 )

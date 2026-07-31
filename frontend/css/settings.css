@@ -1,0 +1,145 @@
+/* ===== Layout ===== */
+.settings-main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 24px 100px;
+}
+
+.settings-loading {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    padding: 60px 0;
+}
+
+.settings-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.settings-back {
+    align-self: flex-start;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.settings-back:hover {
+    color: var(--color-primary-dark);
+}
+
+/* ===== Sections ===== */
+.settings-section {
+    padding: 28px;
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+}
+
+.settings-section h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    color: var(--color-primary-dark);
+    margin: 0 0 20px;
+}
+
+/* ===== Form — self-contained, since auth.css / main.css
+   are not linked on this page ===== */
+.settings-form {
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.settings-form .form_group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.settings-form .form_group label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.settings-form .form_group input {
+    height: 46px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1.5px solid var(--color-border);
+    background-color: var(--color-bg);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settings-form .form_group input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.settings-form .form_group input:focus {
+    outline: none;
+    border-color: var(--color-primary-light);
+    box-shadow: 0 0 0 3px rgba(169, 124, 80, 0.15);
+}
+
+/* Email field — locked, visually distinct from editable fields. */
+.settings-form .form_group input:disabled {
+    background-color: var(--color-bg-accent);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+}
+
+.field-hint {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+/* Submit button — same gradient treatment as the sign-in button
+   elsewhere on the site, redefined here since main.css isn't loaded. */
+.settings-form .button_s {
+    align-self: flex-start;
+    height: 46px;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #fff;
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-dark));
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 4px 14px rgba(169, 124, 80, 0.3);
+}
+
+.settings-form .button_s:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(169, 124, 80, 0.4);
+}
+
+.settings-form .button_s:focus-visible {
+    outline: 2px solid var(--color-primary-light);
+    outline-offset: 3px;
+}
+
+.settings-form .button_s:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+    .settings-form {
+        max-width: none;
+    }
+}

@@ -24,6 +24,7 @@
 
         <div class="nav-actions">
             <a href="profile.html" class="btn-nav btn-nav-ghost">Профиль</a>
+            <a href="settings.html" class="btn-nav btn-nav-ghost">Настройки</a>
             <button type="button" class="btn-nav btn-nav-solid" id="logout-button">Выйти</button>
         </div>
     </header>
@@ -32,70 +33,107 @@
 
         <p class="profile-loading" id="profile-loading">Загрузка профиля...</p>
 
-        <!-- Filled in by profile.js once GET /user/profile responds -->
-        <section class="profile-card" id="profile-card" hidden>
-            <div class="profile-avatar" id="profile-avatar">A</div>
-            <div class="profile-heading">
-                <h1 id="profile-name">—</h1>
-                <p class="profile-email" id="profile-email">—</p>
-                <div class="profile-badges">
-                    <span class="badge badge-role" id="profile-role">customer</span>
-                    <span class="badge badge-verified" id="profile-verified">Email подтверждён</span>
-                </div>
+        <div class="profile-layout">
+            <div class="profile-column profile-column-left">
+
+                <!-- Filled in by profile.js once GET /user/profile responds -->
+                <section class="profile-card" id="profile-card" hidden>
+                    <div class="profile-avatar" id="profile-avatar-button" tabindex="0" role="button" aria-label="Изменить аватар">
+                        <span class="profile-avatar-initials" id="profile-avatar">A</span>
+                        <img class="profile-avatar-image" id="profile-avatar-image" src="" alt="" hidden>
+                        <span class="profile-avatar-overlay">Изменить</span>
+                    </div>
+                    <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/webp" hidden>
+                    <div class="profile-heading">
+                        <h1 id="profile-name">—</h1>
+                        <p class="profile-email" id="profile-email">—</p>
+                        <div class="profile-badges">
+                            <span class="badge badge-role" id="profile-role">customer</span>
+                            <span class="badge badge-verified" id="profile-verified">Email подтверждён</span>
+                        </div>
+                    </div>
+                    <div class="profile-bonus">
+                        <span class="bonus-value" id="profile-bonus">0</span>
+                        <span class="bonus-label">бонусных баллов</span>
+                    </div>
+                </section>
+
+                <section class="profile-details" id="profile-details" hidden>
+                    <h2>Контактные данные</h2>
+                    <dl class="details-list">
+                        <div class="details-row">
+                            <dt>Телефон</dt>
+                            <dd id="detail-phone">—</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Адрес</dt>
+                            <dd id="detail-address">—</dd>
+                        </div>
+                        <div class="details-row">
+                            <dt>Дата рождения</dt>
+                            <dd id="detail-birth-date">—</dd>
+                        </div>
+                    </dl>
+                </section>
+
+                <section class="profile-section danger-zone" id="danger-zone" hidden>
+                    <h2>Деактивация аккаунта</h2>
+                    <p class="danger-text">
+                        Аккаунт можно восстановить в течение 30 дней после деактивации.
+                        История заказов и отзывов сохранится.
+                    </p>
+                    <button type="button" class="btn-danger" id="deactivate-button">Деактивировать аккаунт</button>
+                </section>
+
             </div>
-            <div class="profile-bonus">
-                <span class="bonus-value" id="profile-bonus">0</span>
-                <span class="bonus-label">бонусных баллов</span>
+
+            <div class="profile-column profile-column-right">
+
+                <div class="profile-tabs" role="tablist">
+                    <button type="button" class="tab-button active" id="tab-btn-reviews" data-tab="reviews" role="tab" aria-selected="true" aria-controls="tab-panel-reviews">Отзывы</button>
+                    <button type="button" class="tab-button" id="tab-btn-orders" data-tab="orders" role="tab" aria-selected="false" aria-controls="tab-panel-orders">Заказы</button>
+                </div>
+
+                <div class="tab-panel" id="tab-panel-reviews" role="tabpanel" aria-labelledby="tab-btn-reviews">
+                    <p class="tab-empty" id="reviews-empty">Загрузка отзывов...</p>
+                    <ul class="review-list" id="review-list" hidden></ul>
+                </div>
+
+                <div class="tab-panel" id="tab-panel-orders" role="tabpanel" aria-labelledby="tab-btn-orders" hidden>
+                    <p class="tab-empty" id="orders-empty">Загрузка заказов...</p>
+                    <ul class="order-list" id="order-list" hidden></ul>
+                </div>
+
             </div>
-        </section>
-
-        <section class="profile-details" id="profile-details" hidden>
-            <h2>Контактные данные</h2>
-            <dl class="details-list">
-                <div class="details-row">
-                    <dt>Телефон</dt>
-                    <dd id="detail-phone">—</dd>
-                </div>
-                <div class="details-row">
-                    <dt>Адрес</dt>
-                    <dd id="detail-address">—</dd>
-                </div>
-                <div class="details-row">
-                    <dt>Дата рождения</dt>
-                    <dd id="detail-birth-date">—</dd>
-                </div>
-            </dl>
-        </section>
-
-        <section class="profile-section" id="password-section" hidden>
-            <h2>Изменить пароль</h2>
-            <form class="auth_form" id="password-form" novalidate>
-                <div class="form_group">
-                    <label for="current_password">Текущий пароль</label>
-                    <input type="password" id="current_password" name="current_password" placeholder="••••••••" required>
-                </div>
-                <div class="form_group">
-                    <label for="new_password">Новый пароль</label>
-                    <input type="password" id="new_password" name="new_password" placeholder="••••••••" required>
-                </div>
-                <div class="form_group">
-                    <label for="new_password_confirm">Повторите новый пароль</label>
-                    <input type="password" id="new_password_confirm" name="new_password_confirm" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="button_s sign_in">Сохранить пароль</button>
-            </form>
-        </section>
-
-        <section class="profile-section danger-zone" id="danger-zone" hidden>
-            <h2>Деактивация аккаунта</h2>
-            <p class="danger-text">
-                Аккаунт можно восстановить в течение 30 дней после деактивации.
-                История заказов и отзывов сохранится.
-            </p>
-            <button type="button" class="btn-danger" id="deactivate-button">Деактивировать аккаунт</button>
-        </section>
+        </div>
 
     </main>
+
+    <div class="modal-overlay" id="order-modal-overlay" hidden>
+        <div class="modal" id="order-modal" role="dialog" aria-modal="true" aria-labelledby="order-modal-title">
+            <button type="button" class="modal-close" id="order-modal-close" aria-label="Закрыть">&times;</button>
+
+            <h2 id="order-modal-title">Заказ №<span id="modal-order-id"></span></h2>
+            <p class="modal-order-meta">
+                <span class="badge badge-role" id="modal-order-status"></span>
+                <span class="modal-order-date" id="modal-order-date"></span>
+            </p>
+
+            <ul class="modal-item-list" id="modal-item-list"></ul>
+
+            <div class="modal-removed" id="modal-removed-block" hidden>
+                <h3>Исключённые позиции</h3>
+                <ul class="modal-removed-list" id="modal-removed-list"></ul>
+            </div>
+
+            <div class="modal-total">
+                <span>Итого</span>
+                <span id="modal-order-total"></span>
+            </div>
+
+            <button type="button" class="btn-danger" id="modal-cancel-button" hidden>Отменить заказ</button>
+        </div>
+    </div>
 
     <script src="../js/api.js"></script>
     <script src="../js/toast.js"></script>

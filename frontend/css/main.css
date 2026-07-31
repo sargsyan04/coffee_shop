@@ -51,7 +51,7 @@ body {
     z-index: 2;
 }
 
-/* --> Light "steam" rising above the icon <-- */
+/* Light "steam" rising above the icon */
 .central_header::before,
 .central_header::after {
     content: "";

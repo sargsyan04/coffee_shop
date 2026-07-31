@@ -1,11 +1,11 @@
 from datetime import UTC, datetime, timedelta
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, UploadFile, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core import UserRole, db_session, settings
+from src.core import UserRole, db_session, delete_image, save_image, settings
 from src.models import RefreshToken, User
 from src.schemas import (
     ChangePasswordRequest,
@@ -17,6 +17,7 @@ from src.schemas import (
     UserCreate,
     UserPasswordChange,
     UserResponse,
+    UserSettingsUpdate,
     UserStatusResponse,
     VerifyEmailRequest,
 )
@@ -397,3 +398,33 @@ async def resend_verification_code(
     background_tasks.add_task(send_verification_email, user_email, code)
 
     return {"detail": "A new verification code has been sent to your email."}
+
+
+@router.post("/image", response_model=UserResponse, status_code=status.HTTP_200_OK)
+async def upload_user_image(
+    current_user: User = Depends(get_current_active_user),
+    file: UploadFile = File(...),
+    session: AsyncSession = Depends(db_session),
+):
+    delete_image(current_user.image_url)
+    current_user.image_url = save_image(file, filename_prefix="User", entity_id=current_user.id, folder="users")
+
+    await session.commit()
+    await session.refresh(current_user)
+    return current_user
+
+
+@router.patch("/update", response_model=MessageResponse, status_code=status.HTTP_200_OK)
+async def  user_settings(
+    update_user: UserSettingsUpdate,
+    current_user: User = Depends(get_current_active_user),
+    session: AsyncSession = Depends(db_session)
+):
+    change_data = update_user.model_dump(exclude_unset=True)
+    for field, value in change_data.items():
+        setattr(current_user, field, value)
+
+    session.add(current_user)
+    await session.commit()
+    await session.refresh(current_user)
+    return {"detail": "Changes saved successfully."}

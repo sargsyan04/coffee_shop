@@ -1,4 +1,4 @@
-let allProducts = []; // --> Keeps all loaded products so we can filter them client-side <--
+let allProducts = []; // Keeps all loaded products so we can filter them client-side
 
 async function loadProducts() {
   const container = document.getElementById("products-container");
@@ -38,7 +38,7 @@ function createProductCard(product) {
   const card = document.createElement("div");
   card.className = "product-card";
 
-  // --> Fall back to a placeholder image when the product has none <--
+  // Fall back to a placeholder image when the product has none
   const imageUrl = product.image_url
     ? `${API_BASE_URL}${product.image_url}`
     : "../images/placeholder.png";
@@ -60,7 +60,7 @@ function createProductCard(product) {
 }
 
 // ============================================================
-// --> Search (already functional — filters loaded products by name) <--
+// Search (already functional — filters loaded products by name)
 // ============================================================
 function setupSearch() {
   const searchInput = document.getElementById("search-input");
@@ -76,9 +76,9 @@ function setupSearch() {
 }
 
 // ============================================================
-// --> Category filter chips <--
-// --> For now this only toggles the active button — real filtering
-//     will be wired up once the API exposes a category field <--
+// Category filter chips
+// For now this only toggles the active button — real filtering
+// will be wired up once the API exposes a category field
 // ============================================================
 function setupFilterChips() {
   const chips = document.querySelectorAll(".chip");

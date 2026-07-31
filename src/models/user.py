@@ -14,17 +14,20 @@ if TYPE_CHECKING:
 
 
 class User(BaseModel):
-    # --> Step 1 — Required Account Information <--
+    # Step 1 — Required Account Information
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     hashed_password: Mapped[str] = mapped_column(String(255))
     name: Mapped[str] = mapped_column(String(255))
 
-    # --> Step 2 — Optional Profile Information <--
+    # Step 2 — Optional Profile Information
     birth_date: Mapped[date | None] = mapped_column(Date)
     phone: Mapped[str | None] = mapped_column(String(20), unique=True)
     address: Mapped[str | None] = mapped_column(String(500))
 
-    # --> Account Status <--
+    # Account image
+    image_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
+    # Account Status
     role: Mapped[UserRole] = mapped_column(default=UserRole.CUSTOMER)
     bonus_points: Mapped[int] = mapped_column(Integer(), default=0)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)

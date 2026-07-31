@@ -28,57 +28,78 @@ def trim_whitespace(image: Image.Image, tolerance: int = 12) -> Image.Image:
 # ============================================================
 
 
-def save_image(file: UploadFile, folder: str, resize: tuple[int, int] = MAX_SIZE) -> str:
-    """Saves the uploaded file to disk after validating, cropping, and resizing it.
-    Returns the web-facing path to store in the database."""
+def save_image(
+    file: UploadFile,
+    folder: str,
+    filename_prefix: str,
+    entity_id: int,
+    resize: tuple[int, int] = MAX_SIZE,
+) -> str:
+    """
+    Saves an uploaded image after validation and processing.
 
+    Args:
+        file: Uploaded image.
+        folder: Folder inside the media directory.
+        filename_prefix: Prefix for the filename (e.g. "product", "user").
+        entity_id: ID of the entity the image belongs to.
+        resize: Final image size.
+
+    Returns:
+        Relative path to the saved image.
+    """
     if file.content_type not in ALLOWED_TYPES:
-        raise HTTPException(400, "Only JPEG, PNG, and WEBP are allowed")
+        raise HTTPException(
+            status_code=400,
+            detail="Only JPEG, PNG, and WEBP images are allowed.",
+        )
 
     media_dir = Path("media") / folder
     media_dir.mkdir(parents=True, exist_ok=True)
 
     raw_bytes = file.file.read()
 
-    # --> Step 1: validate that the file is actually a readable image <--
+    # --> Step 1: validate that the uploaded file is a real image <--
     try:
         image = Image.open(io.BytesIO(raw_bytes))
         image.verify()
     except Exception:
-        raise HTTPException(400, "The file is corrupted or not a valid image")
+        raise HTTPException(
+            status_code=400,
+            detail="The uploaded file is corrupted or is not a valid image.",
+        )
 
     # --> Image.verify() invalidates the object for further use — reopen it <--
     image = Image.open(io.BytesIO(raw_bytes))
 
-    # --> Step 2: convert to RGB if saving a transparent PNG as JPEG
-    #     (JPEG has no alpha channel and would otherwise fail to save) <--
-    if image.mode in ("RGBA", "P") and file.content_type == "image/jpeg":
+    # --> Step 2: JPEG doesn't support transparency, convert if needed.
+    #     (No redundant re-open afterwards — that was the bug in the original,
+    #     it discarded this conversion by reopening raw bytes right after.) <--
+    if image.mode in ("RGBA", "LA", "P") and file.content_type == "image/jpeg":
         image = image.convert("RGB")
 
-    image = Image.open(io.BytesIO(raw_bytes))
-
-    # --> Step 3: crop empty padding around the product <--
+    # --> Step 3: crop empty padding around the subject <--
     image = trim_whitespace(image)
 
-    # --> Step 4: fit into a square, filling the frame entirely (not just shrinking) <--
-    image = ImageOps.fit(image, resize, Image.LANCZOS)
+    # --> Step 4: don't upscale images already smaller than the target size <--
+    if image.width > resize[0] or image.height > resize[1]:
+        image = ImageOps.fit(image, resize, Image.LANCZOS)
+    else:
+        image.thumbnail(resize, Image.LANCZOS)
 
-    # --> Step 5: resize while preserving aspect ratio (never upscales small images) <--
-    image.thumbnail(resize, Image.LANCZOS)
-
-    # --> Step 6: determine the file extension and save format <--
-    ext_map = {
+    # --> Step 5: determine the file extension and save format <--
+    extension_map = {
         "image/jpeg": ("jpg", "JPEG"),
         "image/png": ("png", "PNG"),
         "image/webp": ("webp", "WEBP"),
     }
-    extension, pil_format = ext_map[file.content_type]
+    extension, image_format = extension_map[file.content_type]
 
-    filename = f"{uuid.uuid4()}.{extension}"
+    filename = f"{filename_prefix}_{entity_id}-{uuid.uuid4().hex}.{extension}"
     filepath = media_dir / filename
 
-    save_kwargs = {"quality": 85} if pil_format in ("JPEG", "WEBP") else {}
-    image.save(filepath, format=pil_format, **save_kwargs)
+    save_kwargs = {"quality": 85} if image_format in ("JPEG", "WEBP") else {}
+    image.save(filepath, format=image_format, **save_kwargs)
 
     return f"/media/{folder}/{filename}"
 

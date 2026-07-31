@@ -217,7 +217,6 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-
 # IDEs and editors
 .vscode/
 .idea/

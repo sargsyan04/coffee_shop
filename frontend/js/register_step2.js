@@ -11,7 +11,7 @@ const context = sessionStorage.getItem("verification_context");
 if (pendingEmail) {
   emailLabel.textContent = pendingEmail;
 
-  // --> Adjust the copy depending on how the user got here <--
+  // Adjust the copy depending on how the user got here
   if (context === "login") {
     eyebrow.textContent = "Подтверждение входа";
     stepIndicator.hidden = true;

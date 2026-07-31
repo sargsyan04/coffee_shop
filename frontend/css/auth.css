@@ -1,10 +1,10 @@
-/* --> Wider card for forms (bigger than the start screen) <-- */
+/* Wider card for forms (bigger than the start screen) */
 .auth_block {
     width: 640px;
 }
 
-/* --> The form itself — 2-column grid so more fields fit without
-       the card growing too tall and causing page scroll <-- */
+/* The form itself — 2-column grid so more fields fit without
+   the card growing too tall and causing page scroll */
 .auth_form {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -12,8 +12,8 @@
     width: 100%;
 }
 
-/* --> Makes an element span both columns (buttons, status text,
-       or any field you want on its own full-width row) <-- */
+/* Makes an element span both columns (buttons, status text,
+   or any field you want on its own full-width row) */
 .full_row {
     grid-column: 1 / -1;
 }
@@ -54,7 +54,7 @@
     box-shadow: 0 0 0 3px rgba(169, 124, 80, 0.15);
 }
 
-/* --> Field error state (not wired up yet, reserved for future use) <-- */
+/* Field error state (not wired up yet, reserved for future use) */
 .form_group.has_error input {
     border-color: var(--color-danger);
 }
@@ -69,7 +69,7 @@
     display: block;
 }
 
-/* --> "Forgot password" link <-- */
+/* "Forgot password" link */
 .forgot_link {
     align-self: flex-end;
     margin-top: -8px;
@@ -84,7 +84,7 @@
     color: var(--color-primary-dark);
 }
 
-/* --> Narrow, centered submit button <-- */
+/* Narrow, centered submit button */
 .full_width {
     align-self: center;
     width: auto;
@@ -92,7 +92,7 @@
     padding: 0 40px;
 }
 
-/* --> Form submission status (placeholder until the backend is wired up) <-- */
+/* Form submission status (placeholder until the backend is wired up) */
 .form_status {
     margin: 0;
     text-align: center;
@@ -101,7 +101,7 @@
     color: var(--color-text-secondary);
 }
 
-/* --> Switching between login and registration <-- */
+/* Switching between login and registration */
 .switch_text {
     margin: 0;
     font-family: 'Inter', sans-serif;
@@ -119,7 +119,7 @@
     text-decoration: underline;
 }
 
-/* --> Registration step indicator <-- */
+/* Registration step indicator */
 .step_indicator {
     display: flex;
     justify-content: center;
@@ -147,13 +147,13 @@
     background-color: var(--color-primary);
 }
 
-/* --> Optional fields <-- */
+/* Optional fields */
 .optional_label {
     font-weight: 400;
     color: var(--color-text-muted);
 }
 
-/* --> "Skip" / "resend" button <-- */
+/* "Skip" / "resend" button */
 .skip_link {
     background: none;
     border: none;
@@ -169,7 +169,7 @@
     color: var(--color-primary-dark);
 }
 
-/* --> Email confirmation text <-- */
+/* Email confirmation text */
 .confirm_text {
     text-align: center;
     font-size: 0.9rem;
@@ -178,7 +178,7 @@
 }
 
 
-/* --> "Back" link, top-left of the auth card <-- */
+/* "Back" link, top-left of the auth card */
 .back_link {
     align-self: flex-start;
     display: inline-flex;
@@ -201,7 +201,7 @@
     color: var(--color-primary-dark);
 }
 
-/* --> Responsive: collapse back to a single column on narrow screens <-- */
+/* Responsive: collapse back to a single column on narrow screens */
 @media (max-width: 480px) {
     .auth_block {
         width: 90%;

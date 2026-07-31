@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="../media/logo.png">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/toast.css">
+    <link rel="stylesheet" href="../css/settings.css">
+    <title>Coffee Shop — Настройки</title>
+</head>
+<body>
+
+    <header class="site-nav">
+        <a href="index.html" class="nav-brand">
+            <img src="../media/logo.png" alt="" class="nav-logo">
+            <span>Coffee Shop</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="catalog.html" class="nav-link">Меню</a>
+        </nav>
+
+        <div class="nav-actions">
+            <a href="profile.html" class="btn-nav btn-nav-ghost">Профиль</a>
+            <a href="settings.html" class="btn-nav btn-nav-ghost">Настройки</a>
+            <button type="button" class="btn-nav btn-nav-solid" id="logout-button">Выйти</button>
+        </div>
+    </header>
+
+    <main class="settings-main">
+
+        <p class="settings-loading" id="settings-loading">Загрузка...</p>
+
+        <div class="settings-layout" id="settings-content" hidden>
+
+            <a href="profile.html" class="settings-back">← Назад к профилю</a>
+
+            <section class="settings-section" id="personal-section">
+                <h2>Личные данные</h2>
+                <form class="settings-form" id="personal-form" novalidate>
+                    <div class="form_group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" disabled>
+                        <span class="field-hint">Email нельзя изменить</span>
+                    </div>
+                    <div class="form_group">
+                        <label for="name">Имя</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form_group">
+                        <label for="phone">Телефон</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__">
+                    </div>
+                    <div class="form_group">
+                        <label for="address">Адрес</label>
+                        <input type="text" id="address" name="address">
+                    </div>
+                    <div class="form_group">
+                        <label for="birth_date">Дата рождения</label>
+                        <input type="date" id="birth_date" name="birth_date">
+                    </div>
+                    <button type="submit" class="button_s">Сохранить изменения</button>
+                </form>
+            </section>
+
+            <section class="settings-section" id="password-section">
+                <h2>Изменить пароль</h2>
+                <form class="settings-form" id="password-form" novalidate>
+                    <div class="form_group">
+                        <label for="current_password">Текущий пароль</label>
+                        <input type="password" id="current_password" name="current_password" placeholder="••••••••" required>
+                    </div>
+                    <div class="form_group">
+                        <label for="new_password">Новый пароль</label>
+                        <input type="password" id="new_password" name="new_password" placeholder="••••••••" required>
+                    </div>
+                    <div class="form_group">
+                        <label for="new_password_confirm">Повторите новый пароль</label>
+                        <input type="password" id="new_password_confirm" name="new_password_confirm" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="button_s">Сохранить пароль</button>
+                </form>
+            </section>
+
+        </div>
+
+    </main>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/settings.js"></script>
+</body>
+</html>

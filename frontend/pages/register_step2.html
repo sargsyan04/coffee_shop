@@ -18,16 +18,16 @@
             <h1>Подтвердите email</h1>
         </div>
 
-        <!--  Progress dots — final step (2 of 2) is active  -->
+        <!-- Progress dots — final step (2 of 2) is active -->
         <div class="step_indicator" id="step-indicator">
             <span class="step_dot done"></span>
             <span class="step_dot active"></span>
         </div>
 
-        <!--  Filled in by register_step2.js from sessionStorage  -->
+        <!-- Filled in by register_step2.js from sessionStorage -->
         <p class="confirm_text">Мы отправили 6-значный код на <strong id="user-email">вашу почту</strong></p>
 
-        <!--  Step 2 of 2 — email verification code, see register_step2.js  -->
+        <!-- Step 2 of 2 — email verification code, see register_step2.js -->
         <form class="auth_form" id="step3-form" novalidate>
             <div class="form_group">
                 <label for="code">Код подтверждения</label>
@@ -35,14 +35,14 @@
             </div>
 
             <button type="submit" class="button_s sign_in full_width">Подтвердить</button>
-            <!--  Triggers a new verification code to be sent -->
+            <!-- Triggers a new verification code to be sent -->
             <button type="button" class="skip_link" id="resend-code">Отправить код повторно</button>
 
             <p class="form_status" id="form-status" hidden></p>
         </form>
     </div>
 
-    <!--  api.js must load before register_step2.js -->
+    <!-- api.js must load before register_step2.js -->
     <script src="../js/api.js"></script>
     <script src="../js/register_step2.js"></script>
 </body>

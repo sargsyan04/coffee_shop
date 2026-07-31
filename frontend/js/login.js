@@ -15,8 +15,8 @@ loginForm.addEventListener("submit", async (event) => {
     window.location.href = "index.html";
   } catch (error) {
     if (error.message === "Email address not confirmed") {
-      // --> Send the user to the same code-entry screen used during
-      //     registration, but flag the context so the copy makes sense <--
+      // Send the user to the same code-entry screen used during
+      // registration, but flag the context so the copy makes sense
       sessionStorage.setItem("pending_verification_email", email);
       sessionStorage.setItem("verification_context", "login");
       window.location.href = "register_step2.html";

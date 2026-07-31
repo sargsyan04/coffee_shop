@@ -33,7 +33,7 @@ function renderProduct(product) {
     ? `${API_BASE_URL}${product.image_url}`
     : "../images/placeholder.png";
 
-  // --> Description is optional — only render it if the API response includes it <--
+  // Description is optional — only render it if the API response includes it
   const descriptionHtml = product.description
     ? `<p class="detail-description">${product.description}</p>`
     : "";
