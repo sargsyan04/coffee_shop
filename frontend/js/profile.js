@@ -3,16 +3,10 @@ const profileCard = document.getElementById("profile-card");
 const profileDetails = document.getElementById("profile-details");
 const dangerZone = document.getElementById("danger-zone");
 
-const logoutButton = document.getElementById("logout-button");
 const deactivateButton = document.getElementById("deactivate-button");
 
-const avatarButton = document.getElementById("profile-avatar-button");
 const avatarInitials = document.getElementById("profile-avatar");
 const avatarImage = document.getElementById("profile-avatar-image");
-const avatarInput = document.getElementById("avatar-input");
-
-const ALLOWED_AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_AVATAR_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 function initials(name) {
   return name
@@ -48,7 +42,7 @@ function renderProfile(user) {
   document.getElementById("profile-name").textContent = user.name;
   document.getElementById("profile-email").textContent = user.email;
 
-  document.getElementById("profile-role").textContent = user.role;
+  document.getElementById("profile-role").textContent = roleLabel(user.role);
 
   const verifiedBadge = document.getElementById("profile-verified");
   if (user.is_email_verified) {
@@ -83,7 +77,7 @@ async function loadProfile() {
     const userStatus = await apiRequest("/user/status");
 
     if (userStatus.must_change_password) {
-      window.location.href = "force-password-change.html";
+      window.location.href = "force_password_change.html";
       return;
     }
 
@@ -95,16 +89,27 @@ async function loadProfile() {
   }
 }
 
-logoutButton.addEventListener("click", () => {
-  clearTokens();
-  window.location.href = "index.html";
+const deactivateModalOverlay = document.getElementById("deactivate-modal-overlay");
+const deactivateModalClose = document.getElementById("deactivate-modal-close");
+const deactivateModalCancel = document.getElementById("deactivate-modal-cancel");
+const deactivateModalConfirm = document.getElementById("deactivate-modal-confirm");
+
+function closeDeactivateModal() {
+  deactivateModalOverlay.hidden = true;
+}
+
+deactivateButton.addEventListener("click", () => {
+  deactivateModalOverlay.hidden = false;
 });
 
-deactivateButton.addEventListener("click", async () => {
-  const confirmed = confirm(
-    "Вы уверены, что хотите деактивировать аккаунт? Его можно будет восстановить в течение 30 дней."
-  );
-  if (!confirmed) return;
+deactivateModalClose.addEventListener("click", closeDeactivateModal);
+deactivateModalCancel.addEventListener("click", closeDeactivateModal);
+deactivateModalOverlay.addEventListener("click", (event) => {
+  if (event.target === deactivateModalOverlay) closeDeactivateModal();
+});
+
+deactivateModalConfirm.addEventListener("click", async () => {
+  deactivateModalConfirm.disabled = true;
 
   try {
     await apiRequest("/user/profile", { method: "DELETE" });
@@ -113,53 +118,7 @@ deactivateButton.addEventListener("click", async () => {
     window.location.href = "index.html";
   } catch (error) {
     showToast(error.message, "error");
-  }
-});
-
-// ============================================================
-// Avatar Upload
-// ============================================================
-
-avatarButton.addEventListener("click", () => {
-  avatarInput.click();
-});
-
-// role="button" on a <div> gets no native keyboard behavior,
-// so Enter/Space have to be wired up by hand for accessibility
-avatarButton.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" || event.key === " ") {
-    event.preventDefault();
-    avatarInput.click();
-  }
-});
-
-avatarInput.addEventListener("change", async () => {
-  const file = avatarInput.files[0];
-  if (!file) return;
-
-  if (!ALLOWED_AVATAR_TYPES.includes(file.type)) {
-    showToast("Допустимые форматы: JPG, PNG, WEBP", "error");
-    avatarInput.value = "";
-    return;
-  }
-
-  if (file.size > MAX_AVATAR_SIZE_BYTES) {
-    showToast("Файл слишком большой (максимум 5 МБ)", "error");
-    avatarInput.value = "";
-    return;
-  }
-
-  avatarButton.classList.add("avatar-uploading");
-
-  try {
-    const user = await apiUploadFile("/user/image", file);
-    renderAvatar(user);
-    showToast("Аватар обновлён", "success");
-  } catch (error) {
-    showToast(error.message, "error");
-  } finally {
-    avatarButton.classList.remove("avatar-uploading");
-    avatarInput.value = "";
+    deactivateModalConfirm.disabled = false;
   }
 });
 

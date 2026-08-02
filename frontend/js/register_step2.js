@@ -1,38 +1,37 @@
-const step3Form = document.getElementById("step3-form");
+const reactivateForm = document.getElementById("reactivate-form");
 const resendButton = document.getElementById("resend-code");
 const formStatus = document.getElementById("form-status");
 const emailLabel = document.getElementById("user-email");
-const eyebrow = document.getElementById("verify-eyebrow");
-const stepIndicator = document.getElementById("step-indicator");
 
 const pendingEmail = sessionStorage.getItem("pending_verification_email");
-const context = sessionStorage.getItem("verification_context");
 
 if (pendingEmail) {
   emailLabel.textContent = pendingEmail;
-
-  // Adjust the copy depending on how the user got here
-  if (context === "login") {
-    eyebrow.textContent = "Подтверждение входа";
-    stepIndicator.hidden = true;
-  }
 } else {
   window.location.href = "register.html";
 }
 
-step3Form.addEventListener("submit", async (event) => {
+reactivateForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+
   const code = document.getElementById("code").value;
+  const newPassword = document.getElementById("new_password").value;
+  const newPasswordConfirm = document.getElementById("new_password_confirm").value;
+
+  if (newPassword !== newPasswordConfirm) {
+    formStatus.textContent = "Пароли не совпадают.";
+    formStatus.hidden = false;
+    return;
+  }
 
   try {
-    await apiRequest("/user/verify-email", {
+    await apiRequest("/user/new-password", {
       method: "POST",
-      body: JSON.stringify({ email: pendingEmail, code }),
+      body: JSON.stringify({ email: pendingEmail, code, new_password: newPassword }),
     });
 
     sessionStorage.removeItem("pending_verification_email");
-    sessionStorage.removeItem("verification_context");
-    formStatus.textContent = "Email подтверждён! Перенаправляем на вход...";
+    formStatus.textContent = "Аккаунт восстановлен! Перенаправляем на вход...";
     formStatus.hidden = false;
 
     setTimeout(() => {
@@ -46,7 +45,9 @@ step3Form.addEventListener("submit", async (event) => {
 
 resendButton.addEventListener("click", async () => {
   try {
-    await apiRequest("/user/resend-code", {
+    // /user/reactivate invalidates the previous code and issues a new one —
+    // no separate "resend" endpoint needed for this flow.
+    await apiRequest("/user/reactivate", {
       method: "POST",
       body: JSON.stringify({ email: pendingEmail }),
     });

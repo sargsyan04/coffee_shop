@@ -1,0 +1,207 @@
+/* ===== Site Navigation ===== */
+.site-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    background-color: var(--color-bg-card);
+    border-bottom: 1px solid var(--color-border);
+    gap: 20px;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--color-primary-dark);
+    flex-shrink: 0;
+}
+
+.nav-logo {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.nav-links {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.nav-link {
+    position: relative;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-link:hover,
+.nav-link-active {
+    color: var(--color-primary-dark);
+}
+
+.nav-cart-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--color-primary-light);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.nav-cart-badge[hidden] {
+    display: none;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.nav-actions[hidden] {
+    display: none;
+}
+
+.nav-role-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    padding: 4px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    margin-right: 2px;
+}
+
+.btn-nav {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 9px 18px;
+    border-radius: 999px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: none;
+}
+
+.btn-nav-ghost {
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 1.5px solid var(--color-border);
+}
+
+.btn-nav-ghost:hover {
+    color: var(--color-primary-dark);
+    border-color: var(--color-primary-light);
+}
+
+.btn-nav-solid {
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-dark));
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(169, 124, 80, 0.3);
+}
+
+.btn-nav-solid:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(169, 124, 80, 0.4);
+}
+
+/* ===== Site Footer ===== */
+.site-footer {
+    border-top: 1px solid var(--color-border);
+    padding: 32px 48px 20px;
+    background-color: var(--color-bg-card);
+}
+
+.footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    font-size: 0.95rem;
+}
+
+.footer-logo {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+.footer-links {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-links a {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    color: var(--color-primary-dark);
+}
+
+/* The year here is written into the DOM by js/layout.js at render time
+   (new Date().getFullYear()) — never hardcode it in markup. */
+.footer-copy {
+    text-align: center;
+    max-width: 1100px;
+    margin: 20px auto 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+}
+
+@media (max-width: 720px) {
+    .site-nav {
+        padding: 16px 20px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .nav-links {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+    }
+    .site-footer {
+        padding: 28px 20px 16px;
+    }
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+}

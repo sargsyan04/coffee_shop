@@ -1,5 +1,15 @@
 const API_BASE_URL = "http://localhost:8080";
 
+const ROLE_LABELS = {
+  customer: "Клиент",
+  barista: "Бариста",
+  admin: "Админ",
+};
+
+function roleLabel(role) {
+  return ROLE_LABELS[role] || role;
+}
+
 // ============================================================
 // Token Storage
 // ============================================================
@@ -72,7 +82,10 @@ async function apiRequest(endpoint, options = {}, _isRetry = false) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
-    throw new Error(extractErrorMessage(errorData, response.status));
+    const error = new Error(extractErrorMessage(errorData, response.status));
+    error.status = response.status;
+    error.detail = errorData?.detail;
+    throw error;
   }
 
   if (response.status === 204) return null;
@@ -140,7 +153,10 @@ async function apiLoginRequest(email, password) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
-    throw new Error(errorData?.detail || `Request error: ${response.status}`);
+    const error = new Error(extractErrorMessage(errorData, response.status));
+    error.status = response.status;
+    error.detail = errorData?.detail;
+    throw error;
   }
 
   return response.json();

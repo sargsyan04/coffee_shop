@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="../media/logo.png">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../css/toast.css">
+    <link rel="stylesheet" href="../css/panel.css">
+    <title>Coffee Shop — Админ-панель</title>
+</head>
+<body>
+
+    <div id="site-header-root"></div>
+
+    <!-- Shown only if a non-admin account somehow lands here -->
+    <p class="panel-guard-message" id="panel-guard-message" hidden>
+        Эта страница доступна только администраторам.
+    </p>
+
+    <main class="panel-main" id="panel-content" hidden>
+        <div class="panel-header">
+            <p class="panel-eyebrow">Админ-панель</p>
+            <h1 class="panel-title">Управление кофейней</h1>
+        </div>
+
+        <!-- Same order queue baristas see — admins can act on it too -->
+        <section class="panel-section">
+            <h2>Очередь заказов</h2>
+            <ul class="queue-list" id="order-queue"></ul>
+        </section>
+
+        <!-- POST /categories/ and POST /products/create already exist on
+             the backend and are usable today -->
+        <section class="panel-section">
+            <h2>Новая категория</h2>
+            <form class="panel-form" id="category-form" novalidate>
+                <div class="form_group full_row">
+                    <label for="category-name">Название</label>
+                    <input type="text" id="category-name" name="category-name" required>
+                </div>
+                <button type="submit" class="button_s sign_in full_row" style="width:fit-content;">Создать категорию</button>
+                <p class="form_status full_row" id="category-form-status" hidden></p>
+            </form>
+        </section>
+
+        <section class="panel-section">
+            <h2>Новый товар</h2>
+            <form class="panel-form" id="product-form" novalidate>
+                <div class="form_group">
+                    <label for="product-name">Название</label>
+                    <input type="text" id="product-name" name="product-name" required>
+                </div>
+                <div class="form_group">
+                    <label for="product-price">Цена, ֏</label>
+                    <input type="number" id="product-price" name="product-price" min="1" step="1" required>
+                </div>
+                <div class="form_group full_row">
+                    <label for="product-category">Категория</label>
+                    <select id="product-category" name="product-category">
+                        <option value="">Без категории</option>
+                    </select>
+                </div>
+                <button type="submit" class="button_s sign_in full_row" style="width:fit-content;">Создать товар</button>
+                <p class="form_status full_row" id="product-form-status" hidden></p>
+            </form>
+        </section>
+
+        <!-- No backend endpoint for this yet — see src/routers/admin_users.py (TODO) -->
+        <section class="panel-section">
+            <h2>Пользователи</h2>
+            <div class="panel-todo-note">
+                Управление пользователями (список, смена роли, сброс пароля) ещё не реализовано
+                на бэкенде. Заготовка роутера — <code>src/routers/admin_users.py</code>.
+                Эта секция подключится сама, как только появятся эндпоинты.
+            </div>
+        </section>
+    </main>
+
+    <div id="site-footer-root"></div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/layout.js"></script>
+    <script src="../js/cart_store.js"></script>
+    <script src="../js/order_queue.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

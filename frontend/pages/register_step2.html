@@ -7,43 +7,49 @@
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/auth.css">
-    <title>Coffee Shop — Подтверждение</title>
+    <link rel="stylesheet" href="../css/toast.css">
+    <title>Coffee Shop — Восстановление аккаунта</title>
 </head>
 <body>
 
     <div class="central_block auth_block">
         <div class="central_header">
-            <span class="eyebrow" id="verify-eyebrow">Шаг 2 из 2</span>
+            <span class="eyebrow">Восстановление аккаунта</span>
             <img src="../media/big_logo.png" alt="Coffee Shop">
-            <h1>Подтвердите email</h1>
+            <h1>Задайте новый пароль</h1>
         </div>
 
-        <!-- Progress dots — final step (2 of 2) is active -->
-        <div class="step_indicator" id="step-indicator">
-            <span class="step_dot done"></span>
-            <span class="step_dot active"></span>
-        </div>
-
-        <!-- Filled in by register_step2.js from sessionStorage -->
+        <!-- Filled in by reactivate_step2.js from sessionStorage -->
         <p class="confirm_text">Мы отправили 6-значный код на <strong id="user-email">вашу почту</strong></p>
 
-        <!-- Step 2 of 2 — email verification code, see register_step2.js -->
-        <form class="auth_form" id="step3-form" novalidate>
-            <div class="form_group">
+        <form class="auth_form" id="reactivate-form" novalidate>
+            <div class="form_group full_row">
                 <label for="code">Код подтверждения</label>
                 <input type="text" id="code" name="code" maxlength="6" placeholder="000000" inputmode="numeric" required>
             </div>
 
-            <button type="submit" class="button_s sign_in full_width">Подтвердить</button>
-            <!-- Triggers a new verification code to be sent -->
+            <div class="form_group">
+                <label for="new_password">Новый пароль</label>
+                <input type="password" id="new_password" name="new_password" placeholder="••••••••" required>
+            </div>
+
+            <div class="form_group">
+                <label for="new_password_confirm">Повторите пароль</label>
+                <input type="password" id="new_password_confirm" name="new_password_confirm" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="button_s sign_in full_width full_row">Восстановить аккаунт</button>
+            <!-- Re-sends the reactivation code — POST /user/reactivate is
+                 idempotent here, it just issues a fresh code each time -->
             <button type="button" class="skip_link" id="resend-code">Отправить код повторно</button>
 
-            <p class="form_status" id="form-status" hidden></p>
+            <p class="form_status full_row" id="form-status" hidden></p>
         </form>
     </div>
 
-    <!-- api.js must load before register_step2.js -->
+    <!-- api.js must load before reactivate_step2.js -->
     <script src="../js/api.js"></script>
-    <script src="../js/register_step2.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/reactivate_step2.js"></script>
 </body>
 </html>

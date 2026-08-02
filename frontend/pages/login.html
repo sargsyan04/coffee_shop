@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../css/toast.css">
     <title>Coffee Shop — Вход</title>
 </head>
 <body>
@@ -48,8 +49,23 @@
         <p class="switch_text">Нет аккаунта? <a href="register.html">Зарегистрироваться</a></p>
     </div>
 
+    <!-- Shown when POST /user/login responds with a deactivated-account
+         detail (same shape as the 409 from /user/register) -->
+    <div class="modal-overlay" id="reactivate-modal-overlay" hidden>
+        <div class="modal modal-narrow" id="reactivate-modal" role="dialog" aria-modal="true" aria-labelledby="reactivate-modal-title">
+            <button type="button" class="modal-close" id="reactivate-modal-close" aria-label="Закрыть">&times;</button>
+            <h2 id="reactivate-modal-title">Аккаунт деактивирован</h2>
+            <p class="modal-text" id="reactivate-modal-text"></p>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="reactivate-modal-cancel">Отмена</button>
+                <button type="button" class="button_s sign_in" id="reactivate-modal-restore">Восстановить аккаунт</button>
+            </div>
+        </div>
+    </div>
+
     <!-- api.js must load before login.js — login.js relies on apiLoginRequest/storeTokens -->
     <script src="../js/api.js"></script>
+    <script src="../js/toast.js"></script>
     <script src="../js/login.js"></script>
 </body>
 </html>

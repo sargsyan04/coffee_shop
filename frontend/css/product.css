@@ -30,8 +30,8 @@
 /* Product card */
 .product-detail {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: minmax(240px, 300px) 1fr;
+  gap: 40px;
   align-items: start;
 }
 
@@ -41,13 +41,12 @@
   overflow: hidden;
   background-color: var(--color-bg-accent);
   border: 1px solid var(--color-border);
-  padding: 24px;
 }
 
 .detail-image {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   display: block;
 }
 
@@ -88,6 +87,13 @@
   margin: 0 0 24px;
 }
 
+.price-per-unit {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
 .detail-add-button {
   font-family: 'Inter', sans-serif;
   font-size: 15px;
@@ -107,6 +113,98 @@
 
 .detail-add-button:active {
   transform: scale(0.98);
+}
+
+/* ============================================================
+   Category badge + tag chips (data already exists in the API
+   response — product.category / product.tags — just wasn't
+   rendered anywhere before)
+   ============================================================ */
+
+.detail-category {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--color-primary-dark);
+  background-color: var(--color-bg-accent);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 5px 14px;
+  margin: 0 0 14px;
+}
+
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 20px;
+}
+
+.detail-tag {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 5px 12px;
+}
+
+/* ============================================================
+   Additional info accordion (composition / nutrition / etc.)
+   ============================================================ */
+
+.detail-accordion {
+  margin: 28px 0 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.accordion-item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.accordion-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 16px 2px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-align: left;
+}
+
+.accordion-trigger .accordion-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-muted);
+  transition: transform 0.2s ease;
+}
+
+.accordion-item.open .accordion-trigger .accordion-icon {
+  transform: rotate(45deg);
+}
+
+.accordion-panel {
+  display: none;
+  padding: 0 2px 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.accordion-item.open .accordion-panel {
+  display: block;
 }
 
 /* Loading / error states */
@@ -135,4 +233,275 @@
   .detail-name {
     font-size: 26px;
   }
+}
+/* Quantity stepper — added alongside cart wiring */
+.detail-quantity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 4px 0 18px;
+}
+
+.qty-button {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    border: 1.5px solid var(--color-border);
+    background: var(--color-bg-card);
+    color: var(--color-text-primary);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.qty-button:hover {
+    border-color: var(--color-primary-light);
+    color: var(--color-primary-dark);
+}
+
+#qty-value {
+    min-width: 20px;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* ============================================================
+   Rating summary (next to product name)
+   ============================================================ */
+
+.detail-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.detail-rating .stars {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--color-primary-light);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.detail-rating .stars .star-empty {
+  color: var(--color-border);
+}
+
+.detail-rating .rating-count {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.detail-rating .rating-count.no-reviews {
+  font-style: italic;
+}
+
+/* ============================================================
+   Reviews section
+   ============================================================ */
+
+.reviews-section {
+  grid-column: 1 / -1;
+  margin-top: 56px;
+  padding-top: 40px;
+  border-top: 1px solid var(--color-border);
+}
+
+.reviews-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: 'Fraunces', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  margin: 0 0 24px;
+}
+
+.reviews-heading .reviews-count {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.review-card {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.review-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.review-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.review-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: var(--color-bg-accent);
+  flex-shrink: 0;
+}
+
+.review-avatar-fallback {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: var(--color-bg-accent);
+  color: var(--color-primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.review-author-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+
+.review-date {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.review-card .stars {
+  color: var(--color-primary-light);
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.review-card .stars .star-empty {
+  color: var(--color-border);
+}
+
+.review-comment {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.reviews-empty-text,
+.reviews-loading-text {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  margin-bottom: 32px;
+}
+
+/* --> Review form / status states <-- */
+
+.review-form-box {
+  background-color: var(--color-bg-accent);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.review-form-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-text-primary);
+  margin: 0 0 14px;
+}
+
+.review-status-text {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-accent);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+
+.star-input {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.star-input button {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-border);
+  transition: color 0.15s ease;
+}
+
+.star-input button.active,
+.star-input button:hover,
+.star-input button:hover ~ button {
+  color: var(--color-primary-light);
+}
+
+.review-textarea {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.review-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary-light);
+  box-shadow: 0 0 0 3px rgba(169, 124, 80, 0.15);
+}
+
+.review-submit-button {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 999px;
+  padding: 11px 26px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.review-submit-button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.review-submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

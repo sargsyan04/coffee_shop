@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../css/toast.css">
     <title>Coffee Shop — Регистрация</title>
 </head>
 <body>
@@ -79,8 +80,26 @@
         <p class="switch_text">Уже есть аккаунт? <a href="login.html">Войти</a></p>
     </div>
 
+    <!-- Shown when /user/register responds 409: this email belongs to a
+         deactivated account that's still within its recovery window -->
+    <div class="modal-overlay" id="reactivate-modal-overlay" hidden>
+        <div class="modal modal-narrow" id="reactivate-modal" role="dialog" aria-modal="true" aria-labelledby="reactivate-modal-title">
+            <button type="button" class="modal-close" id="reactivate-modal-close" aria-label="Закрыть">&times;</button>
+            <h2 id="reactivate-modal-title">Этот email уже занят</h2>
+            <p class="modal-text">
+                Аккаунт с этим адресом был деактивирован недавно, и его ещё можно восстановить.
+                Хотите вернуть старый аккаунт или создать новый на этот же email?
+            </p>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="reactivate-modal-new">Создать новый</button>
+                <button type="button" class="button_s sign_in" id="reactivate-modal-restore">Восстановить старый</button>
+            </div>
+        </div>
+    </div>
+
     <!-- api.js must load before register.js -->
     <script src="../js/api.js"></script>
+    <script src="../js/toast.js"></script>
     <script src="../js/register.js"></script>
 </body>
 </html>

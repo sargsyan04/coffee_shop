@@ -6,9 +6,13 @@
   <title>Coffee Shop — Товар</title>
   <link rel="icon" type="image/png" href="../media/logo.png">
   <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/product.css">
+  <link rel="stylesheet" href="../css/toast.css">
 </head>
 <body>
+
+  <div id="site-header-root"></div>
 
   <div class="page-container">
 
@@ -26,8 +30,13 @@
 
   </div>
 
+  <div id="site-footer-root"></div>
+
   <!-- api.js must load before product.js — product.js relies on API_BASE_URL -->
   <script src="../js/api.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/layout.js"></script>
+  <script src="../js/cart_store.js"></script>
   <script src="../js/product.js" defer></script>
 </body>
 </html>

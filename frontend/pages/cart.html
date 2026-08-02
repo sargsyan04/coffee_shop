@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="../media/logo.png">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/toast.css">
+    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../css/cart.css">
+    <title>Coffee Shop — Корзина</title>
+</head>
+<body>
+
+    <div id="site-header-root"></div>
+
+    <main class="cart-main">
+        <h1 class="cart-title">Корзина</h1>
+
+        <!-- Shown only to guests — informational, not blocking -->
+        <p class="cart-guest-note" id="cart-guest-note" hidden>
+            Вы не вошли в аккаунт. Можно собрать корзину и оформить заказ как гость,
+            либо <a href="login.html">войти</a> / <a href="register.html">зарегистрироваться</a>,
+            чтобы видеть историю заказов и копить бонусы.
+        </p>
+
+        <p class="cart-loading" id="cart-loading">Загрузка корзины...</p>
+        <p class="cart-empty" id="cart-empty" hidden>Корзина пуста. <a href="catalog.html">Перейти в меню →</a></p>
+
+        <div class="cart-layout" id="cart-layout" hidden>
+            <ul class="cart-items" id="cart-items"></ul>
+
+            <aside class="cart-summary">
+                <div class="cart-summary-row">
+                    <span>Итого</span>
+                    <span id="cart-total">0 ֏</span>
+                </div>
+                <button type="button" class="btn-checkout" id="checkout-button">Оформить заказ</button>
+                <p class="cart-summary-hint" id="checkout-hint" hidden></p>
+            </aside>
+        </div>
+
+        <!-- Guest checkout — collects contact details before calling the
+             (not-yet-implemented) guest checkout endpoint, see js/cart.js -->
+        <div class="modal-overlay" id="guest-checkout-overlay" hidden>
+            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="guest-checkout-title">
+                <button type="button" class="modal-close" id="guest-checkout-close" aria-label="Закрыть">&times;</button>
+                <h2 id="guest-checkout-title">Контактные данные</h2>
+                <p class="modal-hint">Понадобятся, чтобы передать заказ и связаться с вами.</p>
+
+                <form class="auth_form" id="guest-checkout-form" novalidate>
+                    <div class="form_group">
+                        <label for="guest-name">Имя</label>
+                        <input type="text" id="guest-name" name="guest-name" required>
+                    </div>
+                    <div class="form_group">
+                        <label for="guest-phone">Телефон</label>
+                        <input type="tel" id="guest-phone" name="guest-phone" required>
+                    </div>
+                    <div class="form_group">
+                        <label for="guest-email">Email <span class="optional_label">(необязательно)</span></label>
+                        <input type="email" id="guest-email" name="guest-email">
+                    </div>
+
+                    <button type="submit" class="button_s sign_in full_width">Оплатить и оформить</button>
+                    <p class="form_status" id="guest-checkout-status" hidden></p>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="site-footer-root"></div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/layout.js"></script>
+    <script src="../js/cart_store.js"></script>
+    <script src="../js/cart.js"></script>
+</body>
+</html>

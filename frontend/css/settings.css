@@ -143,3 +143,98 @@
         max-width: none;
     }
 }
+/* ===== Avatar section (moved here from the profile page) ===== */
+.avatar-settings-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.avatar-preview {
+    position: relative;
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-dark));
+    color: #fff;
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    overflow: hidden;
+}
+
+.avatar-preview-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Purely visual highlight — the avatar itself isn't clickable anymore,
+   changing the photo only happens through the "Загрузить фото" button */
+.avatar-preview-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(43, 32, 24, 0.35);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.avatar-preview:hover .avatar-preview-overlay,
+.avatar-preview.avatar-uploading .avatar-preview-overlay {
+    opacity: 1;
+}
+
+.avatar-settings-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.avatar-settings-info p {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+.btn-avatar-upload {
+    align-self: flex-start;
+    padding: 10px 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #fff;
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-dark));
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-avatar-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(169, 124, 80, 0.4);
+}
+
+.btn-avatar-upload:focus-visible {
+    outline: 2px solid var(--color-primary-light);
+    outline-offset: 3px;
+}
+
+.btn-avatar-upload:active {
+    transform: translateY(0);
+}
+
+.btn-avatar-upload:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}

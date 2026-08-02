@@ -5,33 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="../media/logo.png">
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/home.css">
     <title>Coffee Shop</title>
 </head>
 <body>
 
-    <header class="site-nav">
-        <a href="index.html" class="nav-brand">
-            <img src="../media/logo.png" alt="" class="nav-logo">
-            <span>Coffee Shop</span>
-        </a>
-
-        <nav class="nav-links">
-            <a href="catalog.html" class="nav-link">Меню</a>
-        </nav>
-
-        <!-- Guest state — default, swapped by main.js if a valid session exists -->
-        <div class="nav-actions" id="nav-actions-guest">
-            <a href="login.html" class="btn-nav btn-nav-ghost">Войти</a>
-            <a href="register.html" class="btn-nav btn-nav-solid">Регистрация</a>
-        </div>
-
-        <!-- Logged-in state — hidden until main.js confirms a valid session -->
-        <div class="nav-actions" id="nav-actions-account" hidden>
-            <a href="profile.html" class="btn-nav btn-nav-ghost">Профиль</a>
-            <button type="button" class="btn-nav btn-nav-solid" id="logout-button">Выйти</button>
-        </div>
-    </header>
+    <div id="site-header-root"></div>
 
     <main>
         <section class="hero">
@@ -73,12 +53,12 @@
         </section>
     </main>
 
-    <footer class="site-footer">
-        <p>© Coffee Shop, 2026</p>
-    </footer>
+    <div id="site-footer-root"></div>
 
     <script src="../js/api.js"></script>
     <script src="../js/toast.js"></script>
+    <script src="../js/layout.js"></script>
+    <script src="../js/cart_store.js"></script>
     <script src="../js/main.js"></script>
 </body>
 </html>

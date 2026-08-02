@@ -211,3 +211,96 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== Reactivation choice modal ===== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(43, 32, 24, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 1000;
+}
+
+/* [hidden] alone loses to this rule's own "display: flex" at equal
+   specificity, so it needs restating here to actually hide the overlay */
+.modal-overlay[hidden] {
+    display: none;
+}
+
+.modal {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    max-height: 85vh;
+    overflow-y: auto;
+    background-color: var(--color-bg-card);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(43, 32, 24, 0.3);
+}
+
+.modal-narrow {
+    max-width: 400px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--color-bg-accent);
+    color: var(--color-text-secondary);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.modal-close:hover {
+    background-color: var(--color-border);
+    color: var(--color-primary-dark);
+}
+
+.modal h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.2rem;
+    margin: 0 0 16px;
+}
+
+.modal-text {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0 0 20px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1.5px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-secondary:hover {
+    border-color: var(--color-primary-light);
+    color: var(--color-primary-dark);
+}

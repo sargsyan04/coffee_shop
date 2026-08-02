@@ -1,30 +1,10 @@
-const guestActions = document.getElementById("nav-actions-guest");
-const accountActions = document.getElementById("nav-actions-account");
 const heroGuestActions = document.getElementById("hero-actions-guest");
 const heroAccountActions = document.getElementById("hero-actions-account");
-const logoutButton = document.getElementById("logout-button");
 
-async function reflectAuthState() {
-  if (!getAccessToken()) {
-    return; // guest state is the default — nothing to change
-  }
+document.addEventListener("coffeeshop:auth", (event) => {
+  const { authenticated } = event.detail;
+  if (!heroGuestActions || !heroAccountActions) return;
 
-  try {
-    await apiRequest("/user/profile");
-    guestActions.hidden = true;
-    accountActions.hidden = false;
-    heroGuestActions.hidden = true;
-    heroAccountActions.hidden = false;
-  } catch {
-    // token invalid/expired and refresh failed — stay in guest state
-    clearTokens();
-  }
-}
-
-logoutButton?.addEventListener("click", () => {
-  clearTokens();
-  window.location.reload();
+  heroGuestActions.hidden = authenticated;
+  heroAccountActions.hidden = !authenticated;
 });
-
-reflectAuthState();
-consumeFlashMessage();

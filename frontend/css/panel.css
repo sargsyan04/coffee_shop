@@ -1,0 +1,157 @@
+.panel-main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 44px 24px 80px;
+}
+
+.panel-header {
+    margin-bottom: 32px;
+}
+
+.panel-eyebrow {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin: 0 0 6px;
+}
+
+.panel-title {
+    font-family: 'Fraunces', serif;
+    font-size: 2rem;
+    color: var(--color-primary-dark);
+    margin: 0;
+}
+
+.panel-guard-message {
+    max-width: 480px;
+    margin: 80px auto;
+    text-align: center;
+    color: var(--color-text-secondary);
+}
+
+.panel-section {
+    margin-bottom: 40px;
+}
+
+.panel-section h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    color: var(--color-primary-dark);
+    margin: 0 0 16px;
+}
+
+/* ===== Order queue ===== */
+.queue-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.queue-loading,
+.queue-empty,
+.queue-error {
+    color: var(--color-text-muted);
+    padding: 24px 0;
+}
+
+.queue-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.queue-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.queue-order-id {
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--color-bg-accent);
+    color: var(--color-text-secondary);
+}
+
+.queue-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.queue-card-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+}
+
+.queue-total {
+    font-weight: 600;
+    color: var(--color-primary-dark);
+}
+
+.btn-queue-advance {
+    margin-top: 4px;
+    padding: 9px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-dark));
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.btn-queue-advance:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ===== Admin-only extra sections ===== */
+.panel-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    max-width: 520px;
+}
+
+.panel-form .full_row {
+    grid-column: 1 / -1;
+}
+
+.panel-todo-note {
+    background: var(--color-bg-accent);
+    border: 1px dashed var(--color-border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+}
+
+.panel-todo-note code {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1px 5px;
+    border-radius: 4px;
+}

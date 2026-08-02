@@ -32,11 +32,14 @@ function renderProducts(products) {
     const card = createProductCard(product);
     container.appendChild(card);
   });
+
+  setupAddToCartButtons(container);
 }
 
 function createProductCard(product) {
   const card = document.createElement("div");
   card.className = "product-card";
+  card.dataset.productId = product.id;
 
   // Fall back to a placeholder image when the product has none
   const imageUrl = product.image_url
@@ -57,6 +60,32 @@ function createProductCard(product) {
   `;
 
   return card;
+}
+
+// ============================================================
+// Add to cart — works for guests (localStorage) and logged-in users
+// (real backend cart) transparently, see js/cart-store.js
+// ============================================================
+function setupAddToCartButtons(container) {
+  container.querySelectorAll(".product-card").forEach((card) => {
+    const button = card.querySelector(".add-button");
+    const productId = Number(card.dataset.productId);
+
+    button.addEventListener("click", async () => {
+      const product = allProducts.find((p) => p.id === productId);
+      if (!product) return;
+
+      button.disabled = true;
+      try {
+        await addProductToCart(product, 1);
+        showToast(`«${product.name}» добавлен в корзину`, "success");
+      } catch (error) {
+        showToast(error.message, "error");
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
 }
 
 // ============================================================

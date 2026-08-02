@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="../media/logo.png">
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/toast.css">
     <link rel="stylesheet" href="../css/profile.css">
@@ -12,22 +13,7 @@
 </head>
 <body>
 
-    <header class="site-nav">
-        <a href="index.html" class="nav-brand">
-            <img src="../media/logo.png" alt="" class="nav-logo">
-            <span>Coffee Shop</span>
-        </a>
-
-        <nav class="nav-links">
-            <a href="catalog.html" class="nav-link">Меню</a>
-        </nav>
-
-        <div class="nav-actions">
-            <a href="profile.html" class="btn-nav btn-nav-ghost">Профиль</a>
-            <a href="settings.html" class="btn-nav btn-nav-ghost">Настройки</a>
-            <button type="button" class="btn-nav btn-nav-solid" id="logout-button">Выйти</button>
-        </div>
-    </header>
+    <div id="site-header-root"></div>
 
     <main class="profile-main">
 
@@ -38,12 +24,10 @@
 
                 <!-- Filled in by profile.js once GET /user/profile responds -->
                 <section class="profile-card" id="profile-card" hidden>
-                    <div class="profile-avatar" id="profile-avatar-button" tabindex="0" role="button" aria-label="Изменить аватар">
+                    <div class="profile-avatar">
                         <span class="profile-avatar-initials" id="profile-avatar">A</span>
                         <img class="profile-avatar-image" id="profile-avatar-image" src="" alt="" hidden>
-                        <span class="profile-avatar-overlay">Изменить</span>
                     </div>
-                    <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/webp" hidden>
                     <div class="profile-heading">
                         <h1 id="profile-name">—</h1>
                         <p class="profile-email" id="profile-email">—</p>
@@ -52,9 +36,18 @@
                             <span class="badge badge-verified" id="profile-verified">Email подтверждён</span>
                         </div>
                     </div>
-                    <div class="profile-bonus">
-                        <span class="bonus-value" id="profile-bonus">0</span>
-                        <span class="bonus-label">бонусных баллов</span>
+                    <div class="profile-card-aside">
+                        <a href="settings.html" class="profile-settings-button">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                                <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="1.6"/>
+                                <path d="M19.4 13.5a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V19.4a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H4.6a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1.08 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H10.5a1.65 1.65 0 0 0 1-1.51V4.6a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V10.5a1.65 1.65 0 0 0 1.51 1H19.4a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Настройки
+                        </a>
+                        <div class="profile-bonus">
+                            <span class="bonus-value" id="profile-bonus">0</span>
+                            <span class="bonus-label">бонусных баллов</span>
+                        </div>
                     </div>
                 </section>
 
@@ -135,8 +128,26 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="deactivate-modal-overlay" hidden>
+        <div class="modal modal-narrow" id="deactivate-modal" role="dialog" aria-modal="true" aria-labelledby="deactivate-modal-title">
+            <button type="button" class="modal-close" id="deactivate-modal-close" aria-label="Закрыть">&times;</button>
+            <h2 id="deactivate-modal-title">Деактивировать аккаунт?</h2>
+            <p class="modal-order-meta">
+                Аккаунт можно будет восстановить в течение 30 дней. История заказов и отзывов сохранится.
+            </p>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="deactivate-modal-cancel">Отмена</button>
+                <button type="button" class="btn-danger" id="deactivate-modal-confirm">Деактивировать</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="site-footer-root"></div>
+
     <script src="../js/api.js"></script>
     <script src="../js/toast.js"></script>
+    <script src="../js/layout.js"></script>
+    <script src="../js/cart_store.js"></script>
     <script src="../js/profile.js"></script>
 </body>
 </html>

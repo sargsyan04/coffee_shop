@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="../media/logo.png">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/toast.css">
+    <link rel="stylesheet" href="../css/panel.css">
+    <title>Coffee Shop — Панель сотрудника</title>
+</head>
+<body>
+
+    <div id="site-header-root"></div>
+
+    <!-- Shown only if a non-staff account somehow lands here -->
+    <p class="panel-guard-message" id="panel-guard-message" hidden>
+        Эта страница доступна только сотрудникам кофейни.
+    </p>
+
+    <main class="panel-main" id="panel-content" hidden>
+        <div class="panel-header">
+            <p class="panel-eyebrow">Панель сотрудника</p>
+            <h1 class="panel-title">Очередь заказов</h1>
+        </div>
+
+        <section class="panel-section">
+            <ul class="queue-list" id="order-queue"></ul>
+        </section>
+    </main>
+
+    <div id="site-footer-root"></div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/toast.js"></script>
+    <script src="../js/layout.js"></script>
+    <script src="../js/cart_store.js"></script>
+    <script src="../js/order_queue.js"></script>
+    <script src="../js/staff.js"></script>
+</body>
+</html>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="../media/logo.png">
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/toast.css">
     <link rel="stylesheet" href="../css/settings.css">
@@ -12,22 +13,7 @@
 </head>
 <body>
 
-    <header class="site-nav">
-        <a href="index.html" class="nav-brand">
-            <img src="../media/logo.png" alt="" class="nav-logo">
-            <span>Coffee Shop</span>
-        </a>
-
-        <nav class="nav-links">
-            <a href="catalog.html" class="nav-link">Меню</a>
-        </nav>
-
-        <div class="nav-actions">
-            <a href="profile.html" class="btn-nav btn-nav-ghost">Профиль</a>
-            <a href="settings.html" class="btn-nav btn-nav-ghost">Настройки</a>
-            <button type="button" class="btn-nav btn-nav-solid" id="logout-button">Выйти</button>
-        </div>
-    </header>
+    <div id="site-header-root"></div>
 
     <main class="settings-main">
 
@@ -36,6 +22,22 @@
         <div class="settings-layout" id="settings-content" hidden>
 
             <a href="profile.html" class="settings-back">← Назад к профилю</a>
+
+            <section class="settings-section" id="avatar-section">
+                <h2>Фото профиля</h2>
+                <div class="avatar-settings-row">
+                    <div class="avatar-preview" id="avatar-preview-button">
+                        <span class="avatar-preview-initials" id="avatar-preview-initials">A</span>
+                        <img class="avatar-preview-image" id="avatar-preview-image" src="" alt="" hidden>
+                        <span class="avatar-preview-overlay"></span>
+                    </div>
+                    <div class="avatar-settings-info">
+                        <p>JPG, PNG или WEBP, до 5 МБ.</p>
+                        <button type="button" class="btn-avatar-upload" id="avatar-upload-button">Загрузить фото</button>
+                    </div>
+                    <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/webp" hidden>
+                </div>
+            </section>
 
             <section class="settings-section" id="personal-section">
                 <h2>Личные данные</h2>
@@ -88,8 +90,12 @@
 
     </main>
 
+    <div id="site-footer-root"></div>
+
     <script src="../js/api.js"></script>
     <script src="../js/toast.js"></script>
+    <script src="../js/layout.js"></script>
+    <script src="../js/cart_store.js"></script>
     <script src="../js/settings.js"></script>
 </body>
 </html>
