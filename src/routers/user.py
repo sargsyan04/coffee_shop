@@ -22,13 +22,12 @@ from src.schemas import (
     VerifyEmailRequest,
 )
 from src.services import (
-    REFRESH_TOKEN_TYPE,
     create_verification_token,
     generate_tokens,
+    get_refresh_token_record,
     hash_password,
     send_verification_email,
     verify_email_code,
-    verify_token,
 )
 from src.validators import (
     check_email_uniqueness,
@@ -64,6 +63,15 @@ async def create_user(
         # --> Case 2: a deactivated account exists <--
         grace_period_end = existing_user.deactivated_at + timedelta(days=settings.DEACTIVATION_GRACE_PERIOD_DAYS)
 
+        # TODO:
+        # - if payload.force_new is True, skip the 409 below entirely and
+        #   fall straight through to the "grace period expired" branch
+        #   right after this if-block (existing_user.email = f"deleted-...",
+        #   commit) so the email frees up immediately instead of waiting
+        #   out the grace period.
+        # - the "hint" text below is wrong and should be fixed either way —
+        #   POST /user/reactivate only takes {email}, no password. Drop
+        #   "and password" from the hint.
         if datetime.now(UTC) < grace_period_end:
             # still within the grace period — offer reactivation instead of registration
             raise HTTPException(
@@ -170,6 +178,18 @@ async def login(
         )
 
     # --> Password confirmed — now it's safe to reveal account status <--
+    # TODO: replace the flat string below with a structured detail, same
+    # shape as the 409 from POST /user/register:
+    #   {
+    #     "message": "...",
+    #     "reactivation_available": bool,   # False if the grace period
+    #                                       # (settings.DEACTIVATION_GRACE_PERIOD_DAYS
+    #                                       # since user.deactivated_at) has passed
+    #     "reactivation_deadline": iso string or None,
+    #     "hint": "Use POST /user/reactivate to restore it.",  # no password involved
+    #   }
+    # The frontend (login.js) already expects this shape — see
+    # reactivateModalText / error.detail.reactivation_available there.
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -192,32 +212,21 @@ async def refresh_token(
     payload: RefreshTokenRequest,
     session: AsyncSession = Depends(db_session),
 ):
-    # --> Step 1: verify signature, expiry, and token type (must be refresh, not access) <--
-    jwt_payload = verify_token(payload.refresh_token, REFRESH_TOKEN_TYPE)
-
-    # --> Step 2: extract "jti" — the unique id we embedded when the token was created <--
-    token_id = jwt_payload.get("jti")
-    if not token_id:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
-
-    # --> Step 3: find the matching record in the database <--
-    stmt = select(RefreshToken).where(RefreshToken.token == token_id)
-    result = await session.execute(stmt)
-    db_token = result.scalar_one_or_none()
+    token = await get_refresh_token_record(payload, session)
 
     # --> Step 4: reject if the record is missing or already revoked <--
-    if db_token is None or db_token.is_revoked:
+    if token is None or token.is_revoked:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Refresh token has been revoked or does not exist",
         )
 
     # --> Step 5: extra expiry check at the database level <--
-    if db_token.expires_at < datetime.now(UTC):
+    if token.expires_at < datetime.now(UTC):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token has expired")
 
     # --> Step 6: load the user this token belongs to <--
-    user_stmt = select(User).where(User.id == db_token.user_id)
+    user_stmt = select(User).where(User.id == token.user_id)
     user_result = await session.execute(user_stmt)
     user = user_result.scalar_one_or_none()
 
@@ -225,7 +234,7 @@ async def refresh_token(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Account is not active")
 
     # --> Step 7: rotation — revoke the old refresh token, issue a brand new pair <--
-    db_token.is_revoked = True
+    token.is_revoked = True
 
     new_tokens = await generate_tokens(session, user)
     await session.commit()
@@ -428,3 +437,34 @@ async def  user_settings(
     await session.commit()
     await session.refresh(current_user)
     return {"detail": "Changes saved successfully."}
+
+
+@router.post("/logout", response_model=MessageResponse, status_code=status.HTTP_200_OK)
+async def logout(
+    payload: RefreshTokenRequest,
+    current_user: User = Depends(get_current_active_user),
+    session: AsyncSession = Depends(db_session),
+):
+    """
+    TODO:
+    - verify_token(payload.refresh_token, REFRESH_TOKEN_TYPE) -> get "jti"
+    - 401 if no "jti" in the payload
+    - find RefreshToken where token == jti
+    - 401 if not found OR db_token.user_id != current_user.id (not this user's token)
+    - set db_token.is_revoked = True, commit
+    - return MessageResponse(detail="Logged out successfully")
+    """
+
+    token = await get_refresh_token_record(payload, session)
+
+    if token is None or token.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token.",
+        )
+
+    token.is_revoked = True
+
+    await session.commit()
+
+    return {"detail": "Logged out successfully."}

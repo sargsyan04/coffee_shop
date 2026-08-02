@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core import settings
 from src.core.enums import VerificationTokenType
 from src.models import RefreshToken, User, VerificationToken
+from src.schemas import RefreshTokenRequest
 
 ACCESS_TOKEN_TYPE = "access_token"
 REFRESH_TOKEN_TYPE = "refresh_token"
@@ -164,3 +165,18 @@ async def generate_tokens(session: AsyncSession, user: User) -> dict:
         "refresh_token": await create_refresh_token(session, user),
         "token_type": "bearer",
     }
+
+async def get_refresh_token_record(payload: RefreshTokenRequest, session: AsyncSession):
+    jwt_payload = verify_token(payload.refresh_token, REFRESH_TOKEN_TYPE)
+
+    token_id = jwt_payload.get("jti")
+
+    if not token_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid refresh token")
+
+    stmt = select(RefreshToken).where(RefreshToken.token == token_id)
+    result = await session.execute(stmt)
+    db_token = result.scalar_one_or_none()
+
+    return db_token

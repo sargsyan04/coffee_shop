@@ -3,29 +3,19 @@ import uuid
 from pathlib import Path
 
 from fastapi import HTTPException, UploadFile
-from PIL import Image, ImageChops, ImageOps
+from PIL import Image, UnidentifiedImageError
 
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_SIZE = (256, 256)
 
 
-# ============================================================
-# --> Image Preprocessing Helpers <--
-# ============================================================
-
-
-def trim_whitespace(image: Image.Image, tolerance: int = 12) -> Image.Image:
-    """Crops uniform padding around the edges (white/beige background around the product)."""
-    background = Image.new(image.mode, image.size, image.getpixel((0, 0)))
-    diff = ImageChops.difference(image, background)
-    diff = ImageChops.add(diff, diff, 2.0, -tolerance)
-    bbox = diff.getbbox()
-    return image.crop(bbox) if bbox else image
-
-
-# ============================================================
-# --> Image Upload & Storage <--
-# ============================================================
+def center_crop_square(image: Image.Image) -> Image.Image:
+    """Crop the image to a centered square by trimming the longer side."""
+    width, height = image.size
+    side = min(width, height)
+    left = (width - side) // 2
+    top = (height - side) // 2
+    return image.crop((left, top, left + side, top + side))
 
 
 def save_image(
@@ -36,7 +26,7 @@ def save_image(
     resize: tuple[int, int] = MAX_SIZE,
 ) -> str:
     """
-    Saves an uploaded image after validation and processing.
+    Validate, process and save an uploaded image.
 
     Args:
         file: Uploaded image.
@@ -59,35 +49,29 @@ def save_image(
 
     raw_bytes = file.file.read()
 
-    # --> Step 1: validate that the uploaded file is a real image <--
     try:
         image = Image.open(io.BytesIO(raw_bytes))
         image.verify()
-    except Exception:
+    except (UnidentifiedImageError, OSError, SyntaxError) as exc:
         raise HTTPException(
             status_code=400,
             detail="The uploaded file is corrupted or is not a valid image.",
-        )
+        ) from exc
 
-    # --> Image.verify() invalidates the object for further use — reopen it <--
+    # verify() leaves the image unusable, so it needs to be reopened
     image = Image.open(io.BytesIO(raw_bytes))
 
-    # --> Step 2: JPEG doesn't support transparency, convert if needed.
-    #     (No redundant re-open afterwards — that was the bug in the original,
-    #     it discarded this conversion by reopening raw bytes right after.) <--
+    # JPEG has no alpha channel, so drop it before saving
     if image.mode in ("RGBA", "LA", "P") and file.content_type == "image/jpeg":
         image = image.convert("RGB")
 
-    # --> Step 3: crop empty padding around the subject <--
-    image = trim_whitespace(image)
+    image = center_crop_square(image)
 
-    # --> Step 4: don't upscale images already smaller than the target size <--
-    if image.width > resize[0] or image.height > resize[1]:
-        image = ImageOps.fit(image, resize, Image.LANCZOS)
+    if image.width > resize[0]:
+        image = image.resize(resize, Image.LANCZOS)
     else:
         image.thumbnail(resize, Image.LANCZOS)
 
-    # --> Step 5: determine the file extension and save format <--
     extension_map = {
         "image/jpeg": ("jpg", "JPEG"),
         "image/png": ("png", "PNG"),
@@ -105,7 +89,7 @@ def save_image(
 
 
 def delete_image(image_url: str | None) -> None:
-    """Deletes the old file from disk, if one existed."""
+    """Delete the old file from disk, if one existed."""
     if not image_url:
         return
     old_path = Path("media") / image_url.removeprefix("/media/")

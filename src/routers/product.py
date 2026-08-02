@@ -79,10 +79,15 @@ async def get_product(product_id: int, db: AsyncSession = Depends(db_session)):
 async def upload_product_image(
     product_id: int,
     file: UploadFile = File(...),
-    db: AsyncSession = Depends(db_session),
+    session: AsyncSession = Depends(db_session),
 ):
-    result = await db.execute(select(Product).where(Product.id == product_id))
-    product = result.scalar_one_or_none()
+    stmt = (
+        select(Product)
+        .options(selectinload(Product.category), selectinload(Product.tags))
+        .where(Product.id == product_id)
+    )
+    product = await session.scalar(stmt)
+
     if product is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
 
@@ -90,6 +95,6 @@ async def upload_product_image(
     product.image_url = save_image(file, filename_prefix="Product", entity_id=product_id,
                                    folder="products")
 
-    await db.commit()
-    await db.refresh(product)
+    await session.commit()
+    await session.refresh(product)
     return product

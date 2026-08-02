@@ -1,14 +1,4 @@
-"""
-Async loader that inserts fixture data into the database, resolving
-cross-references (products -> categories/tags).
-
-Idempotent by default: records are matched by natural keys (e.g. user email,
-category name, tag slug, product name) and skipped if they already exist,
-unless `force=True` is passed, in which case matching rows are deleted and
-recreated.
-"""
-
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.fixtures.data import (
@@ -18,7 +8,7 @@ from src.fixtures.data import (
     get_tags_fixtures,
     get_users_fixtures,
 )
-from src.models import Category, Product, Tag, User
+from src.models import Category, Order, OrderItem, Product, Review, Tag, User
 from src.services import hash_password
 
 # ============================================================
@@ -35,6 +25,20 @@ async def _load_users(session: AsyncSession, fixtures: list[dict], force: bool) 
                 print(f"  [skip] user already exists: {data['email']}")
                 created.append(existing)
                 continue
+
+            # --> No ON DELETE CASCADE on Order.user_id / Review.user_id, so
+            #     force-deleting a user that already has orders/reviews would
+            #     otherwise fail with an IntegrityError. Clean those up first.
+            #     order_items reference orders.id (not the user directly), and
+            #     a bulk delete() does NOT trigger the ORM-level
+            #     cascade="all, delete-orphan" on Order.items — that cascade
+            #     only fires when SQLAlchemy deletes objects through the
+            #     session, not on a bulk DELETE statement. So order_items must
+            #     be removed explicitly first, before the orders themselves. <--
+            user_order_ids = select(Order.id).where(Order.user_id == existing.id)
+            await session.execute(delete(OrderItem).where(OrderItem.order_id.in_(user_order_ids)))
+            await session.execute(delete(Order).where(Order.user_id == existing.id))
+            await session.execute(delete(Review).where(Review.user_id == existing.id))
             await session.delete(existing)
             await session.flush()
             print(f"  [replace] user: {data['email']}")
@@ -140,6 +144,12 @@ async def load_products(session: AsyncSession, force: bool = False) -> list[Prod
                 print(f"  [skip] product already exists: {data['name']}")
                 created.append(existing)
                 continue
+
+            # --> No ON DELETE CASCADE on OrderItem.product_id / Review.product_id,
+            #     so force-deleting a product that's already been ordered/reviewed
+            #     would otherwise fail with an IntegrityError. Clean those up first. <--
+            await session.execute(delete(OrderItem).where(OrderItem.product_id == existing.id))
+            await session.execute(delete(Review).where(Review.product_id == existing.id))
             await session.delete(existing)
             await session.flush()
             print(f"  [replace] product: {data['name']}")

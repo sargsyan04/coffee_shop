@@ -3,12 +3,12 @@
 Management CLI for the Coffee Shop Management System.
 
 Usage examples:
-    python manage.py loaddata --models all
-    python manage.py loaddata --models users categories
-    python manage.py loaddata --models all --force
-    python manage.py createsuperuser
-    python manage.py createsuperuser --email admin@x.com --password Secret123 --name "Ada Lovelace"
-    python manage.py createsuperuser --use-fixture
+    python -m src.manage loaddata --models all
+    python -m src.manage loaddata --models users categories
+    python -m src.manage loaddata --models all --force
+    python -m src.manage createsuperuser
+    python -m src.manage createsuperuser --email admin@x.com --password Secret123 --name "Ada Lovelace"
+    python -m src.manage createsuperuser --use-fixture
 """
 
 import argparse
@@ -50,8 +50,9 @@ async def _run_createsuperuser(args: argparse.Namespace) -> None:
         try:
             if args.use_fixture:
                 user = await load_super_admin(session, force=args.force)
+                email = user.email
                 await session.commit()
-                print(f"\nSuper admin ready: {user.email}")
+                print(f"\nSuper admin ready: {email}")
                 return
 
             email = args.email or input("Email: ").strip()

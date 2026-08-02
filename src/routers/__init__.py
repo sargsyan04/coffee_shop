@@ -6,14 +6,12 @@ from src.routers.product import router as product_router
 from src.routers.review import router as review_router
 from src.routers.user import router as user_router
 
-routers = (
-    user_router,
-    category_router,
-    product_router,
-    admin_router,
-    order_router,
-    cart_router,
-    review_router,
+__all__ = (
+    'admin_router',
+    'cart_router',
+    'category_router',
+    'order_router',
+    'product_router',
+    'review_router',
+    'user_router',
 )
-
-__all__ = ("routers",)

@@ -86,6 +86,7 @@ def get_products_fixtures() -> list[dict]:
             "category": "Напитки",
             "tags": ["bestseller"],
             "is_available": True,
+            "image_url": "/media/products/Product_7-f7686f2bddae4885b0329ceed7316f50.jpg",
         },
         {
             "name": "Латте",
@@ -94,6 +95,7 @@ def get_products_fixtures() -> list[dict]:
             "category": "Напитки",
             "tags": [],
             "is_available": True,
+            "image_url": "/media/products/Product_8-a45a395cd465412fa05c93c84b3d0990.jpg",
         },
         {
             "name": "Раф",
@@ -102,6 +104,7 @@ def get_products_fixtures() -> list[dict]:
             "category": "Напитки",
             "tags": ["new"],
             "is_available": True,
+            "image_url": "/media/products/Product_9-73bf6b9a15274b5881dda9d86d2b5848.jpg",
         },
         {
             "name": "Чизкейк Нью-Йорк",
@@ -110,6 +113,7 @@ def get_products_fixtures() -> list[dict]:
             "category": "Десерты",
             "tags": ["bestseller"],
             "is_available": True,
+            "image_url": "/media/products/Product_10-5ba161d221a54504bd9c28dbedfc4e27.jpg",
         },
         {
             "name": "Овсяное печенье",
@@ -118,6 +122,7 @@ def get_products_fixtures() -> list[dict]:
             "category": "Десерты",
             "tags": ["vegan"],
             "is_available": True,
+            "image_url": "/media/products/Product_11-5b1d540f33a24ba89816682f507dd243.jpg",
         },
         {
             "name": "Сэндвич с курицей",
@@ -126,5 +131,6 @@ def get_products_fixtures() -> list[dict]:
             "category": "Еда",
             "tags": [],
             "is_available": True,
+            "image_url": "/media/products/Product_12-3f2068c3d4314c0cad1f50a0fd1495c2.jpg",
         },
     ]

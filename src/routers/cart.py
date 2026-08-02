@@ -6,16 +6,8 @@ from sqlalchemy.orm import selectinload
 from src.core import OrderStatus, db_session
 from src.models import Order, User
 from src.schemas import CartItemAdd, CartItemUpdate, OrderResponse
-from src.services import checkout_cart_total_price
+from src.services import add_item_to_cart, checkout_cart_total_price, get_or_create_cart, recalculate_cart_total
 from src.validators import get_current_active_user
-
-# from src.services import (
-#     get_or_create_cart,
-#     add_item_to_cart,
-#     update_item_quantity,
-#     remove_item_from_cart,
-#     checkout_cart,
-# )
 
 router = APIRouter(prefix="/cart", tags=["Cart"])
 
@@ -33,25 +25,9 @@ async def get_cart(
     # TODO: call get_or_create_cart(session, current_user.id) instead of a raw query
     # TODO: build the OrderResponse manually (product_name/unit_price/line_total
     #       don't exist as plain attributes on OrderItem - see schemas/order.py)
-    user_id = current_user.id
+    cart = await get_or_create_cart(session, current_user.id)
+    return cart
 
-    stmt = select(Order).where(Order.user_id == user_id)
-    result = await session.scalar(stmt)
-
-    if not result:
-        cart = Order(
-            user_id=user_id,
-            status=OrderStatus.CREATED,
-            items=[]
-        )
-
-        session.add(cart)
-        await session.commit()
-        await session.refresh(cart)
-
-        return cart
-
-    return result
 
 
 @router.post("/items", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
@@ -62,7 +38,13 @@ async def add_item(
 ):
     # TODO: call add_item_to_cart(session, current_user.id, payload.product_id, payload.quantity)
     # TODO: return the built OrderResponse
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Not implemented yet")
+    item = await add_item_to_cart(session, current_user.id, payload.quantity, payload.product_id)
+
+    cart = await get_or_create_cart(session, current_user.id)
+
+    await recalculate_cart_total(session, cart)
+
+    return item
 
 
 @router.patch("/items/{item_id}", response_model=OrderResponse)
