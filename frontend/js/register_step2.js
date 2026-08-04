@@ -1,37 +1,41 @@
-const reactivateForm = document.getElementById("reactivate-form");
+const verifyForm = document.getElementById("verify-form");
 const resendButton = document.getElementById("resend-code");
 const formStatus = document.getElementById("form-status");
 const emailLabel = document.getElementById("user-email");
+const stepIndicator = document.getElementById("step-indicator");
+const stepEyebrow = document.getElementById("step-eyebrow");
 
 const pendingEmail = sessionStorage.getItem("pending_verification_email");
+const verificationContext = sessionStorage.getItem("verification_context"); // "registration" | "login"
 
-if (pendingEmail) {
-  emailLabel.textContent = pendingEmail;
+if (!pendingEmail) {
+  // Nothing pending — no reason to be on this page
+  window.location.href = verificationContext === "login" ? "login.html" : "register.html";
 } else {
-  window.location.href = "register.html";
+  emailLabel.textContent = pendingEmail;
 }
 
-reactivateForm.addEventListener("submit", async (event) => {
+// The "step 2 of 2" framing only makes sense right after registration —
+// if we got here because login said "email not confirmed", drop it.
+if (verificationContext === "login") {
+  stepIndicator.hidden = true;
+  stepEyebrow.textContent = "Подтверждение email";
+}
+
+verifyForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const code = document.getElementById("code").value;
-  const newPassword = document.getElementById("new_password").value;
-  const newPasswordConfirm = document.getElementById("new_password_confirm").value;
-
-  if (newPassword !== newPasswordConfirm) {
-    formStatus.textContent = "Пароли не совпадают.";
-    formStatus.hidden = false;
-    return;
-  }
 
   try {
-    await apiRequest("/user/new-password", {
+    await apiRequest("/user/verify-email", {
       method: "POST",
-      body: JSON.stringify({ email: pendingEmail, code, new_password: newPassword }),
+      body: JSON.stringify({ email: pendingEmail, code }),
     });
 
     sessionStorage.removeItem("pending_verification_email");
-    formStatus.textContent = "Аккаунт восстановлен! Перенаправляем на вход...";
+    sessionStorage.removeItem("verification_context");
+    formStatus.textContent = "Email подтверждён! Перенаправляем на вход...";
     formStatus.hidden = false;
 
     setTimeout(() => {
@@ -45,9 +49,7 @@ reactivateForm.addEventListener("submit", async (event) => {
 
 resendButton.addEventListener("click", async () => {
   try {
-    // /user/reactivate invalidates the previous code and issues a new one —
-    // no separate "resend" endpoint needed for this flow.
-    await apiRequest("/user/reactivate", {
+    await apiRequest("/user/resend-code", {
       method: "POST",
       body: JSON.stringify({ email: pendingEmail }),
     });
