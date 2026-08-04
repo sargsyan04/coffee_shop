@@ -25,10 +25,7 @@ class UserBase(BaseModel, EmailNormalizerMixin):
 class UserCreate(UserBase):
     password: str
     password_confirm: str
-
-    # TODO: add `force_new: bool = False`
-    # Used by POST /user/register — see the TODO in
-    # src/routers/user.py::create_user for what it should do.
+    force_new: bool = False
 
     @model_validator(mode="after")
     def passwords_match(self):

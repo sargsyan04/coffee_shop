@@ -11,6 +11,13 @@ const reactivateModalNew = document.getElementById("reactivate-modal-new");
 // account instead" needs to resend the whole payload with force_new set.
 let lastRegisterPayload = null;
 
+// Coming here from login's "Создать новый аккаунт" button — prefill the
+// email and mark the next submit as force_new right away
+const prefillEmail = sessionStorage.getItem("prefill_email");
+const forceNewFromLogin = sessionStorage.getItem("force_new_registration") === "true";
+sessionStorage.removeItem("prefill_email");
+sessionStorage.removeItem("force_new_registration");
+
 function closeReactivateModal() {
   reactivateModalOverlay.hidden = true;
 }
@@ -19,6 +26,10 @@ reactivateModalClose.addEventListener("click", closeReactivateModal);
 reactivateModalOverlay.addEventListener("click", (event) => {
   if (event.target === reactivateModalOverlay) closeReactivateModal();
 });
+
+if (prefillEmail) {
+  document.getElementById("email").value = prefillEmail;
+}
 
 registerForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -31,6 +42,7 @@ registerForm.addEventListener("submit", async (event) => {
     birth_date: document.getElementById("birth_date").value || null,
     phone: document.getElementById("phone").value || null,
     address: document.getElementById("address").value || null,
+    force_new: forceNewFromLogin,
   };
 
   lastRegisterPayload = payload;
@@ -88,9 +100,6 @@ reactivateModalNew.addEventListener("click", async () => {
   reactivateModalNew.disabled = true;
   closeReactivateModal();
 
-  // TODO(backend): /user/register needs to accept force_new and free up
-  // the email immediately instead of returning 409 again — see the TODO
-  // list for src/routers/user.py.
   await submitRegistration({ ...lastRegisterPayload, force_new: true });
 
   reactivateModalNew.disabled = false;
