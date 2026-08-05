@@ -7,9 +7,7 @@ from src.core import UserRole, db_session
 from src.models import User
 from src.services import ACCESS_TOKEN_TYPE, oauth2_scheme, verify_token
 
-# ============================================================
-# --> Registration Helpers <--
-# ============================================================
+# Registration Helpers
 
 
 async def check_email_uniqueness(session: AsyncSession, email: str) -> User | None:
@@ -22,9 +20,7 @@ def validate_password(password: str, hashed_password: bytes) -> bool:
     return bcrypt.checkpw(password.encode("utf-8"), hashed_password)
 
 
-# ============================================================
-# --> Authentication Dependencies (stacked, each builds on the previous) <--
-# ============================================================
+# Authentication Dependencies (stacked, each builds on the previous)
 
 
 async def get_current_user(

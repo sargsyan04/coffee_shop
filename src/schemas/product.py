@@ -16,8 +16,8 @@ class ProductCreate(ProductBase):
     tag_ids: list[int] = []
 
 
-# --> Minimal product shape for embedding inside other responses
-#     (e.g. ReviewResponse.product) — no category/tags/price needed there <--
+# Minimal product shape for embedding inside other responses
+#     (e.g. ReviewResponse.product) — no category/tags/price needed there
 class ProductBrief(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

@@ -44,6 +44,33 @@ async def reactivate_account(
     return {"detail": "Verification code sent. Confirm via POST /user/new-password to complete reactivation."}
 
 
+@router.post("/forgot-password", response_model=MessageResponse, status_code=status.HTTP_200_OK)
+async def forgot_password(
+    payload: ReactivateRequest,
+    background_tasks: BackgroundTasks,
+    session: AsyncSession = Depends(db_session),
+):
+    """Send a confirmation code to reset the password of an active account."""
+    stmt = select(User).where(User.email == payload.email)
+    user = await session.scalar(stmt)
+
+    if user is None or not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No active account found for this email",
+        )
+
+    # Save values before create_verification_token, since it commits internally
+    # and expires all objects currently tracked by the session
+    user_id = user.id
+    user_email = user.email
+
+    code = await create_verification_token(session, user_id)
+    background_tasks.add_task(send_verification_email, user_email, code)
+
+    return {"detail": "Verification code sent. Confirm via POST /user/new-password to set a new password."}
+
+
 @router.post("/new-password", response_model=MessageResponse, status_code=status.HTTP_200_OK)
 async def new_password(
     payload: UserPasswordChange,

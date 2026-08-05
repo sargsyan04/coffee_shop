@@ -17,25 +17,50 @@ function formatOrderDate(iso) {
   return new Date(iso).toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 }
 
+// containerId -> { orders: [...], filter: "all" | order status }. Keeping the
+// full list here means a status filter (see setQueueFilter) can re-render
+// instantly without another request, and survives the reload that happens
+// after advancing an order's status.
+const queueState = {};
+
 async function loadOrderQueue(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
   container.innerHTML = `<p class="queue-loading">Загрузка заказов...</p>`;
+  queueState[containerId] = queueState[containerId] || { orders: [], filter: "all" };
 
   try {
     const orders = await apiRequest("/orders/staff/all");
-
-    if (orders.length === 0) {
-      container.innerHTML = `<p class="queue-empty">Активных заказов нет.</p>`;
-      return;
-    }
-
-    container.innerHTML = orders.map(renderOrderCard).join("");
-    bindOrderQueueActions(containerId);
+    queueState[containerId].orders = orders;
+    renderQueueList(containerId);
   } catch (error) {
     container.innerHTML = `<p class="queue-error">Не удалось загрузить заказы: ${error.message}</p>`;
   }
+}
+
+function renderQueueList(containerId) {
+  const container = document.getElementById(containerId);
+  const state = queueState[containerId];
+  if (!container || !state) return;
+
+  const orders = state.filter === "all" ? state.orders : state.orders.filter((order) => order.status === state.filter);
+
+  if (orders.length === 0) {
+    container.innerHTML = `<p class="queue-empty">${state.orders.length === 0 ? "Активных заказов нет." : "Нет заказов с этим статусом."}</p>`;
+    return;
+  }
+
+  container.innerHTML = orders.map(renderOrderCard).join("");
+  bindOrderQueueActions(containerId);
+}
+
+// Called by the filter tabs on staff.html — status is "all" or one of
+// paid / in_progress / ready
+function setQueueFilter(containerId, status) {
+  queueState[containerId] = queueState[containerId] || { orders: [], filter: "all" };
+  queueState[containerId].filter = status;
+  renderQueueList(containerId);
 }
 
 function renderOrderCard(order) {

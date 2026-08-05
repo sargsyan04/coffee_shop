@@ -5,7 +5,7 @@ from pydantic import SecretStr
 from pydantic_settings import BaseSettings
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-# --> Resolve the logo path relative to the project root, regardless of the working directory <--
+# Resolve the logo path relative to the project root, regardless of the working directory
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 LOGO_PATH = PROJECT_ROOT / "frontend" / "media" / "logo.png"
 
@@ -13,33 +13,33 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
-    # --> JWT & Auth <--
+    # JWT & Auth
     SECRET_KEY: SecretStr
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 15
     DEACTIVATION_GRACE_PERIOD_DAYS: int = 30
 
-    # --> SMTP / Email Delivery <--
+    # SMTP / Email Delivery
     MAIL_FROM: str = ""
     MAIL_PORT: int = 465
     SMTP_SERVER: str = "smtp.gmail.com"
     SMTP_USERNAME: str = ""
     SMTP_PASSWORD: str = ""
 
-    # --> Database <--
+    # Database
     DB_HOST: str
     DB_PORT: int = 5432
     DB_USER: str = "postgres"
     DB_PASSWORD: str
     DB_NAME: str
 
-    # --> Initial Admin Account — seeded once on startup if no admin exists yet <--
+    # Initial Admin Account — seeded once on startup if no admin exists yet
     ADMIN_EMAIL: str = "admin@coffeeshop.local"
     ADMIN_PASSWORD: str = "change-me-please"
     ADMIN_NAME: str = "Administrator"
 
-    # --> CORS <--
+    # CORS
     CORS_ORIGINS: str = "http://localhost:5500,http://127.0.0.1:5500,http://localhost:63342,http://127.0.0.1:63342"
 
     @property
@@ -49,7 +49,7 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-# --> Database Engine & Session Setup <--
+# Database Engine & Session Setup
 database_url = f"postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASSWORD}@" f"{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
 
 engine = create_async_engine(database_url)

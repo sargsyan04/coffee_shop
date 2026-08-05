@@ -287,20 +287,40 @@
     margin-top: 24px;
 }
 
+/* .button_s sets its own "display: flex", which beats [hidden] at equal
+   specificity (same as the .modal-overlay[hidden] case above), so a
+   hidden .button_s inside the modal still renders without this */
+.modal-actions .button_s[hidden] {
+    display: none;
+}
+
+/* Both modal buttons share the available width equally — without this,
+   .btn-secondary sizes to its own content while .button_s (flex: 1)
+   stretches to fill the rest, so the two end up visibly mismatched */
+.modal-actions .btn-secondary,
+.modal-actions .button_s {
+    flex: 1;
+    height: 44px;
+}
+
 .btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 10px 20px;
     border-radius: 8px;
     border: 1.5px solid var(--color-border);
     background: transparent;
     color: var(--color-text-secondary);
     font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
-    transition: border-color 0.15s ease, color 0.15s ease;
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
 }
 
 .btn-secondary:hover {
     border-color: var(--color-primary-light);
     color: var(--color-primary-dark);
+    background-color: rgba(0, 0, 0, 0.03);
 }

@@ -17,17 +17,15 @@ from src.routers import (
     user_router,
 )
 
-# ============================================================
-# --> Application Lifespan (startup / shutdown hooks) <--
-# ============================================================
+# Application Lifespan (startup / shutdown hooks)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # --> Startup: ensure the default admin account exists.
-    #     Reuses the same fixture-based loader as `manage.py createsuperuser
-    #     --use-fixture`, so there is a single source of truth for how the
-    #     default admin is created (idempotent — skips if already present). <--
+    # Startup: ensure the default admin account exists.
+    # Reuses the same fixture-based loader as `manage.py createsuperuser
+    # --use-fixture`, so there is a single source of truth for how the
+    # default admin is created (idempotent — skips if already present).
     async with session_factory() as session:
         await load_super_admin(session)
         await session.commit()
@@ -35,9 +33,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-# ============================================================
-# --> App Setup <--
-# ============================================================
+# App Setup
 
 app = FastAPI(
     title="Coffee Shop API",
@@ -57,9 +53,7 @@ app.add_middleware(
 app.mount("/media", StaticFiles(directory="media"), name="media")
 
 
-# ============================================================
-# --> Root Endpoint & Router Registration <--
-# ============================================================
+# Root Endpoint & Router Registration
 
 @app.get("/")
 async def root():

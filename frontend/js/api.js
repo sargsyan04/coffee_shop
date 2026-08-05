@@ -10,9 +10,7 @@ function roleLabel(role) {
   return ROLE_LABELS[role] || role;
 }
 
-// ============================================================
 // Token Storage
-// ============================================================
 
 function getAccessToken() {
   return localStorage.getItem("access_token");
@@ -56,9 +54,7 @@ function extractErrorMessage(errorData, status) {
   return detail;
 }
 
-// ============================================================
 // Generic JSON Requests (with automatic token refresh on 401)
-// ============================================================
 
 async function apiRequest(endpoint, options = {}, _isRetry = false) {
   const token = getAccessToken();
@@ -107,10 +103,8 @@ async function tryRefreshToken() {
   }
 }
 
-// ============================================================
 // File Upload (multipart/form-data) — apiRequest can't be reused here
 // since it always forces Content-Type: application/json
-// ============================================================
 
 async function apiUploadFile(endpoint, file, fieldName = "file") {
   const token = getAccessToken();
@@ -136,9 +130,7 @@ async function apiUploadFile(endpoint, file, fieldName = "file") {
   return response.json();
 }
 
-// ============================================================
 // Login uses OAuth2's form-urlencoded format, not JSON
-// ============================================================
 
 async function apiLoginRequest(email, password) {
   const body = new URLSearchParams();

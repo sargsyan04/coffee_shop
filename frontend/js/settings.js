@@ -132,9 +132,7 @@ passwordForm.addEventListener("submit", async (event) => {
 
 loadSettings();
 
-// ============================================================
 // Avatar Upload
-// ============================================================
 
 function triggerAvatarInput() {
   avatarInput.click();

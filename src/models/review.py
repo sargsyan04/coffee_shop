@@ -14,14 +14,14 @@ if TYPE_CHECKING:
 class Review(BaseModel, DateMixin):
     __table_args__ = (UniqueConstraint("user_id", "product_id", name="uq_user_product_review"),)
 
-    # --> Fields <--
+    # Fields
     rating: Mapped[int] = mapped_column(Integer)
     comment: Mapped[str | None] = mapped_column(Text)
 
-    # --> User <--
+    # User
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     user: Mapped["User"] = relationship(back_populates="reviews")
 
-    # --> Product <--
+    # Product
     product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
     product: Mapped["Product"] = relationship(back_populates="reviews")

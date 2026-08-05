@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class Order(BaseModel):
-    # --> Fields <--
+    # Fields
     status: Mapped[OrderStatus] = mapped_column(
         SAEnum(OrderStatus, name="order_status"),
         default=OrderStatus.CREATED,
@@ -26,25 +26,25 @@ class Order(BaseModel):
         default=lambda: datetime.now(UTC),
     )
 
-    # --> User <--
+    # User
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     user: Mapped["User"] = relationship(back_populates="orders")
 
-    # --> Items <--
+    # Items
     items: Mapped[list["OrderItem"]] = relationship(back_populates="order", cascade="all, delete-orphan")
 
 
 class OrderItem(BaseModel):
     __tablename__ = "order_items"
 
-    # --> Fields <--
+    # Fields
     quantity: Mapped[int] = mapped_column(Integer, default=1)
     price_at_order: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
 
-    # --> Order <--
+    # Order
     order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"))
     order: Mapped["Order"] = relationship(back_populates="items")
 
-    # --> Product <--
+    # Product
     product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
     product: Mapped["Product"] = relationship()

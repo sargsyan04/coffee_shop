@@ -20,9 +20,18 @@
     </p>
 
     <main class="panel-main" id="panel-content" hidden>
-        <div class="panel-header">
-            <p class="panel-eyebrow">Панель сотрудника</p>
-            <h1 class="panel-title">Очередь заказов</h1>
+        <div class="panel-header panel-header-row">
+            <div>
+                <p class="panel-eyebrow">Панель сотрудника</p>
+                <h1 class="panel-title">Очередь заказов</h1>
+            </div>
+
+            <div class="queue-filter-tabs" id="queue-filter-tabs" role="tablist" aria-label="Фильтр по статусу">
+                <button type="button" class="queue-filter-btn active" data-status="all">Все</button>
+                <button type="button" class="queue-filter-btn" data-status="paid">Оплачен</button>
+                <button type="button" class="queue-filter-btn" data-status="in_progress">Готовится</button>
+                <button type="button" class="queue-filter-btn" data-status="ready">Готов к выдаче</button>
+            </div>
         </div>
 
         <section class="panel-section">

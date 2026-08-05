@@ -126,6 +126,15 @@
     box-shadow: 0 5px 14px rgba(169, 124, 80, 0.4);
 }
 
+/* Pushes the footer to the bottom of the viewport on pages with little
+   content — works together with the body flex-column rule in common.css.
+   margin-top: auto on this wrapper (rather than flex-growing whatever's
+   above it) works no matter what markup a given page uses for its main
+   content (some pages use <main>, product.html uses a plain div). */
+#site-footer-root {
+    margin-top: auto;
+}
+
 /* ===== Site Footer ===== */
 .site-footer {
     border-top: 1px solid var(--color-border);

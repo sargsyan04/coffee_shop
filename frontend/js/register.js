@@ -86,7 +86,8 @@ reactivateModalRestore.addEventListener("click", async () => {
     });
 
     sessionStorage.setItem("pending_verification_email", lastRegisterPayload.email);
-    window.location.href = "reactivate_step2.html";
+    sessionStorage.setItem("recovery_context", "reactivation");
+    window.location.href = "new_password.html";
   } catch (error) {
     closeReactivateModal();
     formStatus.textContent = error.message;

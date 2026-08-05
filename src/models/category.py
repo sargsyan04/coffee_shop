@@ -12,8 +12,8 @@ if TYPE_CHECKING:
 class Category(BaseModel):
     __tablename__ = "categories"
 
-    # --> Fields <--
+    # Fields
     name: Mapped[str] = mapped_column(String(120), unique=True)
 
-    # --> Relationships <--
+    # Relationships
     products: Mapped[list["Product"]] = relationship(back_populates="category")

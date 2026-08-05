@@ -1,11 +1,206 @@
+/* .button_s / .sign_in live in main.css, which admin.html doesn't load
+   (it uses the panel layout, not the centered auth-card one main.css is
+   built around) — repeated here so the "Готово"/confirm-dialog/"Создать..."
+   buttons that already use these classes are actually styled. */
+.button_s {
+    height: 44px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.button_s:focus-visible {
+    outline: 2px solid var(--color-primary-light);
+    outline-offset: 3px;
+}
+
+.sign_in {
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-dark));
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 14px rgba(169, 124, 80, 0.3);
+}
+
+.sign_in:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(169, 124, 80, 0.4);
+}
+
+.panel-guard-message {
+    max-width: 480px;
+    margin: 80px auto;
+    text-align: center;
+    color: var(--color-text-secondary);
+}
+
+/* ===== staff.html still uses this simple single-column layout ===== */
 .panel-main {
     max-width: 960px;
     margin: 0 auto;
     padding: 44px 24px 80px;
 }
 
+.panel-section {
+    margin-bottom: 40px;
+}
+
+.panel-section h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    color: var(--color-primary-dark);
+    margin: 0 0 16px;
+}
+
+/* ===== staff.html header — title on the left, status filter on the right ===== */
+.panel-header-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.queue-filter-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 4px;
+}
+
+.queue-filter-btn {
+    border: none;
+    background: transparent;
+    border-radius: 7px;
+    padding: 7px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.queue-filter-btn:hover {
+    color: var(--color-primary-dark);
+}
+
+.queue-filter-btn.active {
+    background: var(--color-bg-accent);
+    color: var(--color-primary-dark);
+}
+
+@media (max-width: 560px) {
+    .queue-filter-tabs {
+        width: 100%;
+        overflow-x: auto;
+    }
+}
+
+/* ===== Shell — sidebar + content (admin.html) ===== */
+.panel-shell {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 32px 32px 80px;
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    box-sizing: border-box;
+}
+
+.panel-sidebar {
+    width: 224px;
+    flex-shrink: 0;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 24px;
+}
+
+.panel-sidebar-brand {
+    padding: 0 20px 18px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.panel-sidebar-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin: 0 0 2px;
+}
+
+.panel-sidebar-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    margin: 0;
+}
+
+.panel-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 10px 0;
+}
+
+.panel-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+}
+
+.panel-nav-item svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+}
+
+.panel-nav-item:hover {
+    background: var(--color-bg);
+    color: var(--color-primary-dark);
+}
+
+.panel-nav-item.active {
+    background: var(--color-bg-accent);
+    color: var(--color-primary-dark);
+}
+
+/* ===== Body / page header ===== */
+.panel-body {
+    flex: 1;
+    min-width: 0;
+}
+
 .panel-header {
-    margin-bottom: 32px;
+    margin-bottom: 26px;
 }
 
 .panel-eyebrow {
@@ -24,22 +219,44 @@
     margin: 0;
 }
 
-.panel-guard-message {
-    max-width: 480px;
-    margin: 80px auto;
-    text-align: center;
-    color: var(--color-text-secondary);
-}
-
-.panel-section {
+.panel-page {
     margin-bottom: 40px;
 }
 
-.panel-section h2 {
-    font-family: 'Fraunces', serif;
-    font-size: 1.3rem;
-    color: var(--color-primary-dark);
-    margin: 0 0 16px;
+.panel-placeholder {
+    background: var(--color-bg-accent);
+    border: 1px dashed var(--color-border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+
+@media (max-width: 760px) {
+    .panel-shell {
+        flex-direction: column;
+        padding: 24px 16px 60px;
+    }
+
+    .panel-sidebar {
+        width: 100%;
+        position: static;
+        padding: 14px 0;
+    }
+
+    .panel-sidebar-brand {
+        padding: 0 16px 12px;
+    }
+
+    .panel-nav-list {
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 6px 10px 0;
+    }
+
+    .panel-nav-item {
+        white-space: nowrap;
+    }
 }
 
 /* ===== Order queue ===== */
@@ -141,17 +358,333 @@
     grid-column: 1 / -1;
 }
 
-.panel-todo-note {
+/* ===== Users table ===== */
+.users-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.users-toolbar .search-box {
+    flex: 1 1 220px;
+}
+
+.users-toolbar input,
+.users-toolbar select {
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1.5px solid var(--color-border);
+    background-color: var(--color-bg);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--color-text-primary);
+}
+
+.users-toolbar input {
+    width: 100%;
+}
+
+.users-toolbar input:focus,
+.users-toolbar select:focus {
+    outline: none;
+    border-color: var(--color-primary-light);
+}
+
+.users-toolbar select {
+    cursor: pointer;
+}
+
+#users-sort-order {
+    white-space: nowrap;
+}
+
+.users-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+
+.users-table th,
+.users-table td {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+}
+
+.users-table th {
+    font-weight: 600;
+    color: var(--color-text-muted);
+    background: var(--color-bg-accent);
+}
+
+.users-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.users-role-select {
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1.5px solid var(--color-border);
+    background-color: var(--color-bg);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.users-role-select:hover {
+    border-color: var(--color-primary-light);
+}
+
+.users-role-select:focus {
+    outline: none;
+    border-color: var(--color-primary-light);
+    box-shadow: 0 0 0 3px rgba(169, 124, 80, 0.15);
+}
+
+.users-id-cell {
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.users-actions-cell {
+    display: flex;
+    gap: 8px;
+}
+
+.users-table .btn-secondary {
+    padding: 7px 14px;
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+
+.users-loading,
+.users-empty {
+    color: var(--color-text-muted);
+    padding: 20px 16px;
+    white-space: normal;
+}
+
+/* ===== User details popup (opened from "Подробнее") ===== */
+.modal-wide {
+    max-width: 560px;
+}
+
+/* Flex row so revealing the side panel widens the group and re-centers it —
+   the main card ends up shifted left instead of the side panel overlapping it. */
+.user-details-modal-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.modal-side-panel {
+    width: 320px;
+    max-width: 80vw;
+}
+
+.modal-side-panel[hidden] {
+    display: none;
+}
+
+.modal-side-panel .user-detail-sublist {
+    margin-top: 8px;
+    max-height: 60vh;
+}
+
+.user-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-right: 32px; /* keeps the name clear of the close (×) button */
+}
+
+.user-detail-avatar {
+    position: relative;
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-dark));
+    color: #fff;
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    overflow: hidden;
+}
+
+.user-detail-avatar-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-detail-heading h2 {
+    margin: 0 0 4px;
+}
+
+.user-detail-email {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.88rem;
+}
+
+.user-detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 4px;
+}
+
+.user-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.9rem;
+}
+
+.user-detail-row:last-child {
+    border-bottom: none;
+}
+
+.user-detail-label {
+    color: var(--color-text-muted);
+}
+
+.user-detail-value {
+    color: var(--color-text-primary);
+    font-weight: 600;
+    text-align: right;
+}
+
+.user-detail-value.is-loading {
+    color: var(--color-text-muted);
+    font-weight: 400;
+    font-style: italic;
+}
+
+.user-detail-toggles {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.user-detail-toggle-btn {
+    flex: 1;
+    font-size: 0.85rem;
+    padding: 9px 14px;
+}
+
+.user-detail-toggle-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.user-detail-sublist {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background-color: var(--color-bg-accent);
+    max-height: 220px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.user-detail-empty {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+}
+
+.user-detail-sublist-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.85rem;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.user-detail-sublist-row:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.user-detail-review-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+}
+
+.user-detail-review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.user-detail-review-product {
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.user-detail-review-rating {
+    color: var(--color-primary-light);
+    letter-spacing: 1px;
+}
+
+.user-detail-review-comment {
+    margin: 0;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+}
+
+.user-detail-review-date {
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+}
+
+/* ===== Temporary password reveal (inside its modal) ===== */
+.modal-password {
+    max-width: 480px;
+}
+
+.temp-password-value {
+    font-family: 'Courier New', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     background: var(--color-bg-accent);
     border: 1px dashed var(--color-border);
     border-radius: 10px;
-    padding: 16px 18px;
-    font-size: 0.85rem;
-    color: var(--color-text-secondary);
-}
-
-.panel-todo-note code {
-    background: rgba(0, 0, 0, 0.05);
-    padding: 1px 5px;
-    border-radius: 4px;
+    padding: 20px 16px;
+    text-align: center;
+    color: var(--color-primary-dark);
+    margin-bottom: 4px;
+    word-break: break-all;
+    user-select: all;
 }

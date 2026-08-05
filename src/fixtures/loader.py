@@ -11,9 +11,7 @@ from src.fixtures.data import (
 from src.models import Category, Order, OrderItem, Product, Review, Tag, User
 from src.services import hash_password
 
-# ============================================================
-# --> Users <--
-# ============================================================
+# Users
 
 
 async def _load_users(session: AsyncSession, fixtures: list[dict], force: bool) -> list[User]:
@@ -26,15 +24,6 @@ async def _load_users(session: AsyncSession, fixtures: list[dict], force: bool) 
                 created.append(existing)
                 continue
 
-            # --> No ON DELETE CASCADE on Order.user_id / Review.user_id, so
-            #     force-deleting a user that already has orders/reviews would
-            #     otherwise fail with an IntegrityError. Clean those up first.
-            #     order_items reference orders.id (not the user directly), and
-            #     a bulk delete() does NOT trigger the ORM-level
-            #     cascade="all, delete-orphan" on Order.items — that cascade
-            #     only fires when SQLAlchemy deletes objects through the
-            #     session, not on a bulk DELETE statement. So order_items must
-            #     be removed explicitly first, before the orders themselves. <--
             user_order_ids = select(Order.id).where(Order.user_id == existing.id)
             await session.execute(delete(OrderItem).where(OrderItem.order_id.in_(user_order_ids)))
             await session.execute(delete(Order).where(Order.user_id == existing.id))
@@ -72,9 +61,7 @@ async def load_super_admin(session: AsyncSession, force: bool = False) -> User:
     return users[0]
 
 
-# ============================================================
-# --> Categories <--
-# ============================================================
+# Categories
 
 
 async def load_categories(session: AsyncSession, force: bool = False) -> list[Category]:
@@ -99,9 +86,7 @@ async def load_categories(session: AsyncSession, force: bool = False) -> list[Ca
     return created
 
 
-# ============================================================
-# --> Tags <--
-# ============================================================
+# Tags
 
 
 async def load_tags(session: AsyncSession, force: bool = False) -> list[Tag]:
@@ -126,13 +111,7 @@ async def load_tags(session: AsyncSession, force: bool = False) -> list[Tag]:
     return created
 
 
-# ============================================================
-# --> Products <--
-# ============================================================
-# --> "category" references Category.name, "tags" references Tag.slug —
-#     resolved here to real foreign keys, so categories/tags must already
-#     exist (run load_categories()/load_tags() first, or use
-#     `loaddata --models all`) <--
+# Products
 
 
 async def load_products(session: AsyncSession, force: bool = False) -> list[Product]:
@@ -145,9 +124,6 @@ async def load_products(session: AsyncSession, force: bool = False) -> list[Prod
                 created.append(existing)
                 continue
 
-            # --> No ON DELETE CASCADE on OrderItem.product_id / Review.product_id,
-            #     so force-deleting a product that's already been ordered/reviewed
-            #     would otherwise fail with an IntegrityError. Clean those up first. <--
             await session.execute(delete(OrderItem).where(OrderItem.product_id == existing.id))
             await session.execute(delete(Review).where(Review.product_id == existing.id))
             await session.delete(existing)
