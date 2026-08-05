@@ -5,6 +5,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from pathlib import Path
+
 from src.core import session_factory, settings
 from src.fixtures import load_super_admin
 from src.routers import (
@@ -50,7 +52,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/media", StaticFiles(directory="media"), name="media")
+# app.mount("/media", StaticFiles(directory="media"), name="media")
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+app.mount(
+    "/media",
+    StaticFiles(directory=PROJECT_ROOT / "frontend" / "media"),
+    name="media",
+)
 
 
 # Root Endpoint & Router Registration
@@ -70,4 +80,4 @@ app.include_router(review_router)
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=8080, reload=True)
+    uvicorn.run("src.main:app", host="127.0.0.1", port=8080, reload=True)

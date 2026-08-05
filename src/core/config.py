@@ -2,7 +2,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from pydantic import SecretStr
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 # Resolve the logo path relative to the project root, regardless of the working directory
