@@ -45,8 +45,11 @@ async def create_user(
                 },
             )
 
-        # grace period expired — free up the email so a new account can take it
-        deleted_at = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S")
+        # grace period expired — free up the email so a new account can take it.
+        # Colons/spaces would make this an invalid email (breaks anything
+        # serializing it through EmailStr, e.g. GET /admin/users), so keep
+        # the timestamp URL/email-safe.
+        deleted_at = datetime.now(UTC).strftime("%Y-%m-%dT%H-%M-%S")
         existing_user.email = f"deleted_user_{existing_user.id}_at_{deleted_at}@removed.email"
         await session.commit()
 

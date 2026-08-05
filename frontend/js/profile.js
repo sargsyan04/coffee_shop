@@ -124,9 +124,7 @@ deactivateModalConfirm.addEventListener("click", async () => {
 
 loadProfile();
 
-// ============================================================
 // Tabs: Reviews / Orders
-// ============================================================
 
 const tabButtons = document.querySelectorAll(".tab-button");
 const tabPanels = {
@@ -290,9 +288,7 @@ orderList.addEventListener("click", (event) => {
   if (order) openOrderModal(order);
 });
 
-// ============================================================
 // Order Details Modal
-// ============================================================
 
 const orderModalOverlay = document.getElementById("order-modal-overlay");
 const orderModalClose = document.getElementById("order-modal-close");
@@ -364,7 +360,7 @@ document.addEventListener("keydown", (event) => {
 
 modalCancelButton.addEventListener("click", async () => {
   const orderId = modalCancelButton.dataset.orderId;
-  const confirmed = confirm("Вы уверены, что хотите отменить заказ?");
+  const confirmed = await confirmDialog("Вы уверены, что хотите отменить заказ?", { confirmLabel: "Отменить заказ" });
   if (!confirmed) return;
 
   try {

@@ -22,9 +22,7 @@ REFRESH_TOKEN_TYPE = "refresh_token"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/login")
 
 
-# ============================================================
-# --> JWT Encoding / Decoding <--
-# ============================================================
+# JWT Encoding / Decoding
 
 
 def encode_jwt(
@@ -66,25 +64,21 @@ def verify_token(token: str, expected_type: str) -> dict:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
 
-# ============================================================
-# --> Password Hashing <--
-# ============================================================
+# Password Hashing
 
 
 def hash_password(password: str) -> bytes:
     return bcrypt.hashpw(password.encode("utf-8"), salt=bcrypt.gensalt())
 
 
-# ============================================================
-# --> Email Verification Codes (registration & reactivation) <--
-# ============================================================
+# Email Verification Codes (registration & reactivation)
 
 
 async def create_verification_token(session: AsyncSession, user_id: int) -> str:
     """Creates a 6-digit email verification code and stores it in the database."""
 
-    # --> Step 1: invalidate any previous, still-unused codes for this user
-    #     and this token type, before issuing a new one <--
+    # Step 1: invalidate any previous, still-unused codes for this user
+    # and this token type, before issuing a new one
     await session.execute(
         update(VerificationToken)
         .where(
@@ -95,7 +89,7 @@ async def create_verification_token(session: AsyncSession, user_id: int) -> str:
         .values(is_used=True)
     )
 
-    # --> Step 2: create the new code <--
+    # Step 2: create the new code
     code = f"{random.randint(0, 999999):06d}"
 
     token = VerificationToken(
@@ -132,9 +126,7 @@ async def verify_email_code(session: AsyncSession, user_id: int, code: str) -> b
     return True
 
 
-# ============================================================
-# --> Access / Refresh Token Generation <--
-# ============================================================
+# Access / Refresh Token Generation
 
 
 def create_access_token(user: User):

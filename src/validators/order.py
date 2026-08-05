@@ -6,9 +6,7 @@ from src.core import UserRole
 from src.core.enums import OrderStatus
 from src.models import Order, User
 
-# ============================================================
-# --> Order Lookup <--
-# ============================================================
+# Order Lookup
 
 
 async def get_order_or_404(
@@ -32,12 +30,10 @@ async def get_order_or_404(
     return order
 
 
-# ============================================================
-# --> Order Status Transitions <--
-# ============================================================
+# Order Status Transitions
 
-# --> Allowed status transitions — staff can only move an order forward
-#     along this path, or cancel it while it's still early enough <--
+# Allowed status transitions — staff can only move an order forward
+# along this path, or cancel it while it's still early enough
 ALLOWED_TRANSITIONS: dict[OrderStatus, set[OrderStatus]] = {
     OrderStatus.CREATED: {OrderStatus.PAID, OrderStatus.CANCELLED},
     OrderStatus.PAID: {OrderStatus.IN_PROGRESS, OrderStatus.CANCELLED},

@@ -92,7 +92,6 @@ function renderProduct(product) {
   setupReviewForm(product.id);
 }
 
-// ============================================================
 // Additional info accordion (composition, nutrition, etc.)
 //
 // TODO(backend): ProductResponse currently only has name / price /
@@ -101,7 +100,6 @@ function renderProduct(product) {
 // section isn't empty; once the field exists on the product model +
 // schema, swap the hardcoded string for `product.composition` (falling
 // back to hiding the accordion item if the field is empty).
-// ============================================================
 function renderAdditionalInfoAccordion(product) {
   const items = [
     {
@@ -187,9 +185,7 @@ function pluralizeReviews(count) {
   return `${count} ${word}`;
 }
 
-// ============================================================
 // Reviews list
-// ============================================================
 async function loadReviews(productId) {
   const listEl = document.getElementById("reviews-list");
   const countEl = document.getElementById("reviews-count");
@@ -243,10 +239,8 @@ function renderReviewCard(review) {
   `;
 }
 
-// ============================================================
 // Review form — only shown if the user is logged in, has a completed
 // order containing this product, and hasn't already reviewed it
-// ============================================================
 async function setupReviewForm(productId) {
   const slot = document.getElementById("review-form-slot");
 
@@ -337,10 +331,8 @@ function renderReviewForm(slot, productId) {
   });
 }
 
-// ============================================================
 // Add to cart — works for guests (localStorage) and logged-in users
 // (real backend cart) transparently, see js/cart-store.js
-// ============================================================
 function setupAddToCart(product) {
   const qtyValue = document.getElementById("qty-value");
   const addButton = document.getElementById("add-to-cart-button");

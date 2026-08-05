@@ -34,8 +34,18 @@
   box-sizing: border-box;
 }
 
+/* Sticky footer: body is a full-height flex column, so on short pages
+   #site-footer-root (see layout.css) still gets pushed to the bottom
+   instead of floating right under the content. */
+html {
+  height: 100%;
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   font-family: 'Inter', sans-serif;
   background-color: var(--color-bg);
   color: var(--color-text-primary);

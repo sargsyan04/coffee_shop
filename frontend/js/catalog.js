@@ -62,10 +62,8 @@ function createProductCard(product) {
   return card;
 }
 
-// ============================================================
 // Add to cart — works for guests (localStorage) and logged-in users
 // (real backend cart) transparently, see js/cart-store.js
-// ============================================================
 function setupAddToCartButtons(container) {
   container.querySelectorAll(".product-card").forEach((card) => {
     const button = card.querySelector(".add-button");
@@ -88,9 +86,7 @@ function setupAddToCartButtons(container) {
   });
 }
 
-// ============================================================
 // Search (already functional — filters loaded products by name)
-// ============================================================
 function setupSearch() {
   const searchInput = document.getElementById("search-input");
   if (!searchInput) return;
@@ -104,11 +100,9 @@ function setupSearch() {
   });
 }
 
-// ============================================================
 // Category filter chips
 // For now this only toggles the active button — real filtering
 // will be wired up once the API exposes a category field
-// ============================================================
 function setupFilterChips() {
   const chips = document.querySelectorAll(".chip");
 

@@ -5,9 +5,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from src.core import LOGO_PATH, settings
 
-# ============================================================
-# --> SMTP Configuration <--
-# ============================================================
+# SMTP Configuration
 
 conf = ConnectionConfig(
     MAIL_USERNAME=settings.SMTP_USERNAME,
@@ -24,9 +22,7 @@ conf = ConnectionConfig(
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# ============================================================
-# --> Email Templates <--
-# ============================================================
+# Email Templates
 
 env = Environment(
     loader=FileSystemLoader(BASE_DIR / "templates")
@@ -37,9 +33,7 @@ def render_email(template_name: str, **context) -> str:
     return template.render(**context)
 
 
-# ============================================================
-# --> Email Sending <--
-# ============================================================
+# Email Sending
 
 
 async def send_verification_email(email_to: str, code: str):

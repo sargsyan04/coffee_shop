@@ -1,4 +1,4 @@
-const reactivateForm = document.getElementById("reactivate-form");
+const newPasswordForm = document.getElementById("new-password-form");
 const resendButton = document.getElementById("resend-code");
 const submitButton = document.getElementById("submit-button");
 const formStatus = document.getElementById("form-status");
@@ -26,7 +26,7 @@ if (isForgotPassword) {
   submitButton.textContent = "Сохранить новый пароль";
 }
 
-reactivateForm.addEventListener("submit", async (event) => {
+newPasswordForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const code = document.getElementById("code").value;

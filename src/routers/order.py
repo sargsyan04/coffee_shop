@@ -17,9 +17,7 @@ from src.validators import (
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
 
-# ============================================================
-# --> Customer-Facing Endpoints <--
-# ============================================================
+# Customer-Facing Endpoints
 
 
 @router.get("/", response_model=list[OrderResponse])
@@ -27,7 +25,7 @@ async def get_my_orders(
     current_user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_session),
 ):
-    # --> Excludes the current CREATED cart — that's not a placed order yet <--
+    # Excludes the current CREATED cart — that's not a placed order yet
     stmt = (
         select(Order)
         .where(
@@ -67,9 +65,7 @@ async def cancel_order(
     return order
 
 
-# ============================================================
-# --> Staff-Facing Endpoints (baristas & admins) <--
-# ============================================================
+# Staff-Facing Endpoints (baristas & admins)
 
 
 @router.get("/staff/all", response_model=list[OrderResponse])
@@ -77,8 +73,8 @@ async def get_all_active_orders(
     _: User = Depends(require_staff),
     session: AsyncSession = Depends(db_session),
 ):
-    # --> Only orders staff currently needs to act on:
-    #     paid (ready to start), in progress, or ready for pickup <--
+    # Only orders staff currently needs to act on:
+    # paid (ready to start), in progress, or ready for pickup
     stmt = select(Order).where(Order.status.in_((OrderStatus.PAID, OrderStatus.IN_PROGRESS, OrderStatus.READY))).order_by(Order.created_at.asc())
 
     orders = await session.scalars(stmt)
@@ -100,20 +96,20 @@ async def update_order_status(
 
     validate_status_transition(order.status, payload.status)
 
-    # --> Must run BEFORE we flip the status to COMPLETED below — the
-    #     first-order bonus check needs to see this order as not-yet-completed <--
+    # Must run BEFORE we flip the status to COMPLETED below — the
+    # first-order bonus check needs to see this order as not-yet-completed
     if payload.status == OrderStatus.COMPLETED:
         items_stmt = select(OrderItem).where(OrderItem.order_id == order.id)
         items = (await session.scalars(items_stmt)).all()
         total_items = sum(item.quantity for item in items)
 
-        # --> Credit sold_count for every product in the order <--
+        # Credit sold_count for every product in the order
         for item in items:
             product = await session.get(Product, item.product_id)
             if product:
                 product.sold_count += item.quantity
 
-        # --> Award bonus points to the customer <--
+        # Award bonus points to the customer
         points = await calculate_bonus_points(session, order, total_items)
 
         customer = await session.get(User, order.user_id)

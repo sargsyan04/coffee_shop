@@ -1,12 +1,13 @@
 from datetime import date
+from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, EmailStr, model_validator
 
+from src.core import UserRole
 from src.schemas.common import EmailNormalizerMixin
+from src.schemas.review import ReviewResponse
 
-# ============================================================
-# --> Shared Fields <--
-# ============================================================
+# Shared Fields
 
 
 class UserBase(BaseModel, EmailNormalizerMixin):
@@ -17,9 +18,7 @@ class UserBase(BaseModel, EmailNormalizerMixin):
     phone: str | None = None
 
 
-# ============================================================
-# --> Registration & Profile <--
-# ============================================================
+# Registration & Profile
 
 
 class UserCreate(UserBase):
@@ -41,8 +40,8 @@ class UserSettingsUpdate(BaseModel):
     birth_date: date | None = None
 
 
-# --> Minimal user shape for embedding inside other responses
-#     (e.g. a review's or order's author) — no email/phone/bonus points needed there <--
+# Minimal user shape for embedding inside other responses
+#     (e.g. a review's or order's author) — no email/phone/bonus points needed there
 class UserBrief(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -62,9 +61,7 @@ class UserResponse(UserBase):
     image_url: str | None = None
 
 
-# ============================================================
-# --> Token Responses <--
-# ============================================================
+# Token Responses
 
 
 class TokenResponse(BaseModel):
@@ -73,9 +70,7 @@ class TokenResponse(BaseModel):
     token_type: str
 
 
-# ============================================================
-# --> Account Reactivation (soft-deleted accounts) <--
-# ============================================================
+# Account Reactivation (soft-deleted accounts)
 
 
 class ReactivateRequest(BaseModel, EmailNormalizerMixin):
@@ -87,9 +82,7 @@ class UserPasswordChange(ReactivateRequest):
     new_password: str
 
 
-# ============================================================
-# --> Password Change (for already-logged-in users) <--
-# ============================================================
+# Password Change (for already-logged-in users)
 
 
 class ChangePasswordRequest(BaseModel):
@@ -104,9 +97,7 @@ class ChangePasswordRequest(BaseModel):
         return self
 
 
-# ============================================================
-# --> Verification Code Resend & Account Status <--
-# ============================================================
+# Verification Code Resend & Account Status
 
 
 class ResendCodeRequest(BaseModel, EmailNormalizerMixin):
@@ -118,3 +109,40 @@ class UserStatusResponse(BaseModel):
     is_active: bool
     is_email_verified: bool
     must_change_password: bool
+
+
+# Admin User Management
+
+
+class AdminUserResponse(UserResponse):
+    # Deactivated accounts whose grace period expired get their email
+    # overwritten with an auto-generated placeholder (see the grace-period
+    # cleanup in routers/user/registration.py) so a new account can reclaim
+    # the real address. Older placeholders in the DB predate the current
+    # (email-safe) format and aren't guaranteed to be valid emails, so this
+    # listing can't enforce EmailStr the way UserResponse does elsewhere.
+    email: str
+
+
+# Powers the "Подробнее" popup on the admin Users page — see the
+# policy docstring on get_user_stats in routers/admin.py.
+class AdminUserStatsResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    # Breakdown of spend per order status (e.g. {"paid": ..., "completed": ...}),
+    # excludes draft/CREATED orders — see get_user_stats in routers/admin.py.
+    orders: dict[str, Decimal]
+    total_spent: Decimal
+    reviews: list[ReviewResponse]
+    reviews_count: int
+    orders_count: int
+
+
+class UserRoleUpdate(BaseModel):
+    # Typed as UserRole (not str) so an invalid value like "super_admin"
+    # is rejected with a 422 here, rather than reaching the DB layer.
+    role: UserRole
+
+
+class UserResetPassword(BaseModel):
+    password: str

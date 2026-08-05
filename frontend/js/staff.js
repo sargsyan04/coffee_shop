@@ -16,4 +16,15 @@ document.addEventListener("coffeeshop:auth", (event) => {
 
   panelContent.hidden = false;
   loadOrderQueue("order-queue");
+  bindQueueFilterTabs();
 });
+
+function bindQueueFilterTabs() {
+  const buttons = document.querySelectorAll("#queue-filter-tabs .queue-filter-btn");
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      buttons.forEach((b) => b.classList.toggle("active", b === button));
+      setQueueFilter("order-queue", button.dataset.status);
+    });
+  });
+}

@@ -2,9 +2,7 @@ from decimal import Decimal
 
 from src.core import UserRole, settings
 
-# ============================================================
-# --> Users <--
-# ============================================================
+# Users
 
 
 def get_super_admin_fixture() -> dict:
@@ -44,9 +42,7 @@ def get_users_fixtures() -> list[dict]:
     ]
 
 
-# ============================================================
-# --> Categories <--
-# ============================================================
+# Categories
 
 
 def get_categories_fixtures() -> list[dict]:
@@ -57,9 +53,7 @@ def get_categories_fixtures() -> list[dict]:
     ]
 
 
-# ============================================================
-# --> Tags <--
-# ============================================================
+# Tags
 
 
 def get_tags_fixtures() -> list[dict]:
@@ -70,11 +64,9 @@ def get_tags_fixtures() -> list[dict]:
     ]
 
 
-# ============================================================
-# --> Products <--
-# ============================================================
-# --> "category" references Category.name, "tags" references Tag.slug —
-#     the loader resolves these to real foreign keys after categories/tags exist <--
+# Products
+# "category" references Category.name, "tags" references Tag.slug —
+# the loader resolves these to real foreign keys after categories/tags exist
 
 
 def get_products_fixtures() -> list[dict]:

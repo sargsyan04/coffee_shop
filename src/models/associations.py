@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, Table
 
 from src.models.base import BaseModel
 
-# --> Product <-> Tag (many-to-many) <--
+# Product <-> Tag (many-to-many)
 product_tag_association = Table(
     "product_tag",
     BaseModel.metadata,
