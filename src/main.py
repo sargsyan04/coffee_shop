@@ -4,7 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-
+from starlette.middleware.sessions import SessionMiddleware
 from pathlib import Path
 
 from src.core import session_factory, settings
@@ -52,8 +52,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# app.mount("/media", StaticFiles(directory="media"), name="media")
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SECRET_KEY.get_secret_value(),
+    session_cookie="guest_session",
+    max_age=60 * 60 * 24,
+    same_site="lax",
+    https_only=False,
+)
 
+# app.mount("/media", StaticFiles(directory="media"), name="media")
+    
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 app.mount(
