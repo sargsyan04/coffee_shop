@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 from pathlib import Path
 
-from src.core import session_factory, settings
+from src.core import session_factory, settings, RequestLoggingMiddleware, setup_logging
 from src.fixtures import load_super_admin
 from src.routers import (
     admin_router,
@@ -18,6 +18,10 @@ from src.routers import (
     review_router,
     user_router,
 )
+
+
+setup_logging()
+
 
 # Application Lifespan (startup / shutdown hooks)
 
@@ -43,6 +47,8 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
+app.add_middleware(RequestLoggingMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
