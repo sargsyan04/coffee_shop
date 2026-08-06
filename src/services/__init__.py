@@ -8,6 +8,7 @@ from src.services.auth import (
     get_refresh_token_record,
     hash_password,
     oauth2_scheme,
+    optional_oauth2_scheme,
     verify_email_code,
     verify_token,
 )
@@ -34,6 +35,7 @@ __all__ = (
     "get_refresh_token_record",
     "hash_password",
     "oauth2_scheme",
+    "optional_oauth2_scheme",
     "recalculate_cart_total",
     "send_verification_email",
     "verify_email_code",

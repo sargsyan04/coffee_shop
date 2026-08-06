@@ -13,6 +13,7 @@ from src.routers import (
     admin_router,
     cart_router,
     category_router,
+    guest_cart_router,
     order_router,
     product_router,
     review_router,
@@ -85,6 +86,7 @@ app.include_router(product_router)
 app.include_router(admin_router)
 app.include_router(order_router)
 app.include_router(cart_router)
+app.include_router(guest_cart_router)
 app.include_router(review_router)
 
 

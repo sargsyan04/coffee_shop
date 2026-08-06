@@ -1,4 +1,4 @@
-"""
+""" 
 TODO — Guest (unauthenticated) checkout.
 
 Not registered in src/main.py on purpose — wire it up yourself once the
@@ -35,16 +35,26 @@ Things you'll need to decide before implementing:
     reuse the same rendering path as the logged-in checkout flow.
 """
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Request, Depends
+
+from src.core.session import get_or_create_guest_session_id
+from src.validators.auth import get_optional_current_user
+from src.models import User
 
 router = APIRouter(prefix="/cart/guest", tags=["Guest Cart"])
 
 
 @router.post("/checkout")
-async def guest_checkout():
-    # TODO: implement guest checkout — see module docstring for the contract
-    # the frontend already expects.
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="Guest checkout is not implemented yet",
-    )
+async def guest_checkout(
+    request: Request,
+    current_user: User | None = Depends(get_optional_current_user),
+):
+    if current_user:
+        identifier = current_user.id
+    else:
+        identifier = get_or_create_guest_session_id(request)
+
+    return {
+        "identifier": identifier,
+        "is_guest": current_user is None,
+    }
