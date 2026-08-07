@@ -1,4 +1,4 @@
-"""
+""" 
 TODO — Guest (unauthenticated) checkout.
 
 Not registered in src/main.py on purpose — wire it up yourself once the
@@ -35,16 +35,39 @@ Things you'll need to decide before implementing:
     reuse the same rendering path as the logged-in checkout flow.
 """
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Request, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.session import get_or_create_guest_session_id
+from src.core import db_session
+from src.validators.auth import get_optional_current_user
+from src.models import User
+from src.schemas import GuestCheckoutRequest, OrderResponse
+from src.services import guest_checkout_service
+
 
 router = APIRouter(prefix="/cart/guest", tags=["Guest Cart"])
 
 
-@router.post("/checkout")
-async def guest_checkout():
-    # TODO: implement guest checkout — see module docstring for the contract
-    # the frontend already expects.
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="Guest checkout is not implemented yet",
+@router.post("/checkout", response_model=OrderResponse)
+async def guest_checkout(
+    payload: GuestCheckoutRequest,
+    request: Request,
+    current_user: User | None = Depends(get_optional_current_user),
+    session: AsyncSession = Depends(db_session),
+):
+    if current_user:
+     raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="This endpoint is only for guests.",
     )
+
+    guest_session_id = get_or_create_guest_session_id(request)
+
+    return await guest_checkout_service(
+        session=session,
+        payload=payload,
+        guest_session_id=guest_session_id,
+        # TODO: Use guest_session_id to reconnect guest carts
+        # during the same browser session.
+) 

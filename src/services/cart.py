@@ -1,3 +1,4 @@
+from ast import stmt
 from decimal import Decimal
 
 from fastapi import HTTPException, status
@@ -5,8 +6,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+
 from src.core import OrderStatus
 from src.models import Order, OrderItem, Product
+from src.schemas import GuestCheckoutRequest
 
 
 async def get_product(session: AsyncSession, product_id: int):
@@ -161,21 +164,113 @@ async def recalculate_cart_total(session: AsyncSession, order: Order) -> Order:
     return sum(item_prices)
 
 
-
 async def checkout_cart(session: AsyncSession, order: Order) -> Order:
-    """
-    TODO:
-    - 400 if order.items is empty
-    - recalc total via checkout_cart_total_price (reject if any product unavailable)
-    - set status = PAID, commit
-    - TODO: award loyalty points (loyalty_service)
-    - TODO: decrement ingredient stock (inventory_service)
-    - TODO: notify staff over WebSocket about the new order
-    """
 
-    cart = await get_or_create_cart(session, order.user_id)
 
     if not order.items:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No items to checkout")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cart is empty",
+        )
 
-    return cart
+    total_price, removed_items = await checkout_cart_total_price(order, session)
+
+    if removed_items:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "message": "Some items are no longer available.",
+                "removed_items": removed_items,
+            },
+        )
+
+    order.total_price = total_price
+    order.status = OrderStatus.PAID
+
+    order_id = order.id
+
+    await session.commit()
+
+    stmt = (
+        select(Order)
+            .where(Order.id == order_id)
+            .options(
+                selectinload(Order.items).selectinload(OrderItem.product)
+        )
+    )
+
+    order = await session.scalar(stmt)
+
+    return order
+
+
+async def guest_checkout_service(
+    session: AsyncSession,
+    payload: GuestCheckoutRequest,
+    guest_session_id: str,
+):
+    order = Order(
+        user_id=None,
+        guest_name=payload.contact.name,
+        guest_phone=payload.contact.phone,
+        guest_email=payload.contact.email,
+        status=OrderStatus.CREATED,
+        total_price=Decimal(0),
+    )
+
+    session.add(order)
+    await session.flush()
+
+    for item in payload.items:
+        product = await get_product(session, item.product_id)
+
+        order_item = OrderItem(
+            order_id=order.id,
+            product_id=product.id,
+            quantity=item.quantity,
+            price_at_order=product.price,
+        )
+
+        session.add(order_item)
+
+    stmt = (
+        select(Order)
+        .where(Order.id == order.id)
+        .options(
+            selectinload(Order.items).selectinload(OrderItem.product)
+        )
+    )
+
+    order = await session.scalar(stmt)
+
+    order = await checkout_cart(session, order)
+
+    await session.refresh(
+        order,
+        attribute_names=["items"],
+    )
+
+    return build_order_response(order)
+
+
+from src.schemas import OrderResponse, OrderItemResponse
+
+def build_order_response(order: Order) -> OrderResponse:
+    return OrderResponse(
+        id=order.id,
+        status=order.status,
+        total_price=order.total_price,
+        created_at=order.created_at,
+        removed_items=[],
+        items=[
+            OrderItemResponse(
+                id=item.id,
+                product_id=item.product_id,
+                product_name=item.product.name,
+                quantity=item.quantity,
+                unit_price=item.price_at_order,
+                line_total=item.price_at_order * item.quantity,
+            )
+            for item in order.items
+        ],
+    )
