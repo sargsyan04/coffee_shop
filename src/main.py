@@ -4,20 +4,25 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-
+from starlette.middleware.sessions import SessionMiddleware
 from pathlib import Path
 
-from src.core import session_factory, settings
+from src.core import session_factory, settings, RequestLoggingMiddleware, setup_logging
 from src.fixtures import load_super_admin
 from src.routers import (
     admin_router,
     cart_router,
     category_router,
+    guest_cart_router,
     order_router,
     product_router,
     review_router,
     user_router,
 )
+
+
+setup_logging()
+
 
 # Application Lifespan (startup / shutdown hooks)
 
@@ -44,6 +49,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(RequestLoggingMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
@@ -52,8 +59,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# app.mount("/media", StaticFiles(directory="media"), name="media")
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SECRET_KEY.get_secret_value(),
+    session_cookie="guest_session",
+    max_age=60 * 60 * 24,
+    same_site="lax",
+    https_only=False,
+)
 
+# app.mount("/media", StaticFiles(directory="media"), name="media")
+    
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 app.mount(
@@ -76,6 +92,7 @@ app.include_router(product_router)
 app.include_router(admin_router)
 app.include_router(order_router)
 app.include_router(cart_router)
+app.include_router(guest_cart_router)
 app.include_router(review_router)
 
 

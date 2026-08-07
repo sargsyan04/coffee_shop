@@ -5,7 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core import UserRole, db_session
 from src.models import User
-from src.services import ACCESS_TOKEN_TYPE, oauth2_scheme, verify_token
+from src.services import (
+    ACCESS_TOKEN_TYPE,
+    oauth2_scheme,
+    optional_oauth2_scheme,
+    verify_token,
+)
 
 # Registration Helpers
 
@@ -30,6 +35,35 @@ async def get_current_user(
     """Identifies who the caller is. Does NOT check must_change_password —
     this is used by the password-change endpoint itself, which must remain
     reachable even for a locked account."""
+
+    exc = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid authentication credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    payload = verify_token(token, ACCESS_TOKEN_TYPE)
+
+    email = payload.get("email")
+    if not email:
+        raise exc
+
+    stmt = select(User).where(User.email == email)
+    current_user = await session.scalar(stmt)
+
+    if current_user is None or not current_user.is_active:
+        raise exc
+
+    return current_user
+
+
+async def get_optional_current_user(
+    token: str | None = Depends(optional_oauth2_scheme),
+    session: AsyncSession = Depends(db_session),
+) -> User | None:
+
+    if token is None:
+        return None
 
     exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

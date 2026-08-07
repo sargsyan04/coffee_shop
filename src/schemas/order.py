@@ -41,3 +41,14 @@ class OrderResponse(BaseModel):
 
 class OrderStatusUpdate(BaseModel):
     status: OrderStatus
+
+
+class GuestContact(BaseModel):
+    name: str
+    phone: str
+    email: str | None = None
+
+
+class GuestCheckoutRequest(BaseModel):
+    items: list[CartItemAdd]
+    contact: GuestContact

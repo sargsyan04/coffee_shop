@@ -6,6 +6,8 @@ from src.schemas.order import (
     OrderItemResponse,
     OrderResponse,
     OrderStatusUpdate,
+    GuestCheckoutRequest,
+    GuestContact,
 )
 from src.schemas.product import ProductCreate, ProductResponse
 from src.schemas.review import ReviewCreate, ReviewResponse
@@ -58,4 +60,6 @@ __all__ = (
     "UserSettingsUpdate",
     "UserStatusResponse",
     "VerifyEmailRequest",
+    "GuestCheckoutRequest",
+    "GuestContact"
 )
