@@ -25,9 +25,15 @@ class Order(BaseModel):
         DateTime(timezone=True),
         default=lambda: datetime.now(UTC),
     )
+    guest_name: Mapped[str | None] = mapped_column(nullable=True)
+    guest_phone: Mapped[str | None] = mapped_column(nullable=True)
+    guest_email: Mapped[str | None] = mapped_column(nullable=True)
 
     # User
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=True,
+    )
     user: Mapped["User"] = relationship(back_populates="orders")
 
     # Items

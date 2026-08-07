@@ -21,6 +21,11 @@ REFRESH_TOKEN_TYPE = "refresh_token"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/login")
 
+optional_oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl="/user/login",
+    auto_error=False,
+)
+
 
 # JWT Encoding / Decoding
 
