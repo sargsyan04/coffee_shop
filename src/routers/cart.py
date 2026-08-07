@@ -3,10 +3,17 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from src.services import build_order_response
+from src.services import build_order_response
 from src.core import OrderStatus, db_session
 from src.models import Order, User
 from src.schemas import CartItemAdd, CartItemUpdate, OrderResponse
-from src.services import add_item_to_cart, checkout_cart_total_price, get_or_create_cart, recalculate_cart_total
+from src.services import (
+    add_item_to_cart,
+    checkout_cart,
+    get_or_create_cart,
+    recalculate_cart_total,
+)
 from src.validators import get_current_active_user
 
 router = APIRouter(prefix="/cart", tags=["Cart"])
@@ -26,7 +33,7 @@ async def get_cart(
     # TODO: build the OrderResponse manually (product_name/unit_price/line_total
     #       don't exist as plain attributes on OrderItem - see schemas/order.py)
     cart = await get_or_create_cart(session, current_user.id)
-    return cart
+    return build_order_response(cart)
 
 
 
@@ -82,17 +89,13 @@ async def checkout(
     order = await session.scalar(stmt)
 
     if order is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Cart not found")
+
 
     # TODO: move the checks/logic below into services.checkout_cart(session, order)
     #       instead of inlining business logic in the router
-    if not order.items:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cart is empty")
-    # TODO: solve this import issue
-    order.total_price = await checkout_cart_total_price(order, session)
-    order.status = OrderStatus.PAID
-
-    await session.commit()
-    await session.refresh(order)
+    order = await checkout_cart(session, order)
 
     return order

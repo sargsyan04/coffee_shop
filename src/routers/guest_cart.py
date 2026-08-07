@@ -36,25 +36,38 @@ Things you'll need to decide before implementing:
 """
 
 from fastapi import APIRouter, HTTPException, status, Request, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.session import get_or_create_guest_session_id
+from src.core import db_session
 from src.validators.auth import get_optional_current_user
 from src.models import User
+from src.schemas import GuestCheckoutRequest, OrderResponse
+from src.services import guest_checkout_service
+
 
 router = APIRouter(prefix="/cart/guest", tags=["Guest Cart"])
 
 
-@router.post("/checkout")
+@router.post("/checkout", response_model=OrderResponse)
 async def guest_checkout(
+    payload: GuestCheckoutRequest,
     request: Request,
     current_user: User | None = Depends(get_optional_current_user),
+    session: AsyncSession = Depends(db_session),
 ):
     if current_user:
-        identifier = current_user.id
-    else:
-        identifier = get_or_create_guest_session_id(request)
+     raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="This endpoint is only for guests.",
+    )
 
-    return {
-        "identifier": identifier,
-        "is_guest": current_user is None,
-    }
+    guest_session_id = get_or_create_guest_session_id(request)
+
+    return await guest_checkout_service(
+        session=session,
+        payload=payload,
+        guest_session_id=guest_session_id,
+        # TODO: Use guest_session_id to reconnect guest carts
+        # during the same browser session.
+) 
