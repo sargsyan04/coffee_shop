@@ -5,21 +5,31 @@ from jinja2 import Environment, FileSystemLoader
 
 from src.core import LOGO_PATH, settings
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 # SMTP Configuration
 
-conf = ConnectionConfig(
-    MAIL_USERNAME=settings.SMTP_USERNAME,
-    MAIL_PASSWORD=settings.SMTP_PASSWORD,
-    MAIL_FROM=settings.MAIL_FROM,
-    MAIL_PORT=settings.MAIL_PORT,
-    MAIL_SERVER=settings.SMTP_SERVER,
-    MAIL_STARTTLS=False,
-    MAIL_SSL_TLS=True,
-    USE_CREDENTIALS=True,
-    VALIDATE_CERTS=True,
-)
+_conf: ConnectionConfig | None = None
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+
+def _get_mail_config() -> ConnectionConfig:
+    # built on first use, not at import - ConnectionConfig validates
+    # MAIL_FROM right away, and this file gets imported a lot more often
+    # than mail actually gets sent
+    global _conf
+    if _conf is None:
+        _conf = ConnectionConfig(
+            MAIL_USERNAME=settings.SMTP_USERNAME,
+            MAIL_PASSWORD=settings.SMTP_PASSWORD,
+            MAIL_FROM=settings.MAIL_FROM,
+            MAIL_PORT=settings.MAIL_PORT,
+            MAIL_SERVER=settings.SMTP_SERVER,
+            MAIL_STARTTLS=False,
+            MAIL_SSL_TLS=True,
+            USE_CREDENTIALS=True,
+            VALIDATE_CERTS=True,
+        )
+    return _conf
 
 
 # Email Templates
@@ -60,5 +70,5 @@ async def send_verification_email(email_to: str, code: str):
         ],
     )
 
-    fm = FastMail(conf)
+    fm = FastMail(_get_mail_config())
     await fm.send_message(message)

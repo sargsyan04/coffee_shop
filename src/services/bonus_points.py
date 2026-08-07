@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -42,7 +44,7 @@ async def calculate_bonus_points(session: AsyncSession, order: Order, total_item
     if total_items >= BULK_ITEM_THRESHOLD:
         rate += BULK_ITEM_BONUS_RATE
 
-    points = int(order.total_price * rate)
+    points = int(order.total_price * Decimal(str(rate)))
 
     # First-order bonus: check if this is the customer's first ever
     # COMPLETED order (this one doesn't count yet, since its status
