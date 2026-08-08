@@ -1,10 +1,11 @@
 from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from src.core import UserRole
 from src.core.enums import OrderStatus
-from src.models import Order, User
+from src.models import Order, OrderItem, User
 
 # Order Lookup
 
@@ -17,7 +18,7 @@ async def get_order_or_404(
     """Fetches an order by id, scoped to the current user unless they're staff.
     Raises 404 if the order doesn't exist or doesn't belong to the caller."""
 
-    stmt = select(Order).where(Order.id == order_id)
+    stmt = select(Order).where(Order.id == order_id).options(selectinload(Order.items).selectinload(OrderItem.product))
 
     if current_user.role not in (UserRole.BARISTA, UserRole.ADMIN):
         stmt = stmt.where(Order.user_id == current_user.id)

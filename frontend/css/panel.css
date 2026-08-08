@@ -1,7 +1,3 @@
-/* .button_s / .sign_in live in main.css, which admin.html doesn't load
-   (it uses the panel layout, not the centered auth-card one main.css is
-   built around) — repeated here so the "Готово"/confirm-dialog/"Создать..."
-   buttons that already use these classes are actually styled. */
 .button_s {
     height: 44px;
     padding: 0 20px;
@@ -666,6 +662,152 @@
 .user-detail-review-date {
     color: var(--color-text-muted);
     font-size: 0.78rem;
+}
+
+/* ===== Catalog sections (products / categories / tags) ===== */
+.panel-subsection {
+    margin-bottom: 32px;
+}
+
+.panel-subsection:last-child {
+    margin-bottom: 0;
+}
+
+.panel-subheading {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    color: var(--color-primary-dark);
+    margin: 0 0 14px;
+}
+
+.data-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+
+.data-table th,
+.data-table td {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+}
+
+.data-table th {
+    font-weight: 600;
+    color: var(--color-text-muted);
+    background: var(--color-bg-accent);
+    white-space: nowrap;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.data-table-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    object-fit: cover;
+    display: block;
+    background: var(--color-bg-accent);
+}
+
+.data-table-thumb-placeholder {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: var(--color-bg-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+}
+
+.tag-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag-chip {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--color-bg-accent);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+}
+
+.tag-chip-empty {
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+}
+
+/* Tag checkboxes inside the product creation form */
+.checkbox-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
+
+.checkbox-item input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--color-primary-dark);
+}
+
+/* .form_group only styled <input> before — products/categories forms also
+   need <select> (category picker) and <input type="file"> (product photo) */
+.form_group select {
+    height: 46px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1.5px solid var(--color-border);
+    background-color: var(--color-bg);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form_group select:focus {
+    outline: none;
+    border-color: var(--color-primary-light);
+    box-shadow: 0 0 0 3px rgba(169, 124, 80, 0.15);
+}
+
+.form_group input[type="file"] {
+    height: auto;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1.5px dashed var(--color-border);
+    background-color: var(--color-bg);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    cursor: pointer;
 }
 
 /* ===== Temporary password reveal (inside its modal) ===== */

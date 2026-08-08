@@ -149,44 +149,120 @@
                 <p class="form_status full_row" id="users-form-status" hidden></p>
             </section>
 
-            <!-- POST /products/create already exists on the backend and is usable today -->
             <section class="panel-page" id="panel-page-products" data-panel-page="products" hidden>
-                <form class="panel-form" id="product-form" novalidate>
-                    <div class="form_group">
-                        <label for="product-name">Название</label>
-                        <input type="text" id="product-name" name="product-name" required>
+                <div class="panel-subsection">
+                    <h2 class="panel-subheading">Товары</h2>
+                    <div class="data-table-wrap">
+                        <table class="data-table" id="products-table">
+                            <thead>
+                                <tr>
+                                    <th>Фото</th>
+                                    <th>Название</th>
+                                    <th>Цена</th>
+                                    <th>Категория</th>
+                                    <th>Теги</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body">
+                                <tr><td colspan="5" class="users-loading">Загрузка...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="form_group">
-                        <label for="product-price">Цена, ֏</label>
-                        <input type="number" id="product-price" name="product-price" min="1" step="1" required>
-                    </div>
-                    <div class="form_group full_row">
-                        <label for="product-category">Категория</label>
-                        <select id="product-category" name="product-category">
-                            <option value="">Без категории</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="button_s sign_in full_row" style="width:fit-content;">Создать товар</button>
-                    <p class="form_status full_row" id="product-form-status" hidden></p>
-                </form>
+                </div>
+
+                <div class="panel-subsection">
+                    <h2 class="panel-subheading">Новый товар</h2>
+                    <form class="panel-form" id="product-form" novalidate>
+                        <div class="form_group">
+                            <label for="product-name">Название</label>
+                            <input type="text" id="product-name" name="product-name" required>
+                        </div>
+                        <div class="form_group">
+                            <label for="product-price">Цена, ֏</label>
+                            <input type="number" id="product-price" name="product-price" min="1" step="1" required>
+                        </div>
+                        <div class="form_group">
+                            <label for="product-category">Категория</label>
+                            <select id="product-category" name="product-category">
+                                <option value="">Без категории</option>
+                            </select>
+                        </div>
+                        <div class="form_group">
+                            <label for="product-image">Фото (необязательно)</label>
+                            <input type="file" id="product-image" name="product-image" accept="image/*">
+                        </div>
+                        <div class="form_group full_row">
+                            <label>Теги</label>
+                            <div class="checkbox-grid" id="product-tags-checkboxes">
+                                <p class="users-empty" id="product-tags-empty">Тегов пока нет — создайте их в разделе «Теги».</p>
+                            </div>
+                        </div>
+                        <button type="submit" class="button_s sign_in full_row" style="width:fit-content;">Создать товар</button>
+                        <p class="form_status full_row" id="product-form-status" hidden></p>
+                    </form>
+                </div>
             </section>
 
-            <!-- POST /categories/ already exists on the backend and is usable today -->
             <section class="panel-page" id="panel-page-categories" data-panel-page="categories" hidden>
-                <form class="panel-form" id="category-form" novalidate>
-                    <div class="form_group full_row">
-                        <label for="category-name">Название</label>
-                        <input type="text" id="category-name" name="category-name" required>
+                <div class="panel-subsection">
+                    <h2 class="panel-subheading">Категории</h2>
+                    <div class="data-table-wrap">
+                        <table class="data-table" id="categories-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Название</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categories-table-body">
+                                <tr><td colspan="2" class="users-loading">Загрузка...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <button type="submit" class="button_s sign_in full_row" style="width:fit-content;">Создать категорию</button>
-                    <p class="form_status full_row" id="category-form-status" hidden></p>
-                </form>
+                </div>
+
+                <div class="panel-subsection">
+                    <h2 class="panel-subheading">Новая категория</h2>
+                    <form class="panel-form" id="category-form" novalidate>
+                        <div class="form_group full_row">
+                            <label for="category-name">Название</label>
+                            <input type="text" id="category-name" name="category-name" required>
+                        </div>
+                        <button type="submit" class="button_s sign_in full_row" style="width:fit-content;">Создать категорию</button>
+                        <p class="form_status full_row" id="category-form-status" hidden></p>
+                    </form>
+                </div>
             </section>
 
-            <!-- No tags endpoints on the backend yet -->
             <section class="panel-page" id="panel-page-tags" data-panel-page="tags" hidden>
-                <div class="panel-placeholder">
-                    Раздел «Теги» пока не реализован на бэкенде.
+                <div class="panel-subsection">
+                    <h2 class="panel-subheading">Теги</h2>
+                    <div class="data-table-wrap">
+                        <table class="data-table" id="tags-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Название</th>
+                                    <th>Slug</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tags-table-body">
+                                <tr><td colspan="3" class="users-loading">Загрузка...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="panel-subsection">
+                    <h2 class="panel-subheading">Новый тег</h2>
+                    <form class="panel-form" id="tag-form" novalidate>
+                        <div class="form_group full_row">
+                            <label for="tag-name">Название</label>
+                            <input type="text" id="tag-name" name="tag-name" required>
+                        </div>
+                        <button type="submit" class="button_s sign_in full_row" style="width:fit-content;">Создать тег</button>
+                        <p class="form_status full_row" id="tag-form-status" hidden></p>
+                    </form>
                 </div>
             </section>
 

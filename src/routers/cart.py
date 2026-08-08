@@ -1,18 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
-from src.services import build_order_response
-from src.services import build_order_response
-from src.core import OrderStatus, db_session
-from src.models import Order, User
+from src.core import db_session
+from src.models import User
 from src.schemas import CartItemAdd, CartItemUpdate, OrderResponse
 from src.services import (
     add_item_to_cart,
-    checkout_cart,
+    build_order_response,
+    checkout_cart_for_user,
     get_or_create_cart,
-    recalculate_cart_total,
+    remove_item_from_cart,
+    update_item_quantity,
 )
 from src.validators import get_current_active_user
 
@@ -29,12 +27,8 @@ async def get_cart(
     current_user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_session),
 ):
-    # TODO: call get_or_create_cart(session, current_user.id) instead of a raw query
-    # TODO: build the OrderResponse manually (product_name/unit_price/line_total
-    #       don't exist as plain attributes on OrderItem - see schemas/order.py)
     cart = await get_or_create_cart(session, current_user.id)
     return build_order_response(cart)
-
 
 
 @router.post("/items", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
@@ -43,15 +37,9 @@ async def add_item(
     current_user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_session),
 ):
-    # TODO: call add_item_to_cart(session, current_user.id, payload.product_id, payload.quantity)
-    # TODO: return the built OrderResponse
-    item = await add_item_to_cart(session, current_user.id, payload.quantity, payload.product_id)
+    cart = await add_item_to_cart(session, current_user.id, payload.quantity, payload.product_id)
 
-    cart = await get_or_create_cart(session, current_user.id)
-
-    await recalculate_cart_total(session, cart)
-
-    return item
+    return build_order_response(cart)
 
 
 @router.patch("/items/{item_id}", response_model=OrderResponse)
@@ -61,8 +49,9 @@ async def update_item(
     current_user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_session),
 ):
-    # TODO: call update_item_quantity(session, current_user.id, item_id, payload.quantity)
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Not implemented yet")
+    cart = await update_item_quantity(session, current_user.id, item_id, payload.quantity)
+
+    return build_order_response(cart)
 
 
 @router.delete("/items/{item_id}", response_model=OrderResponse)
@@ -71,8 +60,9 @@ async def remove_item(
     current_user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_session),
 ):
-    # TODO: call remove_item_from_cart(session, current_user.id, item_id)
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Not implemented yet")
+    cart = await remove_item_from_cart(session, current_user.id, item_id)
+
+    return build_order_response(cart)
 
 
 @router.post("/checkout", response_model=OrderResponse)
@@ -80,22 +70,6 @@ async def checkout(
     current_user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_session),
 ):
-    stmt = (
-        select(Order)
-        .where(Order.user_id == current_user.id, Order.status == OrderStatus.CREATED)
-        .options(selectinload(Order.items))
-        # TODO: also .with_for_update() to protect against a double checkout race
-    )
-    order = await session.scalar(stmt)
+    order = await checkout_cart_for_user(session, current_user.id)
 
-    if order is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Cart not found")
-
-
-    # TODO: move the checks/logic below into services.checkout_cart(session, order)
-    #       instead of inlining business logic in the router
-    order = await checkout_cart(session, order)
-
-    return order
+    return build_order_response(order)

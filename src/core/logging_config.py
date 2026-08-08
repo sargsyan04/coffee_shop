@@ -1,15 +1,13 @@
 import logging
 import os
-from pathlib import Path
 from logging.handlers import RotatingFileHandler
+from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOG_DIR = str(BASE_DIR / "logs")
 LOG_FILE = BASE_DIR / "logs" / "app.log"
 
-LOG_FORMAT = (
-    "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
-)
+LOG_FORMAT = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
 
 
 def setup_logging(level: int = logging.INFO) -> None:

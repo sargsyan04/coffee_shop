@@ -23,10 +23,7 @@ def get_client_ip(request: Request) -> str:
 
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
-
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
         request.state.request_id = request_id
 

@@ -1,9 +1,14 @@
 import io
+import logging
 import uuid
 from pathlib import Path
 
 from fastapi import HTTPException, UploadFile
 from PIL import Image, UnidentifiedImageError
+
+logger = logging.getLogger("app.file_storage")
+
+MEDIA_ROOT = Path(__file__).resolve().parents[2] / "frontend" / "media"
 
 ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_SIZE = (256, 256)
@@ -44,7 +49,7 @@ def save_image(
             detail="Only JPEG, PNG, and WEBP images are allowed.",
         )
 
-    media_dir = Path("media") / folder
+    media_dir = MEDIA_ROOT / folder
     media_dir.mkdir(parents=True, exist_ok=True)
 
     raw_bytes = file.file.read()
@@ -89,8 +94,12 @@ def save_image(
 
 
 def delete_image(image_url: str | None) -> None:
-    """Delete the old file from disk, if one existed."""
     if not image_url:
         return
-    old_path = Path("media") / image_url.removeprefix("/media/")
-    old_path.unlink(missing_ok=True)
+    old_path = MEDIA_ROOT / image_url.removeprefix("/media/")
+    try:
+        old_path.unlink(missing_ok=True)
+    except PermissionError:
+        logger.warning("Could not delete old image %s - file is locked by another process", old_path)
+    except OSError:
+        logger.warning("Could not delete old image %s", old_path, exc_info=True)

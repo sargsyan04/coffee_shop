@@ -50,7 +50,7 @@ class Settings(BaseSettings):
 settings = Settings()
 
 # Database Engine & Session Setup
-database_url = f"postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASSWORD}@" f"{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
+database_url = f"postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
 
 engine = create_async_engine(database_url)
 session_factory = async_sessionmaker(engine)

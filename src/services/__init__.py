@@ -16,11 +16,14 @@ from src.services.bonus_points import calculate_bonus_points
 from src.services.cart import (
     add_item_to_cart,
     build_order_response,
-    checkout_cart_total_price,
     checkout_cart,
-    guest_checkout_service,
+    checkout_cart_for_user,
+    checkout_cart_total_price,
     get_or_create_cart,
+    guest_checkout_service,
     recalculate_cart_total,
+    remove_item_from_cart,
+    update_item_quantity,
 )
 from src.services.email import send_verification_email
 
@@ -30,8 +33,9 @@ __all__ = (
     "add_item_to_cart",
     "build_order_response",
     "calculate_bonus_points",
-    "checkout_cart_total_price",
     "checkout_cart",
+    "checkout_cart_for_user",
+    "checkout_cart_total_price",
     "create_verification_token",
     "decode_jwt",
     "encode_jwt",
@@ -43,7 +47,9 @@ __all__ = (
     "oauth2_scheme",
     "optional_oauth2_scheme",
     "recalculate_cart_total",
+    "remove_item_from_cart",
     "send_verification_email",
+    "update_item_quantity",
     "verify_email_code",
     "verify_token",
 )

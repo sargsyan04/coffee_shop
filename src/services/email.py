@@ -34,9 +34,8 @@ def _get_mail_config() -> ConnectionConfig:
 
 # Email Templates
 
-env = Environment(
-    loader=FileSystemLoader(BASE_DIR / "templates")
-)
+env = Environment(loader=FileSystemLoader(BASE_DIR / "templates"))
+
 
 def render_email(template_name: str, **context) -> str:
     template = env.get_template(template_name)

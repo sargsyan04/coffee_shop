@@ -9,8 +9,8 @@ def _make_user_create(**overrides):
     fields = {
         "name": "Test User",
         "email": "Test@Example.com",
-        "password": "secret123",
-        "password_confirm": "secret123",
+        "password": "Secret123!",
+        "password_confirm": "Secret123!",
     }
     fields.update(overrides)
     return UserCreate(**fields)
@@ -30,14 +30,14 @@ def test_email_normalizer_applies_to_other_schemas_too():
 
 
 def test_user_create_matching_passwords_is_valid():
-    user = _make_user_create(password="secret123", password_confirm="secret123")
+    user = _make_user_create(password="Secret123!", password_confirm="Secret123!")
 
-    assert user.password == "secret123"
+    assert user.password == "Secret123!"
 
 
 def test_user_create_mismatched_passwords_raises():
     with pytest.raises(ValidationError):
-        _make_user_create(password="secret123", password_confirm="different")
+        _make_user_create(password="Secret123!", password_confirm="Different123!")
 
 
 def test_change_password_matching_passwords_is_valid():

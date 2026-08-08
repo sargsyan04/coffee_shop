@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Management CLI for the Coffee Shop Management System.
 
@@ -115,7 +114,7 @@ def build_parser() -> argparse.ArgumentParser:
     superuser_parser.add_argument(
         "--use-fixture",
         action="store_true",
-        help=("Ignore --email/--password/--name and create the default admin " f"fixture ({get_super_admin_fixture()['email']})."),
+        help=(f"Ignore --email/--password/--name and create the default admin fixture ({get_super_admin_fixture()['email']})."),
     )
     superuser_parser.add_argument(
         "--force",

@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from src.core import db_session
 from src.core.enums import OrderStatus
 from src.models import Order, OrderItem, Product, User
 from src.schemas import OrderResponse, OrderStatusUpdate
-from src.services import calculate_bonus_points
+from src.services import build_order_response, calculate_bonus_points
 from src.validators import (
     get_current_active_user,
     get_order_or_404,
@@ -32,11 +33,12 @@ async def get_my_orders(
             Order.user_id == current_user.id,
             Order.status != OrderStatus.CREATED,
         )
+        .options(selectinload(Order.items).selectinload(OrderItem.product))
         .order_by(Order.created_at.desc())
     )
 
     orders = await session.scalars(stmt)
-    return orders.all()
+    return [build_order_response(order) for order in orders.all()]
 
 
 @router.get("/{order_id}", response_model=OrderResponse)
@@ -45,7 +47,8 @@ async def get_order_details(
     current_user: User = Depends(get_current_active_user),
     session: AsyncSession = Depends(db_session),
 ):
-    return await get_order_or_404(session, order_id, current_user)
+    order = await get_order_or_404(session, order_id, current_user)
+    return build_order_response(order)
 
 
 @router.post("/{order_id}/cancel", response_model=OrderResponse)
@@ -61,8 +64,14 @@ async def cancel_order(
     order.status = OrderStatus.CANCELLED
 
     await session.commit()
-    await session.refresh(order)
-    return order
+
+    # commit() expires `order`, so re-select by the plain order_id int
+    # (not by re-calling get_order_or_404, which would touch the now-also
+    # -expired current_user) with items/product eager-loaded for the response
+    stmt = select(Order).where(Order.id == order_id).options(selectinload(Order.items).selectinload(OrderItem.product))
+    order = await session.scalar(stmt)
+
+    return build_order_response(order)
 
 
 # Staff-Facing Endpoints (baristas & admins)
@@ -75,10 +84,15 @@ async def get_all_active_orders(
 ):
     # Only orders staff currently needs to act on:
     # paid (ready to start), in progress, or ready for pickup
-    stmt = select(Order).where(Order.status.in_((OrderStatus.PAID, OrderStatus.IN_PROGRESS, OrderStatus.READY))).order_by(Order.created_at.asc())
+    stmt = (
+        select(Order)
+        .where(Order.status.in_((OrderStatus.PAID, OrderStatus.IN_PROGRESS, OrderStatus.READY)))
+        .options(selectinload(Order.items).selectinload(OrderItem.product))
+        .order_by(Order.created_at.asc())
+    )
 
     orders = await session.scalars(stmt)
-    return orders.all()
+    return [build_order_response(order) for order in orders.all()]
 
 
 @router.patch("/{order_id}/status", response_model=OrderResponse)
@@ -119,6 +133,11 @@ async def update_order_status(
     order.status = payload.status
 
     await session.commit()
-    await session.refresh(order)
 
-    return order
+    # same reason as in cancel_order: re-select by order_id with items
+    # eager-loaded instead of session.refresh(order), which doesn't load
+    # relationships and would leave `order` expired for build_order_response
+    stmt = select(Order).where(Order.id == order_id).options(selectinload(Order.items).selectinload(OrderItem.product))
+    order = await session.scalar(stmt)
+
+    return build_order_response(order)

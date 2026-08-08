@@ -1,4 +1,3 @@
-from ast import stmt
 from decimal import Decimal
 
 from fastapi import HTTPException, status
@@ -6,10 +5,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-
 from src.core import OrderStatus
 from src.models import Order, OrderItem, Product
-from src.schemas import GuestCheckoutRequest
+from src.schemas import GuestCheckoutRequest, OrderItemResponse, OrderResponse
 
 
 async def get_product(session: AsyncSession, product_id: int):
@@ -82,7 +80,7 @@ async def get_or_create_cart(session: AsyncSession, user_id: int) -> Order:
     order = await session.scalar(stmt)
 
     if order is not None:
-        return order
+        return await _heal_missing_prices(session, order)
 
     new_order = Order(
         user_id=user_id,
@@ -96,77 +94,125 @@ async def get_or_create_cart(session: AsyncSession, user_id: int) -> Order:
 
     stmt = select(Order).where(Order.id == new_order.id).options(selectinload(Order.items).selectinload(OrderItem.product))
 
-    cart =  await session.scalar(stmt)
+    cart = await session.scalar(stmt)
 
     return cart
 
 
-async def add_item_to_cart(session: AsyncSession, user_id: int, quantity: int, product_id: int) -> (
-        Order):
-    """
-    TODO:
-    - get_or_create_cart(session, user_id)
-    - load Product by product_id, 404 if missing, 409 if not is_available
-    - if product already in cart items -> increase quantity
-      else -> create new OrderItem with price_at_order = product.price
-    - call recalculate_cart_total and commit
-    """
+# Self-heals cart items left with price_at_order = NULL, e.g. rows added
+# to the DB before add_item_to_cart was setting that field. Without this,
+# an old cart just keeps crashing GET /cart/ with `NoneType * int` forever,
+# since nothing else ever fixes the stored row. Only touches the DB (and
+# only re-selects) when it actually finds something to fix.
+async def _heal_missing_prices(session: AsyncSession, order: Order) -> Order:
+    order_id = order.id
+    dirty = False
 
-    cart = await get_or_create_cart(session, user_id)
+    for item in order.items:
+        if item.price_at_order is None and item.product is not None:
+            item.price_at_order = item.product.price
+            dirty = True
 
-    _ = await get_product(session, product_id)
+    if not dirty:
+        return order
 
-    order_item = OrderItem(
-        product_id=product_id,
-        quantity=quantity,
-        order_id=cart.id
-    )
-
-    session.add(order_item)
     await session.commit()
-    await session.refresh(order_item)
 
+    stmt = select(Order).where(Order.id == order_id).options(selectinload(Order.items).selectinload(OrderItem.product))
+
+    return await session.scalar(stmt)
+
+
+async def add_item_to_cart(session: AsyncSession, user_id: int, quantity: int, product_id: int) -> Order:
+    cart = await get_or_create_cart(session, user_id)
+    cart_id = cart.id
+    product = await get_product(session, product_id)
+
+    existing_item = next((item for item in cart.items if item.product_id == product_id), None)
+
+    if existing_item is not None:
+        existing_item.quantity += quantity
+    else:
+        session.add(
+            OrderItem(
+                order_id=cart.id,
+                product_id=product_id,
+                quantity=quantity,
+                price_at_order=product.price,
+            )
+        )
+
+    await session.commit()
+
+    return await recalculate_cart_total(session, cart_id)
 
 
 async def update_item_quantity(session: AsyncSession, user_id: int, item_id: int, quantity: int) -> Order:
-    """
-    TODO:
-    - load current user's cart, find item_id in it, 404 if not found/not owned
-    - update quantity, recalculate_cart_total, commit
-    """
+    cart = await get_or_create_cart(session, user_id)
+    cart_id = cart.id
+
+    item = next((i for i in cart.items if i.id == item_id), None)
+    if item is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found in cart")
+
+    item.quantity = quantity
+
+    await session.commit()
+
+    return await recalculate_cart_total(session, cart_id)
 
 
 async def remove_item_from_cart(session: AsyncSession, user_id: int, item_id: int) -> Order:
-    """
-    TODO:
-    - load current user's cart, find item_id in it, 404 if not found/not owned
-    - delete the item, recalculate_cart_total, commit
-    """
+    cart = await get_or_create_cart(session, user_id)
+    cart_id = cart.id
+
+    item = next((i for i in cart.items if i.id == item_id), None)
+    if item is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found in cart")
+
+    cart.items.remove(item)
+    await session.delete(item)
+    await session.commit()
+
+    return await recalculate_cart_total(session, cart_id)
 
 
-async def recalculate_cart_total(session: AsyncSession, order: Order) -> Order:
-    """
-    TODO:
-    - sum item.price * item.quantity across order.items
-    - assign to order.total_price
-    - commit and return the refreshed order
-    """
+# Takes an order_id (not an Order instance) on purpose: every caller here
+# has just called session.commit(), which expires ORM objects still held
+# in that session (expire_on_commit=True) - accessing order.id on an
+# expired instance triggers a lazy-load outside of an awaited call and
+# raises MissingGreenlet. An id is a plain int and can't go stale.
+async def recalculate_cart_total(session: AsyncSession, order_id: int) -> Order:
+    stmt = select(Order).where(Order.id == order_id).options(selectinload(Order.items).selectinload(OrderItem.product))
+    order = await session.scalar(stmt)
 
-    cart = await get_or_create_cart(session, order.user_id)
+    order.total_price = sum(
+        (item.price_at_order * item.quantity for item in order.items),
+        start=Decimal(0),
+    )
 
-    item_prices = []
+    await session.commit()
+    await session.refresh(order, attribute_names=["items"])
 
-    for item in cart.items:
-        product = await get_product(session, item.product_id)
+    return order
 
-        item_prices.append(product.price * item.quantity)
 
-    return sum(item_prices)
+async def checkout_cart_for_user(session: AsyncSession, user_id: int) -> Order:
+    stmt = (
+        select(Order)
+        .where(Order.user_id == user_id, Order.status == OrderStatus.CREATED)
+        .options(selectinload(Order.items).selectinload(OrderItem.product))
+        .with_for_update()
+    )
+    order = await session.scalar(stmt)
+
+    if order is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found")
+
+    return await checkout_cart(session, order)
 
 
 async def checkout_cart(session: AsyncSession, order: Order) -> Order:
-
-
     if not order.items:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -191,13 +237,7 @@ async def checkout_cart(session: AsyncSession, order: Order) -> Order:
 
     await session.commit()
 
-    stmt = (
-        select(Order)
-            .where(Order.id == order_id)
-            .options(
-                selectinload(Order.items).selectinload(OrderItem.product)
-        )
-    )
+    stmt = select(Order).where(Order.id == order_id).options(selectinload(Order.items).selectinload(OrderItem.product))
 
     order = await session.scalar(stmt)
 
@@ -233,13 +273,7 @@ async def guest_checkout_service(
 
         session.add(order_item)
 
-    stmt = (
-        select(Order)
-        .where(Order.id == order.id)
-        .options(
-            selectinload(Order.items).selectinload(OrderItem.product)
-        )
-    )
+    stmt = select(Order).where(Order.id == order.id).options(selectinload(Order.items).selectinload(OrderItem.product))
 
     order = await session.scalar(stmt)
 
@@ -252,8 +286,6 @@ async def guest_checkout_service(
 
     return build_order_response(order)
 
-
-from src.schemas import OrderResponse, OrderItemResponse
 
 def build_order_response(order: Order) -> OrderResponse:
     return OrderResponse(

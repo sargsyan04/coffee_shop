@@ -1,13 +1,13 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
-from pathlib import Path
 
-from src.core import session_factory, settings, RequestLoggingMiddleware, setup_logging
+from src.core import RequestLoggingMiddleware, session_factory, settings, setup_logging
 from src.fixtures import load_super_admin
 from src.routers import (
     admin_router,
@@ -17,9 +17,9 @@ from src.routers import (
     order_router,
     product_router,
     review_router,
+    tag_router,
     user_router,
 )
-
 
 setup_logging()
 
@@ -69,7 +69,7 @@ app.add_middleware(
 )
 
 # app.mount("/media", StaticFiles(directory="media"), name="media")
-    
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 app.mount(
@@ -80,6 +80,7 @@ app.mount(
 
 
 # Root Endpoint & Router Registration
+
 
 @app.get("/")
 async def root():
@@ -94,7 +95,7 @@ app.include_router(order_router)
 app.include_router(cart_router)
 app.include_router(guest_cart_router)
 app.include_router(review_router)
-
+app.include_router(tag_router)
 
 if __name__ == "__main__":
     uvicorn.run("src.main:app", host="127.0.0.1", port=8080, reload=True)

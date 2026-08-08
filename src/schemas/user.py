@@ -4,7 +4,7 @@ from decimal import Decimal
 from pydantic import BaseModel, ConfigDict, EmailStr, model_validator
 
 from src.core import UserRole
-from src.schemas.common import EmailNormalizerMixin
+from src.schemas.common import EmailNormalizerMixin, PasswordComplexityMixin
 from src.schemas.review import ReviewResponse
 
 # Shared Fields
@@ -21,7 +21,7 @@ class UserBase(BaseModel, EmailNormalizerMixin):
 # Registration & Profile
 
 
-class UserCreate(UserBase):
+class UserCreate(UserBase, PasswordComplexityMixin):
     password: str
     password_confirm: str
     force_new: bool = False
@@ -115,22 +115,12 @@ class UserStatusResponse(BaseModel):
 
 
 class AdminUserResponse(UserResponse):
-    # Deactivated accounts whose grace period expired get their email
-    # overwritten with an auto-generated placeholder (see the grace-period
-    # cleanup in routers/user/registration.py) so a new account can reclaim
-    # the real address. Older placeholders in the DB predate the current
-    # (email-safe) format and aren't guaranteed to be valid emails, so this
-    # listing can't enforce EmailStr the way UserResponse does elsewhere.
     email: str
 
 
-# Powers the "Подробнее" popup on the admin Users page — see the
-# policy docstring on get_user_stats in routers/admin.py.
 class AdminUserStatsResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    # Breakdown of spend per order status (e.g. {"paid": ..., "completed": ...}),
-    # excludes draft/CREATED orders — see get_user_stats in routers/admin.py.
     orders: dict[str, Decimal]
     total_spent: Decimal
     reviews: list[ReviewResponse]
@@ -139,8 +129,6 @@ class AdminUserStatsResponse(BaseModel):
 
 
 class UserRoleUpdate(BaseModel):
-    # Typed as UserRole (not str) so an invalid value like "super_admin"
-    # is rejected with a 422 here, rather than reaching the DB layer.
     role: UserRole
 
 

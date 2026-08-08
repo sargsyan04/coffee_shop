@@ -1,5 +1,8 @@
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from sqlalchemy import select
+import math
+from typing import Literal
+
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -7,9 +10,18 @@ from src.core import db_session, delete_image, save_image
 from src.models import Tag
 from src.models.category import Category
 from src.models.product import Product
+from src.schemas.common import Page
 from src.schemas.product import ProductCreate, ProductResponse
 
 router = APIRouter(prefix="/products", tags=["Products"])
+
+# Maps the public `sort_by` query value to the column it orders by.
+PRODUCT_SORT_COLUMNS = {
+    "name": Product.name,
+    "price": Product.price,
+    "rating": Product.average_rating,
+    "popularity": Product.sold_count,
+}
 
 
 @router.post("/create", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
@@ -47,16 +59,40 @@ async def create_product(
     return product
 
 
-@router.get("/", response_model=list[ProductResponse])
-async def get_products(db: AsyncSession = Depends(db_session)):
+@router.get("/", response_model=Page[ProductResponse])
+async def get_products(
+    db: AsyncSession = Depends(db_session),
+    sort_by: Literal["name", "price", "rating", "popularity"] = Query("name", description="Field to sort the menu by."),
+    order: Literal["asc", "desc"] = Query("asc", description="Sort direction."),
+    page: int = Query(1, ge=1, description="1-indexed page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
+):
+    column = PRODUCT_SORT_COLUMNS[sort_by]
+    direction = column.asc() if order == "asc" else column.desc()
+
+    total = await db.scalar(select(func.count()).select_from(Product))
+    total = total or 0
+    total_pages = math.ceil(total / page_size) if total else 0
+
     result = await db.execute(
-        select(Product).options(
+        select(Product)
+        .options(
             selectinload(Product.category),
             selectinload(Product.tags),
         )
+        .order_by(direction, Product.id.asc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
     )
     products = result.scalars().all()
-    return products
+
+    return Page(
+        items=products,
+        total=total,
+        page=page,
+        page_size=page_size,
+        total_pages=total_pages,
+    )
 
 
 @router.get("/{product_id}", response_model=ProductResponse)
@@ -81,19 +117,14 @@ async def upload_product_image(
     file: UploadFile = File(...),
     session: AsyncSession = Depends(db_session),
 ):
-    stmt = (
-        select(Product)
-        .options(selectinload(Product.category), selectinload(Product.tags))
-        .where(Product.id == product_id)
-    )
+    stmt = select(Product).options(selectinload(Product.category), selectinload(Product.tags)).where(Product.id == product_id)
     product = await session.scalar(stmt)
 
     if product is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
 
     delete_image(product.image_url)
-    product.image_url = save_image(file, filename_prefix="Product", entity_id=product_id,
-                                   folder="products")
+    product.image_url = save_image(file, filename_prefix="Product", entity_id=product_id, folder="products")
 
     await session.commit()
     await session.refresh(product)
