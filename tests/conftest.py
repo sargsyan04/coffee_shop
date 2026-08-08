@@ -13,7 +13,6 @@ os.environ.setdefault("DB_PASSWORD", "pytest")
 os.environ.setdefault("DB_NAME", "pytest")
 os.environ.setdefault("MAIL_FROM", "test@example.com")
 
-import pytest
 import pytest_asyncio
 from sqlalchemy import BIGINT
 from sqlalchemy import DateTime as SADateTime
@@ -23,9 +22,9 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.types import TypeDecorator
 
-from src.models.base import BaseModel
 import src.models  # noqa: F401 - registers the models on BaseModel.metadata
 from src.models import Order, Product, User
+from src.models.base import BaseModel
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 

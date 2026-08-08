@@ -13,7 +13,6 @@ from src.validators.auth import (
     validate_password,
 )
 
-
 # Registration Helpers
 
 

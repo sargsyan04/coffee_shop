@@ -4,7 +4,7 @@ import pytest
 from fastapi import HTTPException
 
 from src.core.enums import VerificationTokenType
-from src.models import RefreshToken, VerificationToken
+from src.models import VerificationToken
 from src.schemas import RefreshTokenRequest
 from src.services.auth import (
     ACCESS_TOKEN_TYPE,
@@ -19,7 +19,6 @@ from src.services.auth import (
     verify_email_code,
     verify_token,
 )
-
 
 # Password Hashing
 

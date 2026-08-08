@@ -1,4 +1,4 @@
-""" 
+"""
 TODO — Guest (unauthenticated) checkout.
 
 Not registered in src/main.py on purpose — wire it up yourself once the
@@ -35,16 +35,15 @@ Things you'll need to decide before implementing:
     reuse the same rendering path as the logged-in checkout flow.
 """
 
-from fastapi import APIRouter, HTTPException, status, Request, Depends
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.session import get_or_create_guest_session_id
 from src.core import db_session
-from src.validators.auth import get_optional_current_user
+from src.core.session import get_or_create_guest_session_id
 from src.models import User
 from src.schemas import GuestCheckoutRequest, OrderResponse
 from src.services import guest_checkout_service
-
+from src.validators.auth import get_optional_current_user
 
 router = APIRouter(prefix="/cart/guest", tags=["Guest Cart"])
 
@@ -57,10 +56,10 @@ async def guest_checkout(
     session: AsyncSession = Depends(db_session),
 ):
     if current_user:
-     raise HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        detail="This endpoint is only for guests.",
-    )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This endpoint is only for guests.",
+        )
 
     guest_session_id = get_or_create_guest_session_id(request)
 
@@ -70,4 +69,4 @@ async def guest_checkout(
         guest_session_id=guest_session_id,
         # TODO: Use guest_session_id to reconnect guest carts
         # during the same browser session.
-) 
+    )
