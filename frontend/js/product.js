@@ -51,95 +51,69 @@ function renderProduct(product) {
         .join("")}</div>`
     : "";
 
+  extendBreadcrumb(product);
+
   container.innerHTML = `
-    <div class="detail-image-wrap">
-      <img src="${imageUrl}" alt="${product.name}" class="detail-image">
-    </div>
-    <div class="detail-info">
-      <p class="detail-eyebrow">О товаре</p>
-      ${categoryHtml}
-      <h1 class="detail-name">${product.name}</h1>
-      ${renderRatingSummary(product)}
-      ${descriptionHtml}
-      ${tagsHtml}
-      <p class="detail-price" id="detail-price"></p>
-      <div class="detail-quantity">
-        <button type="button" class="qty-button" id="qty-decrease" aria-label="Уменьшить количество">−</button>
-        <span id="qty-value">1</span>
-        <button type="button" class="qty-button" id="qty-increase" aria-label="Увеличить количество">+</button>
+    <div class="detail-gallery">
+      <div class="detail-image-wrap">
+        <img src="${imageUrl}" alt="${product.name}" class="detail-image">
       </div>
-      <button class="detail-add-button" type="button" id="add-to-cart-button">Добавить в корзину</button>
-
-      ${renderAdditionalInfoAccordion(product)}
     </div>
-
-    <div class="reviews-section">
-      <h2 class="reviews-heading">
-        Отзывы
-        <span class="reviews-count" id="reviews-count"></span>
-      </h2>
-      <div id="reviews-list" class="reviews-list">
-        <p class="reviews-loading-text">Загрузка отзывов...</p>
+    <div class="detail-main">
+      <div class="detail-info">
+        ${categoryHtml}
+        <h1 class="detail-name">${product.name}</h1>
+        ${renderRatingSummary(product)}
+        ${descriptionHtml}
+        ${tagsHtml}
+        <p class="detail-price" id="detail-price"></p>
+        <div class="detail-quantity">
+          <button type="button" class="qty-button" id="qty-decrease" aria-label="Уменьшить количество">−</button>
+          <span id="qty-value">1</span>
+          <button type="button" class="qty-button" id="qty-increase" aria-label="Увеличить количество">+</button>
+        </div>
+        <button class="detail-add-button" type="button" id="add-to-cart-button">Добавить в корзину</button>
       </div>
-      <div id="review-form-slot"></div>
+
+      <div class="reviews-section">
+        <h2 class="reviews-heading">
+          Отзывы
+          <span class="reviews-count" id="reviews-count"></span>
+        </h2>
+        <div id="reviews-list" class="reviews-list">
+          <p class="reviews-loading-text">Загрузка отзывов...</p>
+        </div>
+        <div id="review-form-slot"></div>
+      </div>
     </div>
   `;
 
   document.title = `${product.name} — Coffee Shop`;
   setupAddToCart(product);
-  setupAccordion();
   loadReviews(product.id);
   setupReviewForm(product.id);
 }
 
-// Additional info accordion (composition, nutrition, etc.)
-//
-// TODO(backend): ProductResponse currently only has name / price /
-// description / category / tags / image_url / rating fields — there's
-// no "composition" field yet. The text below is a placeholder so the
-// section isn't empty; once the field exists on the product model +
-// schema, swap the hardcoded string for `product.composition` (falling
-// back to hiding the accordion item if the field is empty).
-function renderAdditionalInfoAccordion(product) {
-  const items = [
-    {
-      title: "Состав",
-      // TODO(backend): replace with product.composition once it exists
-      body: "Информация о составе появится здесь после того, как поле будет добавлено на бэкенде.",
-    },
-    {
-      title: "Пищевая ценность",
-      // TODO(backend): replace with product.nutrition once it exists
-      body: "Калорийность и БЖУ будут отображаться здесь после добавления соответствующих полей.",
-    },
-  ];
+// Adds the category and product name as extra crumbs after "Меню" —
+// the first crumb is already in the page shell (product.html) since it
+// doesn't depend on the fetched product.
+function extendBreadcrumb(product) {
+  const nav = document.getElementById("breadcrumb");
+  if (!nav) return;
 
-  const itemsHtml = items
-    .map(
-      (item, index) => `
-        <div class="accordion-item" data-index="${index}">
-          <button type="button" class="accordion-trigger">
-            ${escapeHtml(item.title)}
-            <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <div class="accordion-panel">${escapeHtml(item.body)}</div>
-        </div>
-      `
-    )
-    .join("");
+  const categoryCrumb = product.category
+    ? `<span class="breadcrumb-sep" aria-hidden="true">/</span><span class="breadcrumb-current">${escapeHtml(product.category.name)}</span>`
+    : "";
 
-  return `<div class="detail-accordion">${itemsHtml}</div>`;
-}
-
-function setupAccordion() {
-  document.querySelectorAll(".accordion-item").forEach((item) => {
-    const trigger = item.querySelector(".accordion-trigger");
-    trigger.addEventListener("click", () => {
-      item.classList.toggle("open");
-    });
-  });
+  nav.innerHTML = `
+    <a href="catalog.html" class="breadcrumb-link">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Меню
+    </a>
+    ${categoryCrumb}
+  `;
 }
 
 // Basic HTML-escaping for text coming from the API (description, comments) —

@@ -23,7 +23,11 @@
         <p class="header-subtitle">Свежая выпечка, десерты и кофе — каждый день</p>
       </div>
 
-      <!-- Search + category filters — handled client-side, see catalog.js -->
+      <div class="bean-divider" aria-hidden="true"></div>
+
+      <!-- Search + category filters. Chips are built from the loaded
+           products' real categories in catalog.js — "Всё" below is
+           just the loading-state placeholder. -->
       <div class="catalog-controls">
         <label class="search-box" for="search-input">
           <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -33,16 +37,26 @@
           <input type="text" id="search-input" placeholder="Найти в меню..." autocomplete="off">
         </label>
 
-        <!-- TODO: category filtering is only toggled visually for now —
-             real filtering will be wired up once the API exposes a category field -->
         <div class="filter-chips" id="filter-chips">
-          <button class="chip active" data-category="all">Всё</button>
-          <button class="chip" data-category="cakes">Торты</button>
-          <button class="chip" data-category="desserts">Десерты</button>
-          <button class="chip" data-category="coffee">Кофе</button>
-          <button class="chip" data-category="drinks">Напитки</button>
+          <button class="chip active" data-category="all" type="button">Всё</button>
         </div>
+
+        <!-- Sorting is resolved on the backend (GET /products/?sort_by=&order=) —
+             see catalog.js, this control just picks the query params. -->
+        <label class="sort-select" for="sort-select">
+          <span class="sort-select-label">Сортировка</span>
+          <select id="sort-select">
+            <option value="name:asc">По названию А→Я</option>
+            <option value="name:desc">По названию Я→А</option>
+            <option value="price:asc">Сначала дешевле</option>
+            <option value="price:desc">Сначала дороже</option>
+            <option value="rating:desc">По рейтингу</option>
+            <option value="popularity:desc">По популярности</option>
+          </select>
+        </label>
       </div>
+
+      <p class="results-count" id="results-count"></p>
     </header>
 
     <!-- Filled in by catalog.js — loaded from the API on page load -->

@@ -1,3 +1,4 @@
+import math
 import uuid
 from collections import defaultdict
 from decimal import Decimal
@@ -9,7 +10,7 @@ from sqlalchemy.orm import selectinload
 
 from src.core import OrderStatus, UserRole, db_session
 from src.models import Order, User
-from src.schemas import AdminUserResponse, AdminUserStatsResponse, UserResetPassword, UserRoleUpdate
+from src.schemas import AdminUserResponse, AdminUserStatsResponse, Page, UserResetPassword, UserRoleUpdate
 from src.services import hash_password
 from src.validators import require_admin
 
@@ -32,7 +33,7 @@ async def admin_dashboard(current_admin: User = Depends(require_admin)):
 SORTABLE_FIELDS = {"id", "created_at", "orders_count", "total_spent", "reviews_count"}
 
 
-@router.get("/users", response_model=list[AdminUserResponse])
+@router.get("/users", response_model=Page[AdminUserResponse])
 async def list_users(
     search: str | None = Query(None, description="Matches user ID, email or name"),
     role: UserRole | None = Query(None),
@@ -42,6 +43,8 @@ async def list_users(
     has_reviews: bool | None = Query(None),
     sort_by: str = Query("id", description="One of: " + ", ".join(sorted(SORTABLE_FIELDS))),
     sort_order: str = Query("asc", pattern="^(asc|desc)$"),
+    page: int = Query(1, ge=1, description="1-indexed page number"),
+    page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     session: AsyncSession = Depends(db_session),
     _: User = Depends(require_admin),
 ):
@@ -51,18 +54,12 @@ async def list_users(
             detail=f"sort_by must be one of: {', '.join(sorted(SORTABLE_FIELDS))}",
         )
 
-    result = await session.execute(
-        select(User).options(selectinload(User.orders), selectinload(User.reviews))
-    )
+    result = await session.execute(select(User).options(selectinload(User.orders), selectinload(User.reviews)))
     users = list(result.scalars().all())
 
     if search:
         needle = search.strip().lower()
-        users = [
-            user
-            for user in users
-            if needle == str(user.id) or needle in user.email.lower() or needle in user.name.lower()
-        ]
+        users = [user for user in users if needle == str(user.id) or needle in user.email.lower() or needle in user.name.lower()]
     if role is not None:
         users = [user for user in users if user.role == role]
     if is_active is not None:
@@ -91,7 +88,19 @@ async def list_users(
         return user.id
 
     users.sort(key=sort_key, reverse=(sort_order == "desc"))
-    return users
+
+    total = len(users)
+    total_pages = math.ceil(total / page_size) if total else 0
+    start = (page - 1) * page_size
+    page_items = users[start : start + page_size]
+
+    return Page(
+        items=page_items,
+        total=total,
+        page=page,
+        page_size=page_size,
+        total_pages=total_pages,
+    )
 
 
 @router.patch("/users/{user_id}/role", response_model=AdminUserResponse)
@@ -184,16 +193,9 @@ async def get_user_stats(
     orders_count = sum(len(orders) for orders in orders_by_status.values())
 
     money_statuses = {OrderStatus.PAID, OrderStatus.IN_PROGRESS, OrderStatus.READY, OrderStatus.COMPLETED}
-    orders_breakdown = {
-        status_key: sum((order.total_price for order in orders), Decimal("0.00"))
-        for status_key, orders in orders_by_status.items()
-    }
+    orders_breakdown = {status_key: sum((order.total_price for order in orders), Decimal("0.00")) for status_key, orders in orders_by_status.items()}
     total_spent = sum(
-        (
-            total
-            for status_key, total in orders_breakdown.items()
-            if status_key in {s.value for s in money_statuses}
-        ),
+        (total for status_key, total in orders_breakdown.items() if status_key in {s.value for s in money_statuses}),
         Decimal("0.00"),
     )
 

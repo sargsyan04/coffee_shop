@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.12-slim AS base
 
 WORKDIR /app
 
@@ -13,7 +13,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+
+FROM base AS test
+
 COPY . .
+
+ENV SECRET_KEY=test-secret-key-for-ci \
+    DB_HOST=localhost \
+    DB_PASSWORD=test \
+    DB_NAME=test \
+    MAIL_FROM=test@example.com
+
+RUN pytest tests/ -q
+
+FROM base AS production
+
+COPY src ./src
+COPY frontend ./frontend
+COPY migrations ./migrations
+COPY alembic.ini .
 
 EXPOSE 8080
 

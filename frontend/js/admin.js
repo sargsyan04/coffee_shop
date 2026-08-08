@@ -45,9 +45,18 @@ function selectPanelPage(id) {
 
 const categoryForm = document.getElementById("category-form");
 const categoryFormStatus = document.getElementById("category-form-status");
+const categoriesTableBody = document.getElementById("categories-table-body");
+
+const tagForm = document.getElementById("tag-form");
+const tagFormStatus = document.getElementById("tag-form-status");
+const tagsTableBody = document.getElementById("tags-table-body");
+
 const productForm = document.getElementById("product-form");
 const productFormStatus = document.getElementById("product-form-status");
 const productCategorySelect = document.getElementById("product-category");
+const productImageInput = document.getElementById("product-image");
+const productTagsCheckboxes = document.getElementById("product-tags-checkboxes");
+const productsTableBody = document.getElementById("products-table-body");
 
 const usersTableBody = document.getElementById("users-table-body");
 const usersFormStatus = document.getElementById("users-form-status");
@@ -97,21 +106,50 @@ document.addEventListener("coffeeshop:auth", (event) => {
   renderPanelNav();
   selectPanelPage("dashboard");
   loadOrderQueue("order-queue");
-  loadCategoriesIntoSelect();
+  loadCategories();
+  loadTags();
+  loadProducts();
   loadUsers();
 });
 
-async function loadCategoriesIntoSelect() {
+// Categories — list + create
+
+async function loadCategories() {
   try {
     const categories = await apiRequest("/categories/");
-    categories.forEach((category) => {
-      const option = document.createElement("option");
-      option.value = category.id;
-      option.textContent = category.name;
-      productCategorySelect.appendChild(option);
-    });
-  } catch {
-    // Non-critical — the "no category" option still works fine without this.
+    renderCategoriesTable(categories);
+    populateCategorySelect(categories);
+  } catch (error) {
+    categoriesTableBody.innerHTML = `<tr><td colspan="2" class="users-empty">${escapeHtml(error.message)}</td></tr>`;
+  }
+}
+
+function renderCategoriesTable(categories) {
+  if (categories.length === 0) {
+    categoriesTableBody.innerHTML = '<tr><td colspan="2" class="users-empty">Категорий пока нет</td></tr>';
+    return;
+  }
+
+  categoriesTableBody.innerHTML = categories
+    .map((category) => `<tr><td class="users-id-cell">${category.id}</td><td>${escapeHtml(category.name)}</td></tr>`)
+    .join("");
+}
+
+// Keeps whatever the admin already had selected in the product form
+// (if it still exists) when the option list gets refreshed after a create.
+function populateCategorySelect(categories) {
+  const previousValue = productCategorySelect.value;
+
+  productCategorySelect.innerHTML = '<option value="">Без категории</option>';
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category.id;
+    option.textContent = category.name;
+    productCategorySelect.appendChild(option);
+  });
+
+  if (previousValue && categories.some((category) => String(category.id) === previousValue)) {
+    productCategorySelect.value = previousValue;
   }
 }
 
@@ -126,31 +164,153 @@ categoryForm.addEventListener("submit", async (event) => {
     });
     showToast("Категория создана", "success");
     categoryForm.reset();
-    loadCategoriesIntoSelect();
+    loadCategories();
   } catch (error) {
     categoryFormStatus.textContent = error.message;
     categoryFormStatus.hidden = false;
   }
 });
 
+// Tags — list + create
+
+async function loadTags() {
+  try {
+    const tags = await apiRequest("/tags/");
+    renderTagsTable(tags);
+    renderProductTagCheckboxes(tags);
+  } catch (error) {
+    tagsTableBody.innerHTML = `<tr><td colspan="3" class="users-empty">${escapeHtml(error.message)}</td></tr>`;
+  }
+}
+
+function renderTagsTable(tags) {
+  if (tags.length === 0) {
+    tagsTableBody.innerHTML = '<tr><td colspan="3" class="users-empty">Тегов пока нет</td></tr>';
+    return;
+  }
+
+  tagsTableBody.innerHTML = tags
+    .map(
+      (tag) => `<tr><td class="users-id-cell">${tag.id}</td><td>${escapeHtml(tag.name)}</td><td>${escapeHtml(tag.slug ?? "")}</td></tr>`
+    )
+    .join("");
+}
+
+// Renders the tag checkbox list inside the product form — kept in sync
+// whenever tags are (re)loaded, so a freshly created tag is selectable
+// for a product right away without a page reload.
+function renderProductTagCheckboxes(tags) {
+  if (tags.length === 0) {
+    productTagsCheckboxes.innerHTML = '<p class="users-empty">Тегов пока нет — создайте их в разделе «Теги».</p>';
+    return;
+  }
+
+  productTagsCheckboxes.innerHTML = tags
+    .map(
+      (tag) => `
+      <label class="checkbox-item">
+        <input type="checkbox" name="product-tag" value="${tag.id}">
+        ${escapeHtml(tag.name)}
+      </label>
+    `
+    )
+    .join("");
+}
+
+tagForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  tagFormStatus.hidden = true;
+
+  try {
+    await apiRequest("/tags/", {
+      method: "POST",
+      body: JSON.stringify({ name: document.getElementById("tag-name").value }),
+    });
+    showToast("Тег создан", "success");
+    tagForm.reset();
+    loadTags();
+  } catch (error) {
+    tagFormStatus.textContent = error.message;
+    tagFormStatus.hidden = false;
+  }
+});
+
+// Products — list + create
+
+async function loadProducts() {
+  try {
+    const page = await apiRequest("/products/");
+    renderProductsTable(page.items);
+  } catch (error) {
+    productsTableBody.innerHTML = `<tr><td colspan="5" class="users-empty">${escapeHtml(error.message)}</td></tr>`;
+  }
+}
+
+function renderProductsTable(products) {
+  if (products.length === 0) {
+    productsTableBody.innerHTML = '<tr><td colspan="5" class="users-empty">Товаров пока нет</td></tr>';
+    return;
+  }
+
+  productsTableBody.innerHTML = products
+    .map((product) => {
+      const thumb = product.image_url
+        ? `<img class="data-table-thumb" src="${resolveImageUrl(product.image_url)}" alt="">`
+        : '<span class="data-table-thumb-placeholder">—</span>';
+
+      const tags =
+        product.tags && product.tags.length
+          ? `<div class="tag-chip-list">${product.tags.map((tag) => `<span class="tag-chip">${escapeHtml(tag.name)}</span>`).join("")}</div>`
+          : '<span class="tag-chip-empty">—</span>';
+
+      return `
+        <tr>
+          <td>${thumb}</td>
+          <td>${escapeHtml(product.name)}</td>
+          <td>${product.price} ֏</td>
+          <td>${product.category ? escapeHtml(product.category.name) : "—"}</td>
+          <td>${tags}</td>
+        </tr>
+      `;
+    })
+    .join("");
+}
+
 productForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   productFormStatus.hidden = true;
 
   const categoryId = productCategorySelect.value;
+  const tagIds = Array.from(productTagsCheckboxes.querySelectorAll('input[name="product-tag"]:checked')).map((checkbox) =>
+    Number(checkbox.value)
+  );
+  const imageFile = productImageInput.files[0] || null;
 
   try {
-    await apiRequest("/products/create", {
+    const created = await apiRequest("/products/create", {
       method: "POST",
       body: JSON.stringify({
         name: document.getElementById("product-name").value,
         price: document.getElementById("product-price").value,
         category_id: categoryId ? Number(categoryId) : null,
-        tag_ids: [],
+        tag_ids: tagIds,
       }),
     });
+
+    // Image upload is a separate endpoint (POST /products/{id}/image) — run
+    // it only once the product actually exists, and don't fail the whole
+    // submission if just the photo upload has a problem.
+    if (imageFile) {
+      try {
+        await apiUploadFile(`/products/${created.id}/image`, imageFile);
+      } catch {
+        showToast("Товар создан, но фото загрузить не удалось", "error");
+      }
+    }
+
     showToast("Товар создан", "success");
     productForm.reset();
+    loadProducts();
   } catch (error) {
     productFormStatus.textContent = error.message;
     productFormStatus.hidden = false;
@@ -173,8 +333,8 @@ async function loadUsers() {
   params.set("sort_order", usersSortOrderBtn.dataset.order);
 
   try {
-    const users = await apiRequest(`/admin/users?${params.toString()}`);
-    renderUsersTable(users);
+    const page = await apiRequest(`/admin/users?${params.toString()}`);
+    renderUsersTable(page.items);
   } catch (error) {
     usersTableBody.innerHTML = "";
     usersFormStatus.textContent = error.message;

@@ -55,3 +55,17 @@ body {
   width: 32px;
   height: 32px;
 }
+
+/* ============================================================
+   Signature motif — a "bean leader" rule, styled after the dotted
+   price-leader lines on a printed café menu. Reused across the
+   catalog and product-detail pages as the shared visual thread.
+   ============================================================ */
+.bean-divider {
+  height: 5px;
+  background-image: radial-gradient(circle, var(--color-primary-light) 1.6px, transparent 1.7px);
+  background-size: 15px 5px;
+  background-repeat: repeat-x;
+  background-position: left center;
+  opacity: 0.55;
+}
