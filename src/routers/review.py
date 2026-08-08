@@ -12,39 +12,22 @@ router = APIRouter(prefix="/review", tags=["Reviews"])
 
 
 @router.get("/user_reviews", response_model=list[ReviewResponse])
-async def get_my_reviews(
-        current_user: User = Depends(get_current_active_user),
-        session: AsyncSession = Depends(db_session)
-):
-    stmt = (
-        select(Review)
-        .where(Review.user_id == current_user.id)
-        .options(selectinload(Review.product))
-    )
+async def get_my_reviews(current_user: User = Depends(get_current_active_user), session: AsyncSession = Depends(db_session)):
+    stmt = select(Review).where(Review.user_id == current_user.id).options(selectinload(Review.product))
     result = await session.scalars(stmt)
     return result.all()
 
 
 @router.get("/{product_id}/product_reviews", response_model=list[ReviewResponse])
-async def get_product_reviews(
-        product_id: int,
-        session: AsyncSession = Depends(db_session)
-):
-    stmt = (
-        select(Review)
-        .where(Review.product_id == product_id)
-        .options(selectinload(Review.product))
-    )
+async def get_product_reviews(product_id: int, session: AsyncSession = Depends(db_session)):
+    stmt = select(Review).where(Review.product_id == product_id).options(selectinload(Review.product))
     result = await session.scalars(stmt)
     return result.all()
 
 
 @router.post("/{product_id}", response_model=ReviewResponse)
 async def create_review(
-        product_id: int,
-        payload: ReviewCreate,
-        current_user: User = Depends(get_current_active_user),
-        session: AsyncSession = Depends(db_session)
+    product_id: int, payload: ReviewCreate, current_user: User = Depends(get_current_active_user), session: AsyncSession = Depends(db_session)
 ):
     stmt = select(Product).where(Product.id == product_id)
     product = await session.scalar(stmt)
@@ -52,12 +35,7 @@ async def create_review(
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    review = Review(
-        user_id=current_user.id,
-        product_id=product.id,
-        rating=payload.rating,
-        comment=payload.comment
-    )
+    review = Review(user_id=current_user.id, product_id=product.id, rating=payload.rating, comment=payload.comment)
 
     session.add(review)
     await session.commit()

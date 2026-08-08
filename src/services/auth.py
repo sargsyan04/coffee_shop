@@ -163,14 +163,14 @@ async def generate_tokens(session: AsyncSession, user: User) -> dict:
         "token_type": "bearer",
     }
 
+
 async def get_refresh_token_record(payload: RefreshTokenRequest, session: AsyncSession):
     jwt_payload = verify_token(payload.refresh_token, REFRESH_TOKEN_TYPE)
 
     token_id = jwt_payload.get("jti")
 
     if not token_id:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Invalid refresh token")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
 
     stmt = select(RefreshToken).where(RefreshToken.token == token_id)
     result = await session.execute(stmt)
