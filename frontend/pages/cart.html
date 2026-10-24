@@ -41,30 +41,51 @@
             </aside>
         </div>
 
-        <!-- Guest checkout — collects contact details before calling the
-             (not-yet-implemented) guest checkout endpoint, see js/cart.js -->
+        <!-- Guest checkout — collects contact details, then calls
+             POST /cart/guest/checkout (see js/cart.js) -->
         <div class="modal-overlay" id="guest-checkout-overlay" hidden>
-            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="guest-checkout-title">
+            <div class="modal guest-modal" role="dialog" aria-modal="true" aria-labelledby="guest-checkout-title">
                 <button type="button" class="modal-close" id="guest-checkout-close" aria-label="Закрыть">&times;</button>
-                <h2 id="guest-checkout-title">Контактные данные</h2>
-                <p class="modal-hint">Понадобятся, чтобы передать заказ и связаться с вами.</p>
 
-                <form class="auth_form" id="guest-checkout-form" novalidate>
-                    <div class="form_group">
+                <div class="guest-modal-head">
+                    <span class="guest-modal-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4.5 9.5h12.5v4.7a5 5 0 0 1-5 5h-2.5a5 5 0 0 1-5-5V9.5Z"/>
+                            <path d="M17 10.7h1.3a2.4 2.4 0 0 1 0 4.8H17"/>
+                            <path d="M7.3 6.3c.3-.9 1.2-1 1.2-1.9s-.9-1-.9-1.9M11.3 6.3c.3-.9 1.2-1 1.2-1.9s-.9-1-.9-1.9"/>
+                        </svg>
+                    </span>
+                    <h2 id="guest-checkout-title">Оформление заказа</h2>
+                    <p class="guest-modal-sub">Оставьте контакты — так мы сообщим, когда заказ будет готов.</p>
+                </div>
+
+                <div class="guest-summary">
+                    <span id="guest-summary-count"></span>
+                    <strong id="guest-summary-total"></strong>
+                </div>
+
+                <form class="guest-form" id="guest-checkout-form" novalidate>
+                    <div class="guest-field">
                         <label for="guest-name">Имя</label>
-                        <input type="text" id="guest-name" name="guest-name" required>
+                        <input type="text" id="guest-name" name="guest-name" placeholder="Как к вам обращаться" autocomplete="name" required>
                     </div>
-                    <div class="form_group">
+                    <div class="guest-field">
                         <label for="guest-phone">Телефон</label>
-                        <input type="tel" id="guest-phone" name="guest-phone" required>
+                        <input type="tel" id="guest-phone" name="guest-phone" placeholder="+374 00 000000" autocomplete="tel" required>
                     </div>
-                    <div class="form_group">
+                    <div class="guest-field">
                         <label for="guest-email">Email <span class="optional_label">(необязательно)</span></label>
-                        <input type="email" id="guest-email" name="guest-email">
+                        <input type="email" id="guest-email" name="guest-email" placeholder="name@example.com" autocomplete="email">
                     </div>
 
-                    <button type="submit" class="button_s sign_in full_width">Оплатить и оформить</button>
-                    <p class="form_status" id="guest-checkout-status" hidden></p>
+                    <p class="guest-status" id="guest-checkout-status" role="alert" hidden></p>
+
+                    <button type="submit" class="guest-submit" id="guest-submit">
+                        <span>Оплатить и оформить</span>
+                        <span class="guest-submit-total" id="guest-submit-total"></span>
+                    </button>
+
+                    <p class="guest-login-hint">Уже есть аккаунт? <a href="login.html">Войти</a> — и копите бонусы за заказы.</p>
                 </form>
             </div>
         </div>

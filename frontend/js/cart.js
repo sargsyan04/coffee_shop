@@ -33,7 +33,7 @@ function renderItems(items, total) {
   cartLayout.hidden = false;
 
   cartItemsList.innerHTML = items.map((item) => `
-    <li class="cart-item" data-product-id="${item.product_id}">
+    <li class="cart-item" data-product-id="${item.product_id}" data-item-id="${item.item_id ?? ""}">
       <div class="cart-item-info">
         <span class="cart-item-name">${item.name}</span>
         <span class="cart-item-price">${formatPrice(item.price)} × ${item.quantity}</span>
@@ -54,16 +54,18 @@ function renderItems(items, total) {
 function bindItemControls() {
   cartItemsList.querySelectorAll(".cart-item").forEach((row) => {
     const productId = Number(row.dataset.productId);
+    // Backend cart endpoints address a line by its own id, not by product id
+    const itemId = row.dataset.itemId ? Number(row.dataset.itemId) : null;
     const currentQty = Number(row.querySelector(".cart-item-qty").textContent);
 
     row.querySelector('[data-action="increase"]').addEventListener("click", () => {
-      updateQuantity(productId, currentQty + 1, row);
+      updateQuantity(productId, itemId, currentQty + 1);
     });
     row.querySelector('[data-action="decrease"]').addEventListener("click", () => {
-      updateQuantity(productId, currentQty - 1, row);
+      updateQuantity(productId, itemId, currentQty - 1);
     });
     row.querySelector('[data-action="remove"]').addEventListener("click", () => {
-      removeItem(productId, row);
+      removeItem(productId, itemId);
     });
   });
 }
@@ -89,6 +91,7 @@ async function loadAccountCart() {
   try {
     const cart = await apiRequest("/cart/");
     const items = (cart.items || []).map((item) => ({
+      item_id: item.id,
       product_id: item.product_id,
       name: item.product_name,
       price: item.unit_price,
@@ -108,9 +111,9 @@ async function loadAccountCart() {
 
 // --- Quantity / removal ---------------------------------------------------
 
-async function updateQuantity(productId, newQuantity, row) {
+async function updateQuantity(productId, itemId, newQuantity) {
   if (newQuantity < 1) {
-    return removeItem(productId, row);
+    return removeItem(productId, itemId);
   }
 
   if (isGuest()) {
@@ -120,20 +123,18 @@ async function updateQuantity(productId, newQuantity, row) {
   }
 
   try {
-    // NOTE: PATCH /cart/items/{id} is currently a 501 stub on the backend —
-    // once it's implemented this will just work.
-    await apiRequest(`/cart/items/${productId}`, {
+    await apiRequest(`/cart/items/${itemId}`, {
       method: "PATCH",
       body: JSON.stringify({ quantity: newQuantity }),
     });
     await loadAccountCart();
     updateCartBadge();
   } catch (error) {
-    showToast("Изменение количества пока не реализовано на сервере", "info");
+    showToast(error.message, "error");
   }
 }
 
-async function removeItem(productId, row) {
+async function removeItem(productId, itemId) {
   if (isGuest()) {
     removeFromGuestCart(productId);
     loadGuestCart();
@@ -141,12 +142,11 @@ async function removeItem(productId, row) {
   }
 
   try {
-    // NOTE: DELETE /cart/items/{id} is currently a 501 stub on the backend.
-    await apiRequest(`/cart/items/${productId}`, { method: "DELETE" });
+    await apiRequest(`/cart/items/${itemId}`, { method: "DELETE" });
     await loadAccountCart();
     updateCartBadge();
   } catch (error) {
-    showToast("Удаление позиции пока не реализовано на сервере", "info");
+    showToast(error.message, "error");
   }
 }
 
@@ -154,7 +154,7 @@ async function removeItem(productId, row) {
 
 async function handleCheckout() {
   if (isGuest()) {
-    guestOverlay.hidden = false;
+    openGuestCheckout();
     return;
   }
 
@@ -170,37 +170,76 @@ async function handleCheckout() {
   }
 }
 
-guestOverlay.addEventListener("click", (event) => {
-  if (event.target === guestOverlay) guestOverlay.hidden = true;
-});
-document.getElementById("guest-checkout-close").addEventListener("click", () => {
+// Guest checkout popup
+
+const guestSubmit = document.getElementById("guest-submit");
+
+function pluralizePositions(count) {
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+  if (mod10 === 1 && mod100 !== 11) return `${count} позиция`;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `${count} позиции`;
+  return `${count} позиций`;
+}
+
+function openGuestCheckout() {
+  const total = formatPrice(guestCartTotal());
+
+  document.getElementById("guest-summary-count").textContent = `В заказе: ${pluralizePositions(getGuestCart().length)}`;
+  document.getElementById("guest-summary-total").textContent = total;
+  document.getElementById("guest-submit-total").textContent = total;
+
+  guestStatus.hidden = true;
+  guestOverlay.hidden = false;
+  document.getElementById("guest-name").focus();
+}
+
+function closeGuestCheckout() {
   guestOverlay.hidden = true;
+}
+
+guestOverlay.addEventListener("click", (event) => {
+  if (event.target === guestOverlay) closeGuestCheckout();
 });
+document.getElementById("guest-checkout-close").addEventListener("click", closeGuestCheckout);
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !guestOverlay.hidden) closeGuestCheckout();
+});
+
+function showGuestError(message) {
+  guestStatus.textContent = message;
+  guestStatus.hidden = false;
+}
 
 guestForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   guestStatus.hidden = true;
 
+  const name = document.getElementById("guest-name").value.trim();
+  const phone = document.getElementById("guest-phone").value.trim();
+  const email = document.getElementById("guest-email").value.trim();
+
+  if (!name || !phone) {
+    showGuestError("Укажите имя и телефон — без них мы не сможем передать заказ.");
+    return;
+  }
+
   const payload = {
     items: getGuestCart().map((item) => ({ product_id: item.product_id, quantity: item.quantity })),
-    contact: {
-      name: document.getElementById("guest-name").value,
-      phone: document.getElementById("guest-phone").value,
-      email: document.getElementById("guest-email").value || null,
-    },
+    contact: { name, phone, email: email || null },
   };
 
+  // Blocks double submits — otherwise a double click creates two orders
+  guestSubmit.disabled = true;
+
   try {
-    // NOTE: this endpoint is a TODO stub on the backend for now
-    // (see src/routers/guest_cart.py) — it will 501 until implemented.
     await apiRequest("/cart/guest/checkout", { method: "POST", body: JSON.stringify(payload) });
     clearGuestCart();
     setFlashMessage("Заказ оформлен! Мы свяжемся с вами для подтверждения.", "success");
     window.location.href = "index.html";
   } catch (error) {
-    guestStatus.textContent =
-      "Оформление заказа без аккаунта пока недоступно. Пожалуйста, войдите или зарегистрируйтесь, чтобы завершить оплату — корзина сохранится.";
-    guestStatus.hidden = false;
+    showGuestError(error.message);
+    guestSubmit.disabled = false;
   }
 });
 

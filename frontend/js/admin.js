@@ -10,12 +10,16 @@ const panelPageTitle = document.getElementById("panel-page-title");
 const PANEL_PAGES = [
   { id: "dashboard", icon: "icon-dashboard", label: "Дашборд" },
   { id: "users", icon: "icon-users", label: "Пользователи" },
-  { id: "products", icon: "icon-products", label: "Продукты" },
+  { id: "products", icon: "icon-products", label: "Товары" },
   { id: "categories", icon: "icon-categories", label: "Категории" },
   { id: "tags", icon: "icon-tags", label: "Теги" },
   { id: "orders", icon: "icon-orders", label: "Заказы" },
   { id: "stats", icon: "icon-stats", label: "Статистика" },
 ];
+
+// Sections register a loader here (see admin_orders.js / admin_stats.js) —
+// it runs every time the section is opened, so data is always fresh
+const PANEL_PAGE_HOOKS = {};
 
 function renderPanelNav() {
   panelNavList.innerHTML = PANEL_PAGES.map(
@@ -41,6 +45,10 @@ function selectPanelPage(id) {
   const page = PANEL_PAGES.find((p) => p.id === id);
   panelPageEyebrow.textContent = "Админ-панель";
   panelPageTitle.textContent = page.label;
+
+  if (typeof PANEL_PAGE_HOOKS[id] === "function") {
+    PANEL_PAGE_HOOKS[id]();
+  }
 }
 
 const categoryForm = document.getElementById("category-form");
@@ -104,12 +112,11 @@ document.addEventListener("coffeeshop:auth", (event) => {
   currentAdminId = user.id;
   panelContent.hidden = false;
   renderPanelNav();
-  selectPanelPage("dashboard");
-  loadOrderQueue("order-queue");
   loadCategories();
   loadTags();
   loadProducts();
   loadUsers();
+  selectPanelPage("dashboard");
 });
 
 // Categories — list + create
@@ -276,6 +283,57 @@ function renderProductsTable(products) {
     .join("");
 }
 
+// New product popup
+
+const productModalOverlay = document.getElementById("product-modal-overlay");
+const productImagePreview = document.getElementById("product-image-preview");
+const productImageText = document.getElementById("product-image-text");
+
+function resetProductImagePreview() {
+  productImagePreview.hidden = true;
+  productImagePreview.src = "";
+  productImageText.hidden = false;
+}
+
+function openProductModal() {
+  productFormStatus.hidden = true;
+  productModalOverlay.hidden = false;
+  document.getElementById("product-name").focus();
+}
+
+function closeProductModal() {
+  productModalOverlay.hidden = true;
+  productForm.reset();
+  resetProductImagePreview();
+}
+
+document.getElementById("product-add-btn").addEventListener("click", openProductModal);
+document.getElementById("product-modal-close").addEventListener("click", closeProductModal);
+document.getElementById("product-modal-cancel").addEventListener("click", closeProductModal);
+productModalOverlay.addEventListener("click", (event) => {
+  if (event.target === productModalOverlay) closeProductModal();
+});
+
+// Live preview of the chosen photo inside the popup's drop area
+productImageInput.addEventListener("change", () => {
+  const file = productImageInput.files[0];
+  if (!file) {
+    resetProductImagePreview();
+    return;
+  }
+  productImagePreview.src = URL.createObjectURL(file);
+  productImagePreview.hidden = false;
+  productImageText.hidden = true;
+});
+
+// Escape closes whichever popup is open
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  if (!productModalOverlay.hidden) closeProductModal();
+  if (!tempPasswordModalOverlay.hidden) closeTempPasswordModal();
+  if (!userDetailsModalOverlay.hidden) closeUserDetailsModal();
+});
+
 productForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   productFormStatus.hidden = true;
@@ -309,7 +367,7 @@ productForm.addEventListener("submit", async (event) => {
     }
 
     showToast("Товар создан", "success");
-    productForm.reset();
+    closeProductModal();
     loadProducts();
   } catch (error) {
     productFormStatus.textContent = error.message;
