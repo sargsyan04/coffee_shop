@@ -1,19 +1,15 @@
 """
-TODO — Guest (unauthenticated) checkout.
+Guest (unauthenticated) checkout.
 
-Not registered in src/main.py on purpose — wire it up yourself once the
-logic below is implemented, same as the rest of the backend.
-
-Context: the frontend now lets a visitor build a cart entirely client-side
-(localStorage, see frontend/js/cart-store.js) before creating an account —
-add/update/remove all work with zero backend calls. The only step that
-still needs a real endpoint is finishing the order, because today every
-route in src/routers/cart.py and src/routers/order.py requires
+The frontend lets a visitor build a cart entirely client-side
+(localStorage, see frontend/js/cart_store.js) before creating an account —
+add/update/remove need no backend calls. The only step that needs a real
+endpoint is finishing the order, because every route in
+src/routers/cart.py and src/routers/order.py requires
 get_current_active_user.
 
-frontend/js/cart.js already calls the endpoint below and handles a 501
-gracefully (it tells the guest to log in / register instead), so nothing
-on the frontend needs to change once this is implemented.
+frontend/js/cart.js calls the endpoint below and shows the error message
+from the response if the order cannot be placed.
 
 Expected request, sent by frontend/js/cart.js on guest checkout:
 
@@ -67,6 +63,6 @@ async def guest_checkout(
         session=session,
         payload=payload,
         guest_session_id=guest_session_id,
-        # TODO: Use guest_session_id to reconnect guest carts
+        # guest_session_id can be used later to reconnect guest carts
         # during the same browser session.
     )

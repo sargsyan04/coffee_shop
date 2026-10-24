@@ -74,11 +74,21 @@
                 <h1 class="panel-title" id="panel-page-title">Дашборд</h1>
             </div>
 
-            <!-- Landing section — will hold real summary stats next -->
+            <!-- Landing section: summary cards filled by js/admin_stats.js -->
             <section class="panel-page" id="panel-page-dashboard" data-panel-page="dashboard">
-                <div class="panel-placeholder">
-                    Сводная статистика появится здесь на следующем шаге.
+                <div class="stat-grid" id="dashboard-cards"></div>
+
+                <div class="dash-columns">
+                    <div class="dash-card">
+                        <h2 class="panel-subheading">Заказы сегодня по статусам</h2>
+                        <div id="dashboard-statuses"></div>
+                    </div>
+                    <div class="dash-card">
+                        <h2 class="panel-subheading">Популярные товары сегодня</h2>
+                        <div id="dashboard-top-products"></div>
+                    </div>
                 </div>
+                <p class="form_status" id="dashboard-notice" hidden></p>
             </section>
 
             <section class="panel-page" id="panel-page-users" data-panel-page="users" hidden>
@@ -150,56 +160,29 @@
             </section>
 
             <section class="panel-page" id="panel-page-products" data-panel-page="products" hidden>
-                <div class="panel-subsection">
-                    <h2 class="panel-subheading">Товары</h2>
-                    <div class="data-table-wrap">
-                        <table class="data-table" id="products-table">
-                            <thead>
-                                <tr>
-                                    <th>Фото</th>
-                                    <th>Название</th>
-                                    <th>Цена</th>
-                                    <th>Категория</th>
-                                    <th>Теги</th>
-                                </tr>
-                            </thead>
-                            <tbody id="products-table-body">
-                                <tr><td colspan="5" class="users-loading">Загрузка...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="panel-toolbar">
+                    <h2 class="panel-subheading panel-toolbar-title">Товары</h2>
+                    <button type="button" class="btn-add" id="product-add-btn">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                        Добавить товар
+                    </button>
                 </div>
 
-                <div class="panel-subsection">
-                    <h2 class="panel-subheading">Новый товар</h2>
-                    <form class="panel-form" id="product-form" novalidate>
-                        <div class="form_group">
-                            <label for="product-name">Название</label>
-                            <input type="text" id="product-name" name="product-name" required>
-                        </div>
-                        <div class="form_group">
-                            <label for="product-price">Цена, ֏</label>
-                            <input type="number" id="product-price" name="product-price" min="1" step="1" required>
-                        </div>
-                        <div class="form_group">
-                            <label for="product-category">Категория</label>
-                            <select id="product-category" name="product-category">
-                                <option value="">Без категории</option>
-                            </select>
-                        </div>
-                        <div class="form_group">
-                            <label for="product-image">Фото (необязательно)</label>
-                            <input type="file" id="product-image" name="product-image" accept="image/*">
-                        </div>
-                        <div class="form_group full_row">
-                            <label>Теги</label>
-                            <div class="checkbox-grid" id="product-tags-checkboxes">
-                                <p class="users-empty" id="product-tags-empty">Тегов пока нет — создайте их в разделе «Теги».</p>
-                            </div>
-                        </div>
-                        <button type="submit" class="button_s sign_in full_row" style="width:fit-content;">Создать товар</button>
-                        <p class="form_status full_row" id="product-form-status" hidden></p>
-                    </form>
+                <div class="data-table-wrap">
+                    <table class="data-table" id="products-table">
+                        <thead>
+                            <tr>
+                                <th>Фото</th>
+                                <th>Название</th>
+                                <th>Цена</th>
+                                <th>Категория</th>
+                                <th>Теги</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body">
+                            <tr><td colspan="5" class="users-loading">Загрузка...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
@@ -266,15 +249,95 @@
                 </div>
             </section>
 
-            <!-- Same order queue baristas see — admins can act on it too -->
+            <!-- Read-only order history. Admins only look at orders here;
+                 taking an order into work is the barista's job (staff.html). -->
             <section class="panel-page" id="panel-page-orders" data-panel-page="orders" hidden>
-                <ul class="queue-list" id="order-queue"></ul>
+                <div class="users-toolbar">
+                    <label class="search-box" for="orders-search">
+                        <input type="text" id="orders-search" placeholder="Поиск по № заказа, имени или телефону" autocomplete="off">
+                    </label>
+
+                    <select id="orders-filter-status" title="Статус заказа">
+                        <option value="">Статус</option>
+                        <option value="paid">Оплачен</option>
+                        <option value="in_progress">Готовится</option>
+                        <option value="ready">Готов к выдаче</option>
+                        <option value="completed">Завершён</option>
+                        <option value="cancelled">Отменён</option>
+                    </select>
+
+                    <select id="orders-filter-payment" title="Способ оплаты">
+                        <option value="">Оплата</option>
+                        <option value="online">Онлайн</option>
+                        <option value="cash">Наличными</option>
+                    </select>
+
+                    <select id="orders-sort-by" title="Сортировка">
+                        <option value="created_at">По дате</option>
+                        <option value="total_price">По сумме</option>
+                        <option value="id">По номеру</option>
+                    </select>
+
+                    <button type="button" class="btn-secondary" id="orders-sort-order" data-order="desc" title="Направление сортировки">По убыванию</button>
+                </div>
+
+                <div class="users-table-wrap">
+                    <table class="users-table" id="orders-table">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Дата</th>
+                                <th>Клиент</th>
+                                <th>Сумма</th>
+                                <th>Оплата</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <tr><td colspan="7" class="users-loading">Загрузка...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pager" id="orders-pager" hidden>
+                    <button type="button" class="btn-secondary" id="orders-prev">← Назад</button>
+                    <span class="pager-info" id="orders-pager-info"></span>
+                    <button type="button" class="btn-secondary" id="orders-next">Вперёд →</button>
+                </div>
+                <p class="form_status full_row" id="orders-form-status" hidden></p>
             </section>
 
             <section class="panel-page" id="panel-page-stats" data-panel-page="stats" hidden>
-                <div class="panel-placeholder">
-                    Раздел «Статистика» — следующий шаг.
+                <div class="panel-toolbar">
+                    <h2 class="panel-subheading panel-toolbar-title">Показатели за период</h2>
+                    <div class="queue-filter-tabs" id="stats-period-tabs" role="tablist" aria-label="Период">
+                        <button type="button" class="queue-filter-btn" data-period="today">Сегодня</button>
+                        <button type="button" class="queue-filter-btn active" data-period="7d">7 дней</button>
+                        <button type="button" class="queue-filter-btn" data-period="30d">30 дней</button>
+                        <button type="button" class="queue-filter-btn" data-period="90d">90 дней</button>
+                        <button type="button" class="queue-filter-btn" data-period="all">Всё время</button>
+                    </div>
                 </div>
+
+                <div class="stat-grid" id="stats-cards"></div>
+
+                <div class="dash-card dash-card-wide">
+                    <h2 class="panel-subheading">Выручка по дням</h2>
+                    <div id="stats-chart"></div>
+                </div>
+
+                <div class="dash-columns">
+                    <div class="dash-card">
+                        <h2 class="panel-subheading">Заказы по статусам</h2>
+                        <div id="stats-statuses"></div>
+                    </div>
+                    <div class="dash-card">
+                        <h2 class="panel-subheading">Топ товаров</h2>
+                        <div id="stats-top-products"></div>
+                    </div>
+                </div>
+                <p class="form_status" id="stats-notice" hidden></p>
             </section>
         </main>
     </div>
@@ -337,11 +400,71 @@
         </div>
     </div>
 
+    <!-- New product popup — opened by the "Добавить товар" button above the table -->
+    <div class="modal-overlay" id="product-modal-overlay" hidden>
+        <div class="modal modal-form" id="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-title">
+            <button type="button" class="modal-close" id="product-modal-close" aria-label="Закрыть">&times;</button>
+            <h2 id="product-modal-title">Новый товар</h2>
+            <p class="modal-text">Заполните данные — товар сразу появится в каталоге.</p>
+
+            <form class="modal-form-grid" id="product-form" novalidate>
+                <div class="form_group full_row">
+                    <label for="product-name">Название</label>
+                    <input type="text" id="product-name" name="product-name" placeholder="Например, Латте с карамелью" required>
+                </div>
+                <div class="form_group">
+                    <label for="product-price">Цена, ֏</label>
+                    <input type="number" id="product-price" name="product-price" min="1" step="1" placeholder="1200" required>
+                </div>
+                <div class="form_group">
+                    <label for="product-category">Категория</label>
+                    <select id="product-category" name="product-category">
+                        <option value="">Без категории</option>
+                    </select>
+                </div>
+                <div class="form_group full_row">
+                    <label for="product-image">Фото <span class="optional_label">(необязательно)</span></label>
+                    <label class="file-drop" for="product-image" id="product-image-drop">
+                        <img class="file-drop-preview" id="product-image-preview" src="" alt="" hidden>
+                        <span class="file-drop-text" id="product-image-text">Нажмите, чтобы выбрать изображение</span>
+                    </label>
+                    <input type="file" id="product-image" name="product-image" accept="image/*" hidden>
+                </div>
+                <div class="form_group full_row">
+                    <label>Теги</label>
+                    <div class="checkbox-grid" id="product-tags-checkboxes">
+                        <p class="users-empty" id="product-tags-empty">Тегов пока нет — создайте их в разделе «Теги».</p>
+                    </div>
+                </div>
+
+                <p class="form_status full_row" id="product-form-status" hidden></p>
+
+                <div class="modal-actions full_row">
+                    <button type="button" class="btn-secondary" id="product-modal-cancel">Отмена</button>
+                    <button type="submit" class="button_s sign_in">Создать товар</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order details popup — opened by "Подробнее" in the orders table -->
+    <div class="modal-overlay" id="order-details-modal-overlay" hidden>
+        <div class="modal modal-wide" id="order-details-modal" role="dialog" aria-modal="true" aria-labelledby="order-details-title">
+            <button type="button" class="modal-close" id="order-details-close" aria-label="Закрыть">&times;</button>
+            <div class="order-detail-head">
+                <h2 id="order-details-title">Заказ</h2>
+                <span class="badge" id="order-details-status"></span>
+            </div>
+            <div id="order-details-body"></div>
+        </div>
+    </div>
+
     <script src="../js/api.js"></script>
     <script src="../js/toast.js"></script>
     <script src="../js/layout.js"></script>
     <script src="../js/cart_store.js"></script>
-    <script src="../js/order_queue.js"></script>
     <script src="../js/admin.js"></script>
+    <script src="../js/admin_orders.js"></script>
+    <script src="../js/admin_stats.js"></script>
 </body>
 </html>

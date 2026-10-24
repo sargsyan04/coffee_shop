@@ -80,7 +80,9 @@ function renderOrderCard(order) {
         <span class="queue-total">${order.total_price} ֏</span>
         <span class="queue-date">${formatOrderDate(order.created_at)}</span>
       </div>
-      ${action ? `<button type="button" class="btn-queue-advance" data-next-status="${action.next}">${action.label}</button>` : ""}
+      <div class="queue-action-slot">
+        ${action ? `<button type="button" class="btn-queue-advance" data-next-status="${action.next}">${action.label}</button>` : ""}
+      </div>
     </li>
   `;
 }

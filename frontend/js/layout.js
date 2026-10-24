@@ -29,11 +29,12 @@ function renderGuestActions() {
 // as requested: customers get their profile, staff/admins get a link to
 // their own panel instead (they still reach the profile page too).
 function renderAccountActions(user) {
+  const staffLink = `<a href="staff.html" class="btn-nav btn-nav-ghost">Панель сотрудника</a>`;
   const panelLink =
     user.role === "admin"
-      ? `<a href="admin.html" class="btn-nav btn-nav-ghost">Админ-панель</a>`
+      ? `<a href="admin.html" class="btn-nav btn-nav-ghost">Админ-панель</a>${staffLink}`
       : user.role === "barista"
-        ? `<a href="staff.html" class="btn-nav btn-nav-ghost">Панель сотрудника</a>`
+        ? staffLink
         : "";
 
   const roleTag = user.role !== "customer" ? `<span class="nav-role-tag">${roleLabel(user.role)}</span>` : "";
