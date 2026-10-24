@@ -192,9 +192,20 @@ async def recalculate_cart_total(session: AsyncSession, order_id: int) -> Order:
     )
 
     await session.commit()
-    await session.refresh(order, attribute_names=["items"])
 
-    return order
+    # commit() expires every attribute of `order` (expire_on_commit=True in
+    # production), and refresh(attribute_names=["items"]) would only reload
+    # the items - status/total_price/created_at would stay expired and blow
+    # up with MissingGreenlet in build_order_response. Re-select the whole
+    # order instead, forcing a full reload of the already-tracked instance.
+    stmt = (
+        select(Order)
+        .where(Order.id == order_id)
+        .options(selectinload(Order.items).selectinload(OrderItem.product))
+        .execution_options(populate_existing=True)
+    )
+
+    return await session.scalar(stmt)
 
 
 async def checkout_cart_for_user(session: AsyncSession, user_id: int) -> Order:
@@ -277,12 +288,10 @@ async def guest_checkout_service(
 
     order = await session.scalar(stmt)
 
+    # checkout_cart() already returns a freshly selected order with items and
+    # products eager-loaded; refreshing "items" again would drop that eager
+    # load and make item.product lazy -> MissingGreenlet.
     order = await checkout_cart(session, order)
-
-    await session.refresh(
-        order,
-        attribute_names=["items"],
-    )
 
     return build_order_response(order)
 
