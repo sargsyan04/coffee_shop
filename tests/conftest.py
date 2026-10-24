@@ -139,3 +139,22 @@ async def product_factory(db_session):
         return product
 
     return _make_product
+
+
+@pytest_asyncio.fixture
+async def prod_like_session_factory():
+    """Session factory configured like production (expire_on_commit=True).
+
+    The default db_session fixture uses expire_on_commit=False, which hides
+    MissingGreenlet bugs (attributes read after commit()). Use this factory
+    for service tests that must behave like the real app.
+    """
+    engine = create_async_engine(TEST_DATABASE_URL, poolclass=StaticPool)
+    engine.sync_engine.dialect.colspecs[SADateTime] = _UTCDateTime
+
+    async with engine.begin() as conn:
+        await conn.run_sync(BaseModel.metadata.create_all)
+
+    yield async_sessionmaker(engine)
+
+    await engine.dispose()
