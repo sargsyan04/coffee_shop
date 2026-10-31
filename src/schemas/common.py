@@ -10,6 +10,11 @@ class MessageResponse(BaseModel):
     detail: str
 
 
+class HealthResponse(BaseModel):
+    status: str
+    database: str
+
+
 class Page(BaseModel, Generic[T]):
     items: list[T]
     total: int
