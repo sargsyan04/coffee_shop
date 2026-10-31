@@ -30,6 +30,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   tests:
     build:

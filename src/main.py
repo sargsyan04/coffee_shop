@@ -14,6 +14,7 @@ from src.routers import (
     cart_router,
     category_router,
     guest_cart_router,
+    health_router,
     order_router,
     product_router,
     review_router,
@@ -83,6 +84,7 @@ async def root():
     return {"status": "ok", "message": "Coffee Shop API is running"}
 
 
+app.include_router(health_router)
 app.include_router(user_router)
 app.include_router(category_router)
 app.include_router(product_router)
