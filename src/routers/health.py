@@ -16,7 +16,7 @@ router = APIRouter(tags=["Health"])
 async def health(session: AsyncSession = Depends(db_session)):
     try:
         await asyncio.wait_for(session.execute(text("SELECT 1")), timeout=3)
-    except (SQLAlchemyError, OSError, TimeoutError):
+    except SQLAlchemyError, OSError, TimeoutError:
         return JSONResponse(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             content={"status": "degraded", "database": "down"},

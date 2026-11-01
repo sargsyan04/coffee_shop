@@ -16,4 +16,4 @@ class Category(BaseModel):
     name: Mapped[str] = mapped_column(String(120), unique=True)
 
     # Relationships
-    products: Mapped[list["Product"]] = relationship(back_populates="category")
+    products: Mapped[list[Product]] = relationship(back_populates="category")

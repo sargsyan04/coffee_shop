@@ -16,7 +16,7 @@ class Tag(BaseModel):
     slug: Mapped[str] = mapped_column(String(50), unique=True)
 
     # Relationships
-    products: Mapped[list["Product"]] = relationship(
+    products: Mapped[list[Product]] = relationship(
         secondary=product_tag_association,
         back_populates="tags",
     )

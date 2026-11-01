@@ -20,8 +20,8 @@ class Review(BaseModel, DateMixin):
 
     # User
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user: Mapped["User"] = relationship(back_populates="reviews")
+    user: Mapped[User] = relationship(back_populates="reviews")
 
     # Product
     product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
-    product: Mapped["Product"] = relationship(back_populates="reviews")
+    product: Mapped[Product] = relationship(back_populates="reviews")

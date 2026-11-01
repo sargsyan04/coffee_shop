@@ -1,9 +1,6 @@
 import re
-from typing import Generic, TypeVar
 
 from pydantic import BaseModel, field_validator
-
-T = TypeVar("T")
 
 
 class MessageResponse(BaseModel):
@@ -15,7 +12,7 @@ class HealthResponse(BaseModel):
     database: str
 
 
-class Page(BaseModel, Generic[T]):
+class Page[T](BaseModel):
     items: list[T]
     total: int
     page: int

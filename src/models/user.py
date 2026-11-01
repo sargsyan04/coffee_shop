@@ -43,13 +43,13 @@ class User(BaseModel):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships
-    orders: Mapped[list["Order"]] = relationship(back_populates="user")
-    reviews: Mapped[list["Review"]] = relationship(back_populates="user")
-    refresh_tokens: Mapped[list["RefreshToken"]] = relationship(
+    orders: Mapped[list[Order]] = relationship(back_populates="user")
+    reviews: Mapped[list[Review]] = relationship(back_populates="user")
+    refresh_tokens: Mapped[list[RefreshToken]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
     )
-    verification_tokens: Mapped[list["VerificationToken"]] = relationship(
+    verification_tokens: Mapped[list[VerificationToken]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
     )

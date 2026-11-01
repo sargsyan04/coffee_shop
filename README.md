@@ -1,84 +1,84 @@
 # Coffee Shop
 
-Бэкенд для кофейни на FastAPI: каталог напитков, корзина и заказы, аутентификация по JWT, роли (клиент / бариста / админ), бонусные баллы за заказы, отзывы на товары и загрузка изображений. Плюс простой фронтенд на HTML/CSS/JS, который со всем этим работает.
+A coffee shop backend built with FastAPI: a drinks catalog, cart and orders, JWT authentication, roles (customer / barista / admin), bonus points for orders, product reviews and image uploads. It also includes a simple HTML/CSS/JS frontend that works with all of it.
 
-## Что внутри
+## Features
 
-- Регистрация с подтверждением email кодом, вход/выход, refresh-токены
-- Восстановление пароля и повторная активация аккаунта (мягкое удаление вместо физического, с периодом на восстановление)
-- Каталог: категории, товары, теги, загрузка фото товара, пагинация и сортировка списка товаров
-- Корзина и оформление заказа, статусы заказа (created → paid → in_progress → ready → completed / cancelled)
-- Панель для бариста — очередь активных заказов, смена статуса
-- Панель администратора — пользователи (поиск, фильтры, сортировка, пагинация), роли, сброс пароля, базовая статистика по клиенту
-- Бонусные баллы: процент от суммы заказа (ставка растёт вместе с суммой), надбавка за большой заказ и разовый бонус за первый завершённый заказ
-- Отзывы на товары
+- Registration with an email confirmation code, login/logout, refresh tokens
+- Password recovery and account reactivation (soft delete instead of physical deletion, with a grace period for restoring the account)
+- Catalog: categories, products, tags, product photo upload, pagination and sorting of the product list
+- Cart and checkout, order statuses (created → paid → in_progress → ready → completed / cancelled)
+- Barista panel: queue of active orders, status changes
+- Admin panel: users (search, filters, sorting, pagination), roles, password reset, basic per-customer statistics
+- Bonus points: a percentage of the order total (the rate grows with the total), a bonus for large orders and a one-time bonus for the first completed order
+- Product reviews
 
-## Стек
+## Tech stack
 
 - **FastAPI** + Pydantic v2
-- **SQLAlchemy 2.0** (async) + **Alembic** для миграций
+- **SQLAlchemy 2.0** (async) + **Alembic** for migrations
 - **PostgreSQL**
-- JWT (PyJWT) + bcrypt для авторизации
-- fastapi-mail для писем с кодом подтверждения (Jinja-шаблон в `src/templates`)
-- Pillow — обработка загружаемых изображений
-- Фронтенд — обычные HTML/CSS/JS-страницы без фреймворков, ходят в API через `fetch`
+- JWT (PyJWT) + bcrypt for authentication
+- fastapi-mail for confirmation code emails (Jinja template in `src/templates`)
+- Pillow for processing uploaded images
+- Frontend: plain HTML/CSS/JS pages without frameworks, talking to the API via `fetch`
 
-## Структура
+## Project structure
 
 ```
 src/
-  core/        # конфиг, сессия БД, enum'ы, логирование, работа с файлами
-  models/      # модели SQLAlchemy
-  schemas/     # Pydantic-схемы
-  routers/     # эндпоинты FastAPI
-  services/    # бизнес-логика (авторизация, корзина, бонусы, письма)
-  validators/  # зависимости FastAPI (текущий пользователь, роли, проверки)
-  fixtures/    # тестовые/начальные данные, создание админа
-  manage.py    # CLI: загрузка фикстур, создание суперпользователя
+  core/        # config, DB session, enums, logging, file handling
+  models/      # SQLAlchemy models
+  schemas/     # Pydantic schemas
+  routers/     # FastAPI endpoints
+  services/    # business logic (auth, cart, bonuses, emails)
+  validators/  # FastAPI dependencies (current user, roles, checks)
+  fixtures/    # sample/initial data, admin creation
+  manage.py    # CLI: loading fixtures, creating a superuser
 frontend/
-  pages/       # HTML-страницы
-  css/ js/     # стили и логика
-alembic/       # миграции
+  pages/       # HTML pages
+  css/ js/     # styles and logic
+migrations/    # Alembic migrations
 ```
 
-## Запуск
+## Getting started
 
-Через Docker:
+With Docker:
 
 ```bash
 cp .env.example .env
-# заполнить SECRET_KEY, DB_PASSWORD и при желании SMTP-данные для писем
+# fill in SECRET_KEY, DB_PASSWORD and, optionally, SMTP settings for emails
 docker-compose up --build
 ```
 
-API поднимется на `http://localhost:8080`, документация — на `http://localhost:8080/docs`.
+The API starts at `http://localhost:8080`, the documentation is at `http://localhost:8080/docs`.
 
-Без Docker (нужен PostgreSQL, DB_HOST в `.env` должен указывать на него, а не на `db`):
+Without Docker (requires PostgreSQL; `DB_HOST` in `.env` must point to it, not to `db`):
 
 ```bash
 python -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements-dev.txt   # requirements.txt alone is enough to run the app
 alembic upgrade head
-python -m src.manage createsuperuser --use-fixture   # или без --use-fixture, интерактивно
+python -m src.manage createsuperuser --use-fixture   # or without --use-fixture for interactive mode
 uvicorn src.main:app --reload --port 8080
 ```
 
-Фронтенд — статичные файлы в `frontend/`, их достаточно открыть через любой локальный сервер (например, Live Server) и настроить `CORS_ORIGINS` в `.env` под его порт.
+The frontend is a set of static files in `frontend/`. Open them through any local server (for example, Live Server) and set `CORS_ORIGINS` in `.env` to match its port.
 
-### Полезные команды manage.py
+### Useful manage.py commands
 
 ```bash
-python -m src.manage loaddata --models all          # накатить фикстуры
-python -m src.manage loaddata --models all --force   # пересоздать, если уже есть
-python -m src.manage createsuperuser                  # создать админа вручную
+python -m src.manage loaddata --models all          # load fixtures
+python -m src.manage loaddata --models all --force   # recreate if they already exist
+python -m src.manage createsuperuser                  # create an admin manually
 ```
 
-Дефолтный админ (`ADMIN_EMAIL` / `ADMIN_PASSWORD` из `.env`) создаётся автоматически при старте приложения, если в базе ещё нет ни одного администратора.
+The default admin (`ADMIN_EMAIL` / `ADMIN_PASSWORD` from `.env`) is created automatically on application startup if the database has no administrator yet.
 
-## Пагинация
+## Pagination
 
-Списочные эндпоинты (`GET /products/`, `GET /admin/users`) принимают `page` (по умолчанию 1) и `page_size` (по умолчанию 20, максимум 100) и отдают единый формат:
+List endpoints (`GET /products/`, `GET /admin/users`) accept `page` (default 1) and `page_size` (default 20, maximum 100) and return a unified format:
 
 ```json
 {
@@ -90,18 +90,18 @@ python -m src.manage createsuperuser                  # создать адми�
 }
 ```
 
-Список товаров дополнительно поддерживает `sort_by` (`name` / `price` / `rating` / `popularity`) и `order` (`asc` / `desc`); список пользователей — `sort_by` (`id` / `created_at` / `orders_count` / `total_spent` / `reviews_count`), `sort_order` (`asc` / `desc`) и фильтры (`search`, `role`, `is_active`, `is_email_verified`, `has_orders`, `has_reviews`).
+The product list additionally supports `sort_by` (`name` / `price` / `rating` / `popularity`) and `order` (`asc` / `desc`). The user list supports `sort_by` (`id` / `created_at` / `orders_count` / `total_spent` / `reviews_count`), `sort_order` (`asc` / `desc`) and filters (`search`, `role`, `is_active`, `is_email_verified`, `has_orders`, `has_reviews`).
 
-## Роли
+## Roles
 
-- `customer` — обычный клиент
-- `barista` — видит очередь заказов и меняет их статус
-- `admin` — управление пользователями и полный доступ
+- `customer`: a regular customer
+- `barista`: sees the order queue and changes order statuses
+- `admin`: user management and full access
 
-## Известные ограничения
+## Known limitations
 
-Оплата пока заглушка: при оформлении заказ сразу получает статус `paid`. Уведомления в реальном времени, фоновые задачи (Celery + RabbitMQ) и WebSocket — в планах, см. `TODO.md`.
+Payment is currently a stub: an order gets the `paid` status immediately at checkout. Real-time notifications, background tasks (Celery + RabbitMQ) and WebSocket support are planned.
 
-## Лицензия
+## License
 
 MIT
