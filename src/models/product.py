@@ -28,13 +28,13 @@ class Product(BaseModel):
 
     # Category
     category_id: Mapped[int | None] = mapped_column(ForeignKey("categories.id"))
-    category: Mapped["Category"] = relationship(back_populates="products")
+    category: Mapped[Category] = relationship(back_populates="products")
 
     # Tag
-    tags: Mapped[list["Tag"]] = relationship(
+    tags: Mapped[list[Tag]] = relationship(
         secondary=product_tag_association,
         back_populates="products",
     )
 
     # Review
-    reviews: Mapped[list["Review"]] = relationship(back_populates="product")
+    reviews: Mapped[list[Review]] = relationship(back_populates="product")

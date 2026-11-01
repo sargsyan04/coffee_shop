@@ -31,7 +31,7 @@ class ProductResponse(ProductBase):
 
     id: int
     category: CategoryResponse | None = None
-    tags: list["TagResponse"] = []
+    tags: list[TagResponse] = []
     image_url: str | None = None
 
 

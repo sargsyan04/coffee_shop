@@ -38,9 +38,6 @@ exclude = [
 ignore = [
     "E712",
     "B008",
-    # Python 3.14 lets ruff suggest unquoting annotations, but SQLAlchemy models
-    # use quoted forward references like Mapped["User"] for circular relationships
-    "UP037",
 ]
 
 [tool.pytest.ini_options]

@@ -24,7 +24,7 @@ class VerificationToken(BaseModel):
 
     # User
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user: Mapped["User"] = relationship(back_populates="verification_tokens")
+    user: Mapped[User] = relationship(back_populates="verification_tokens")
 
 
 class RefreshToken(BaseModel, DateMixin):
@@ -37,4 +37,4 @@ class RefreshToken(BaseModel, DateMixin):
 
     # User
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    user: Mapped["User"] = relationship(back_populates="refresh_tokens")
+    user: Mapped[User] = relationship(back_populates="refresh_tokens")
