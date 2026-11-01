@@ -1,4 +1,4 @@
-FROM python:3.12-slim AS base
+FROM python:3.14-slim AS base
 
 WORKDIR /app
 
@@ -15,6 +15,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 FROM base AS test
+
+# pytest, ruff and the other dev tools exist only in this stage,
+# so they never reach the production image
+COPY requirements-dev.txt .
+RUN pip install --no-cache-dir -r requirements-dev.txt
 
 COPY . .
 

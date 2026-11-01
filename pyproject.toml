@@ -1,5 +1,22 @@
+[project]
+name = "coffee-shop"
+version = "1.0.0"
+description = "Coffee Shop management system: FastAPI backend with a vanilla JS frontend"
+readme = "README.md"
+requires-python = ">=3.14"
+dynamic = ["dependencies", "optional-dependencies"]
+
+[tool.setuptools]
+# The project is an application, not a library: nothing is built or published
+py-modules = []
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+optional-dependencies = { dev = { file = ["requirements-dev.txt"] } }
+
 [tool.ruff]
 line-length = 150
+target-version = "py314"
 
 exclude = [
     ".venv",
@@ -18,7 +35,13 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-ignore = ["E712", "B008"]
+ignore = [
+    "E712",
+    "B008",
+    # Python 3.14 lets ruff suggest unquoting annotations, but SQLAlchemy models
+    # use quoted forward references like Mapped["User"] for circular relationships
+    "UP037",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
