@@ -41,6 +41,7 @@ def render_email(template_name: str, **context) -> str:
 
 # Email Sending
 
+
 async def send_verification_email(email_to: str, code: str):
     print(f"[DEV] Verification code for {email_to}: {code}")
 

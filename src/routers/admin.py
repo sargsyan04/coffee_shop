@@ -19,12 +19,12 @@ router = APIRouter(prefix="/admin", tags=["Admin"])
 
 # Admin Dashboard
 
+
 @router.get("/dashboard")
 async def admin_dashboard(current_admin: User = Depends(require_admin)):
     return {
         "message": f"Welcome, {current_admin.name}. This is the admin dashboard.",
     }
-
 
 
 # User Management
