@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/toast.css">
     <link rel="stylesheet" href="../css/settings.css">
-    <title>Coffee Shop — Настройки</title>
+    <title>Coffee Shop — Settings</title>
 </head>
 <body>
 
@@ -17,14 +17,14 @@
 
     <main class="settings-main">
 
-        <p class="settings-loading" id="settings-loading">Загрузка...</p>
+        <p class="settings-loading" id="settings-loading">Loading...</p>
 
         <div class="settings-layout" id="settings-content" hidden>
 
-            <a href="profile.html" class="settings-back">← Назад к профилю</a>
+            <a href="profile.html" class="settings-back">← Back to profile</a>
 
             <section class="settings-section" id="avatar-section">
-                <h2>Фото профиля</h2>
+                <h2>Profile photo</h2>
                 <div class="avatar-settings-row">
                     <div class="avatar-preview" id="avatar-preview-button">
                         <span class="avatar-preview-initials" id="avatar-preview-initials">A</span>
@@ -32,57 +32,57 @@
                         <span class="avatar-preview-overlay"></span>
                     </div>
                     <div class="avatar-settings-info">
-                        <p>JPG, PNG или WEBP, до 5 МБ.</p>
-                        <button type="button" class="btn-avatar-upload" id="avatar-upload-button">Загрузить фото</button>
+                        <p>JPG, PNG or WEBP, up to 5 MB.</p>
+                        <button type="button" class="btn-avatar-upload" id="avatar-upload-button">Upload photo</button>
                     </div>
                     <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/webp" hidden>
                 </div>
             </section>
 
             <section class="settings-section" id="personal-section">
-                <h2>Личные данные</h2>
+                <h2>Personal details</h2>
                 <form class="settings-form" id="personal-form" novalidate>
                     <div class="form_group">
                         <label for="email">Email</label>
                         <input type="email" id="email" name="email" disabled>
-                        <span class="field-hint">Email нельзя изменить</span>
+                        <span class="field-hint">Email cannot be changed</span>
                     </div>
                     <div class="form_group">
-                        <label for="name">Имя</label>
+                        <label for="name">Name</label>
                         <input type="text" id="name" name="name" required>
                     </div>
                     <div class="form_group">
-                        <label for="phone">Телефон</label>
+                        <label for="phone">Phone</label>
                         <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__">
                     </div>
                     <div class="form_group">
-                        <label for="address">Адрес</label>
+                        <label for="address">Address</label>
                         <input type="text" id="address" name="address">
                     </div>
                     <div class="form_group">
-                        <label for="birth_date">Дата рождения</label>
+                        <label for="birth_date">Date of birth</label>
                         <input type="date" id="birth_date" name="birth_date">
                     </div>
-                    <button type="submit" class="button_s">Сохранить изменения</button>
+                    <button type="submit" class="button_s">Save changes</button>
                 </form>
             </section>
 
             <section class="settings-section" id="password-section">
-                <h2>Изменить пароль</h2>
+                <h2>Change password</h2>
                 <form class="settings-form" id="password-form" novalidate>
                     <div class="form_group">
-                        <label for="current_password">Текущий пароль</label>
+                        <label for="current_password">Current password</label>
                         <input type="password" id="current_password" name="current_password" placeholder="••••••••" required>
                     </div>
                     <div class="form_group">
-                        <label for="new_password">Новый пароль</label>
+                        <label for="new_password">New password</label>
                         <input type="password" id="new_password" name="new_password" placeholder="••••••••" required>
                     </div>
                     <div class="form_group">
-                        <label for="new_password_confirm">Повторите новый пароль</label>
+                        <label for="new_password_confirm">Repeat new password</label>
                         <input type="password" id="new_password_confirm" name="new_password_confirm" placeholder="••••••••" required>
                     </div>
-                    <button type="submit" class="button_s">Сохранить пароль</button>
+                    <button type="submit" class="button_s">Save password</button>
                 </form>
             </section>
 

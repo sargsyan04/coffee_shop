@@ -19,7 +19,7 @@ function isGuest() {
   return !getAccessToken();
 }
 
-// --- Rendering --------------------------------------------------------
+// Rendering
 
 function renderEmpty() {
   cartLoading.hidden = true;
@@ -39,10 +39,10 @@ function renderItems(items, total) {
         <span class="cart-item-price">${formatPrice(item.price)} × ${item.quantity}</span>
       </div>
       <div class="cart-item-controls">
-        <button type="button" class="qty-button" data-action="decrease" aria-label="Уменьшить количество">−</button>
+        <button type="button" class="qty-button" data-action="decrease" aria-label="Decrease quantity">−</button>
         <span class="cart-item-qty">${item.quantity}</span>
-        <button type="button" class="qty-button" data-action="increase" aria-label="Увеличить количество">+</button>
-        <button type="button" class="cart-item-remove" data-action="remove" aria-label="Удалить">Удалить</button>
+        <button type="button" class="qty-button" data-action="increase" aria-label="Increase quantity">+</button>
+        <button type="button" class="cart-item-remove" data-action="remove" aria-label="Remove">Remove</button>
       </div>
     </li>
   `).join("");
@@ -150,7 +150,7 @@ async function removeItem(productId, itemId) {
   }
 }
 
-// --- Checkout -------------------------------------------------------------
+// Checkout
 
 async function handleCheckout() {
   if (isGuest()) {
@@ -161,7 +161,7 @@ async function handleCheckout() {
   checkoutButton.disabled = true;
   try {
     await apiRequest("/cart/checkout", { method: "POST" });
-    setFlashMessage("Заказ оформлен и оплачен. Спасибо!", "success");
+    setFlashMessage("Order placed and paid. Thank you!", "success");
     window.location.href = "profile.html";
   } catch (error) {
     showToast(error.message, "error");
@@ -175,17 +175,13 @@ async function handleCheckout() {
 const guestSubmit = document.getElementById("guest-submit");
 
 function pluralizePositions(count) {
-  const mod10 = count % 10;
-  const mod100 = count % 100;
-  if (mod10 === 1 && mod100 !== 11) return `${count} позиция`;
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `${count} позиции`;
-  return `${count} позиций`;
+  return `${count} ${count === 1 ? "item" : "items"}`;
 }
 
 function openGuestCheckout() {
   const total = formatPrice(guestCartTotal());
 
-  document.getElementById("guest-summary-count").textContent = `В заказе: ${pluralizePositions(getGuestCart().length)}`;
+  document.getElementById("guest-summary-count").textContent = `In your order: ${pluralizePositions(getGuestCart().length)}`;
   document.getElementById("guest-summary-total").textContent = total;
   document.getElementById("guest-submit-total").textContent = total;
 
@@ -220,7 +216,7 @@ guestForm.addEventListener("submit", async (event) => {
   const email = document.getElementById("guest-email").value.trim();
 
   if (!name || !phone) {
-    showGuestError("Укажите имя и телефон — без них мы не сможем передать заказ.");
+    showGuestError("Enter your name and phone number — we need them to hand over your order.");
     return;
   }
 
@@ -235,7 +231,7 @@ guestForm.addEventListener("submit", async (event) => {
   try {
     await apiRequest("/cart/guest/checkout", { method: "POST", body: JSON.stringify(payload) });
     clearGuestCart();
-    setFlashMessage("Заказ оформлен! Мы свяжемся с вами для подтверждения.", "success");
+    setFlashMessage("Order placed! We will contact you to confirm.", "success");
     window.location.href = "index.html";
   } catch (error) {
     showGuestError(error.message);
@@ -245,7 +241,7 @@ guestForm.addEventListener("submit", async (event) => {
 
 checkoutButton.addEventListener("click", handleCheckout);
 
-// --- Init -------------------------------------------------------------
+// Init
 
 function loadCart() {
   if (isGuest()) {

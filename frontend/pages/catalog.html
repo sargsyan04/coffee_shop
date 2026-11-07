@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coffee Shop — Меню</title>
+  <title>Coffee Shop — Menu</title>
   <link rel="icon" type="image/png" href="../media/logo.png" class="site-logo">
   <link rel="stylesheet" href="../css/common.css">
   <link rel="stylesheet" href="../css/layout.css">
@@ -18,15 +18,15 @@
 
     <header class="catalog-header">
       <div class="header-text">
-        <p class="header-eyebrow">Меню кофейни</p>
-        <h1>Наше меню</h1>
-        <p class="header-subtitle">Свежая выпечка, десерты и кофе — каждый день</p>
+        <p class="header-eyebrow">Coffee shop menu</p>
+        <h1>Our menu</h1>
+        <p class="header-subtitle">Fresh pastries, desserts and coffee — every day</p>
       </div>
 
       <div class="bean-divider" aria-hidden="true"></div>
 
       <!-- Search + category filters. Chips are built from the loaded
-           products' real categories in catalog.js — "Всё" below is
+           products' real categories in catalog.js — "All" below is
            just the loading-state placeholder. -->
       <div class="catalog-controls">
         <label class="search-box" for="search-input">
@@ -34,24 +34,24 @@
             <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
             <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
-          <input type="text" id="search-input" placeholder="Найти в меню..." autocomplete="off">
+          <input type="text" id="search-input" placeholder="Search the menu..." autocomplete="off">
         </label>
 
         <div class="filter-chips" id="filter-chips">
-          <button class="chip active" data-category="all" type="button">Всё</button>
+          <button class="chip active" data-category="all" type="button">All</button>
         </div>
 
         <!-- Sorting is resolved on the backend (GET /products/?sort_by=&order=) —
              see catalog.js, this control just picks the query params. -->
         <label class="sort-select" for="sort-select">
-          <span class="sort-select-label">Сортировка</span>
+          <span class="sort-select-label">Sort by</span>
           <select id="sort-select">
-            <option value="name:asc">По названию А→Я</option>
-            <option value="name:desc">По названию Я→А</option>
-            <option value="price:asc">Сначала дешевле</option>
-            <option value="price:desc">Сначала дороже</option>
-            <option value="rating:desc">По рейтингу</option>
-            <option value="popularity:desc">По популярности</option>
+            <option value="name:asc">Name A→Z</option>
+            <option value="name:desc">Name Z→A</option>
+            <option value="price:asc">Price: low to high</option>
+            <option value="price:desc">Price: high to low</option>
+            <option value="rating:desc">Top rated</option>
+            <option value="popularity:desc">Most popular</option>
           </select>
         </label>
       </div>
@@ -62,7 +62,7 @@
     <!-- Filled in by catalog.js — loaded from the API on page load -->
     <main>
       <div id="products-container" class="products-grid">
-        <p id="loading-text">Загрузка меню...</p>
+        <p id="loading-text">Loading menu...</p>
       </div>
     </main>
 

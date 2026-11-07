@@ -4,9 +4,9 @@ let allProducts = []; // Keeps all loaded products so we can filter them client-
 // for the seeded names). Anything else falls back to a plain dot — chips
 // stay correct even if new categories get added on the backend later.
 const CATEGORY_ICONS = {
-  "Напитки": '<path d="M6 3h9l-1 8a3.5 3.5 0 0 1-3.5 3H10.5A3.5 3.5 0 0 1 7 11L6 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 17h4M11 14v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
-  "Десерты": '<path d="M4 15c0-3.5 3.1-6 7-6s7 2.5 7 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M3 15h16v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M11 9V5m0 0-1.4 1.4M11 5l1.4 1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
-  "Еда": '<path d="M4 10h14M4 10a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2M4 10v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
+  "Drinks": '<path d="M6 3h9l-1 8a3.5 3.5 0 0 1-3.5 3H10.5A3.5 3.5 0 0 1 7 11L6 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 17h4M11 14v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+  "Desserts": '<path d="M4 15c0-3.5 3.1-6 7-6s7 2.5 7 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M3 15h16v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M11 9V5m0 0-1.4 1.4M11 5l1.4 1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
+  "Food": '<path d="M4 10h14M4 10a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2M4 10v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>',
 };
 
 const DEFAULT_ICON = '<circle cx="11" cy="11" r="3" stroke="currentColor" stroke-width="1.6"/>';
@@ -30,7 +30,7 @@ async function loadProducts() {
     applyFilters();
 
   } catch (error) {
-    container.innerHTML = `<p class="error-text">Не удалось загрузить меню: ${error.message}</p>`;
+    container.innerHTML = `<p class="error-text">Could not load the menu: ${error.message}</p>`;
     console.error("Failed to load products:", error);
   }
 }
@@ -48,7 +48,7 @@ function buildFilterChips(products) {
 
   const categories = [...new Set(
     products.map((p) => p.category?.name).filter(Boolean)
-  )].sort((a, b) => a.localeCompare(b, "ru"));
+  )].sort((a, b) => a.localeCompare(b, "en"));
 
   const chipHtml = (label, category, isActive) => `
     <button class="chip${isActive ? " active" : ""}" data-category="${category}" type="button">
@@ -60,7 +60,7 @@ function buildFilterChips(products) {
   `;
 
   chipsContainer.innerHTML =
-    chipHtml("Всё", "all", activeCategory === "all") +
+    chipHtml("All", "all", activeCategory === "all") +
     categories.map((name) => chipHtml(name, name, name === activeCategory)).join("");
 
   chipsContainer.querySelectorAll(".chip").forEach((chip) => {
@@ -93,8 +93,8 @@ function updateResultsCount(shown, total) {
   const el = document.getElementById("results-count");
   if (!el) return;
   el.textContent = shown === total
-    ? `Позиций в меню: ${total}`
-    : `Показано ${shown} из ${total}`;
+    ? `Menu items: ${total}`
+    : `Showing ${shown} of ${total}`;
 }
 
 function renderProducts(products) {
@@ -102,7 +102,7 @@ function renderProducts(products) {
   container.innerHTML = "";
 
   if (products.length === 0) {
-    container.innerHTML = `<p class="empty-text">Ничего не нашлось. Попробуйте другой запрос или категорию.</p>`;
+    container.innerHTML = `<p class="empty-text">Nothing found. Try a different search or category.</p>`;
     return;
   }
 
@@ -138,7 +138,7 @@ function createProductCard(product) {
     </a>
     <div class="product-footer">
       <span class="product-price">${product.price} ֏</span>
-      <button class="add-button" type="button">В корзину</button>
+      <button class="add-button" type="button">Add to cart</button>
     </div>
   `;
 
@@ -159,7 +159,7 @@ function setupAddToCartButtons(container) {
       button.disabled = true;
       try {
         await addProductToCart(product, 1);
-        showToast(`«${product.name}» добавлен в корзину`, "success");
+        showToast(`"${product.name}" added to cart`, "success");
       } catch (error) {
         showToast(error.message, "error");
       } finally {

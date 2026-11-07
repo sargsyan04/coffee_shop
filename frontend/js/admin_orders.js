@@ -1,4 +1,4 @@
-// Admin "Заказы" tab — table of all orders with a "Подробнее" popup.
+// Admin "Orders" tab — table of all orders with a "Details" popup.
 //
 // This tab is the order history. Taking an order into work is done in the
 // staff panel (staff.html), which admins can open too.
@@ -10,23 +10,23 @@
 // Every field the backend does not return is shown as "—".
 
 const ADMIN_ORDER_STATUS_LABELS = {
-  created: "В корзине",
-  paid: "Оплачен",
-  in_progress: "Готовится",
-  ready: "Готов к выдаче",
-  completed: "Завершён",
-  cancelled: "Отменён",
+  created: "In cart",
+  paid: "Paid",
+  in_progress: "In progress",
+  ready: "Ready for pickup",
+  completed: "Completed",
+  cancelled: "Cancelled",
 };
 
 const PAYMENT_METHOD_LABELS = {
-  online: "Онлайн",
-  cash: "Наличными",
+  online: "Online",
+  cash: "Cash",
 };
 
 const PAYMENT_STATUS_LABELS = {
-  paid: "Оплачен",
-  unpaid: "Не оплачен",
-  refunded: "Возврат",
+  paid: "Paid",
+  unpaid: "Unpaid",
+  refunded: "Refunded",
 };
 
 const ordersTableBody = document.getElementById("orders-table-body");
@@ -49,8 +49,7 @@ const orderDetailsBody = document.getElementById("order-details-body");
 const ORDERS_PAGE_SIZE = 20;
 const ordersState = { page: 1, totalPages: 1 };
 
-// Filled by renderAdminOrdersTable — lets "Подробнее" show something instantly
-// from the list row while the full details are still loading
+
 let adminOrdersById = {};
 
 function formatMoney(amount) {
@@ -59,7 +58,7 @@ function formatMoney(amount) {
 
 function formatDateTime(iso) {
   if (!iso) return "—";
-  return new Date(iso).toLocaleString("ru-RU", {
+  return new Date(iso).toLocaleString("en-US", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -90,7 +89,7 @@ function paymentCell(order) {
 function customerCell(order) {
   const customer = order.customer || {};
   const name = customer.name || "—";
-  const guestTag = customer.is_guest ? ' <span class="badge badge-guest">Гость</span>' : "";
+  const guestTag = customer.is_guest ? ' <span class="badge badge-guest">Guest</span>' : "";
   const phone = customer.phone ? `<span class="cell-sub">${escapeHtml(customer.phone)}</span>` : "";
 
   return `<div class="customer-cell"><span>${escapeHtml(name)}${guestTag}</span>${phone}</div>`;
@@ -122,7 +121,7 @@ async function loadAdminOrders() {
     // 404/405 = the backend endpoint has not been written yet
     ordersFormStatus.textContent =
       error.status === 404 || error.status === 405
-        ? "Список заказов появится, когда на сервере будет готов эндпоинт GET /admin/orders."
+        ? "The orders list will appear once the GET /admin/orders endpoint is available on the server."
         : error.message;
     ordersFormStatus.hidden = false;
   }
@@ -132,7 +131,7 @@ function renderAdminOrdersTable(orders) {
   adminOrdersById = Object.fromEntries(orders.map((order) => [order.id, order]));
 
   if (orders.length === 0) {
-    ordersTableBody.innerHTML = '<tr><td colspan="7" class="users-empty">Заказов не найдено</td></tr>';
+    ordersTableBody.innerHTML = '<tr><td colspan="7" class="users-empty">No orders found</td></tr>';
     return;
   }
 
@@ -140,14 +139,14 @@ function renderAdminOrdersTable(orders) {
     .map(
       (order) => `
       <tr>
-        <td class="users-id-cell">№${order.id}</td>
+        <td class="users-id-cell">#${order.id}</td>
         <td>${formatDateTime(order.created_at)}</td>
         <td>${customerCell(order)}</td>
         <td class="nowrap">${formatMoney(order.total_price)}</td>
         <td>${paymentCell(order)}</td>
         <td>${orderStatusBadge(order.status)}</td>
         <td class="nowrap">
-          <button type="button" class="btn-secondary orders-details-btn" data-order-id="${order.id}">Подробнее</button>
+          <button type="button" class="btn-secondary orders-details-btn" data-order-id="${order.id}">Details</button>
         </td>
       </tr>
     `
@@ -161,7 +160,7 @@ function renderAdminOrdersTable(orders) {
 
 function renderOrdersPager(page) {
   ordersPager.hidden = page.total_pages <= 1;
-  ordersPagerInfo.textContent = `Страница ${page.page} из ${page.total_pages} · всего заказов: ${page.total}`;
+  ordersPagerInfo.textContent = `Page ${page.page} of ${page.total_pages} · total orders: ${page.total}`;
   ordersPrevBtn.disabled = page.page <= 1;
   ordersNextBtn.disabled = page.page >= page.total_pages;
 }
@@ -183,7 +182,7 @@ ordersSearchInput.addEventListener("input", () => {
 ordersSortOrderBtn.addEventListener("click", () => {
   const next = ordersSortOrderBtn.dataset.order === "asc" ? "desc" : "asc";
   ordersSortOrderBtn.dataset.order = next;
-  ordersSortOrderBtn.textContent = next === "asc" ? "По возрастанию" : "По убыванию";
+  ordersSortOrderBtn.textContent = next === "asc" ? "Ascending" : "Descending";
   reloadOrdersFromStart();
 });
 
@@ -219,7 +218,7 @@ function renderOrderDetails(order) {
     ? `
       <table class="order-items-table">
         <thead>
-          <tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Сумма</th></tr>
+          <tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th></tr>
         </thead>
         <tbody>
           ${items
@@ -237,38 +236,38 @@ function renderOrderDetails(order) {
         </tbody>
       </table>
     `
-    : '<p class="user-detail-empty">Состав заказа загружается…</p>';
+    : '<p class="user-detail-empty">Loading order items…</p>';
 
   return `
-    <h3 class="order-detail-section">Клиент</h3>
+    <h3 class="order-detail-section">Customer</h3>
     <div class="user-detail-list">
-      ${detailRow("Имя", escapeHtml(customer.name || "—"))}
-      ${detailRow("Тип", customer.is_guest ? "Гость (без аккаунта)" : "Зарегистрированный клиент")}
-      ${customer.user_id ? detailRow("ID пользователя", customer.user_id) : ""}
-      ${detailRow("Телефон", escapeHtml(customer.phone || "—"))}
+      ${detailRow("Name", escapeHtml(customer.name || "—"))}
+      ${detailRow("Type", customer.is_guest ? "Guest (no account)" : "Registered customer")}
+      ${customer.user_id ? detailRow("User ID", customer.user_id) : ""}
+      ${detailRow("Phone", escapeHtml(customer.phone || "—"))}
       ${detailRow("Email", escapeHtml(customer.email || "—"))}
     </div>
 
-    <h3 class="order-detail-section">Оплата</h3>
+    <h3 class="order-detail-section">Payment</h3>
     <div class="user-detail-list">
-      ${detailRow("Способ", PAYMENT_METHOD_LABELS[order.payment_method] || "—")}
-      ${detailRow("Статус оплаты", PAYMENT_STATUS_LABELS[order.payment_status] || "—")}
-      ${detailRow("Итого", `<strong>${formatMoney(order.total_price)}</strong>`)}
+      ${detailRow("Method", PAYMENT_METHOD_LABELS[order.payment_method] || "—")}
+      ${detailRow("Payment status", PAYMENT_STATUS_LABELS[order.payment_status] || "—")}
+      ${detailRow("Total", `<strong>${formatMoney(order.total_price)}</strong>`)}
     </div>
 
-    <h3 class="order-detail-section">Обработка</h3>
+    <h3 class="order-detail-section">Processing</h3>
     <div class="user-detail-list">
-      ${detailRow("Создан", formatDateTime(order.created_at))}
-      ${detailRow("Взял в работу", escapeHtml(order.barista?.name || "—"))}
+      ${detailRow("Created", formatDateTime(order.created_at))}
+      ${detailRow("Taken by", escapeHtml(order.barista?.name || "—"))}
     </div>
 
-    <h3 class="order-detail-section">Состав заказа</h3>
+    <h3 class="order-detail-section">Order items</h3>
     ${itemsHtml}
   `;
 }
 
 function showOrderDetails(order) {
-  orderDetailsTitle.textContent = `Заказ №${order.id}`;
+  orderDetailsTitle.textContent = `Order #${order.id}`;
   orderDetailsStatus.className = `badge badge-status badge-status-${order.status}`;
   orderDetailsStatus.textContent = ADMIN_ORDER_STATUS_LABELS[order.status] || order.status;
   orderDetailsBody.innerHTML = renderOrderDetails(order);
@@ -291,7 +290,7 @@ async function openOrderDetails(orderId) {
       orderDetailsBody.querySelector(".user-detail-empty")?.replaceWith(
         Object.assign(document.createElement("p"), {
           className: "user-detail-empty",
-          textContent: "Не удалось загрузить состав заказа.",
+          textContent: "Could not load order items.",
         })
       );
     }

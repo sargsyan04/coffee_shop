@@ -11,7 +11,7 @@ const reactivateModalNew = document.getElementById("reactivate-modal-new");
 // account instead" needs to resend the whole payload with force_new set.
 let lastRegisterPayload = null;
 
-// Coming here from login's "Создать новый аккаунт" button — prefill the
+// Coming here from login's "Create a new account" button — prefill the
 // email and mark the next submit as force_new right away
 const prefillEmail = sessionStorage.getItem("prefill_email");
 const forceNewFromLogin = sessionStorage.getItem("force_new_registration") === "true";

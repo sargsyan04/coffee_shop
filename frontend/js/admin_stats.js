@@ -1,4 +1,4 @@
-// Admin "Дашборд" and "Статистика" tabs.
+// Admin "Dashboard" and "Statistics" tabs.
 //
 // Backend contract:
 //   GET /admin/stats/overview?period=today|7d|30d|90d|all
@@ -37,16 +37,16 @@ function statCard(label, value, hint = "") {
 }
 
 function formatInt(value) {
-  return Number(value ?? 0).toLocaleString("ru-RU");
+  return Number(value ?? 0).toLocaleString("en-US");
 }
 
 function formatMoneyShort(value) {
-  return `${Math.round(Number(value ?? 0)).toLocaleString("ru-RU")} ֏`;
+  return `${Math.round(Number(value ?? 0)).toLocaleString("en-US")} ֏`;
 }
 
 function noticeForError(error, endpoint) {
   return error.status === 404 || error.status === 405
-    ? `Показатели по заказам появятся, когда на сервере будет готов эндпоинт ${endpoint}.`
+    ? `Order metrics will appear once the ${endpoint} endpoint is available on the server.`
     : error.message;
 }
 
@@ -54,7 +54,7 @@ function noticeForError(error, endpoint) {
 
 function renderBarList(container, rows, formatValue) {
   if (!rows.length) {
-    container.innerHTML = '<p class="user-detail-empty">Данных пока нет.</p>';
+    container.innerHTML = '<p class="user-detail-empty">No data yet.</p>';
     return;
   }
 
@@ -94,7 +94,7 @@ function topProductRows(products) {
 
 function renderRevenueChart(container, points) {
   if (!points || !points.length) {
-    container.innerHTML = '<p class="user-detail-empty">За выбранный период заказов нет.</p>';
+    container.innerHTML = '<p class="user-detail-empty">No orders in the selected period.</p>';
     return;
   }
 
@@ -103,12 +103,12 @@ function renderRevenueChart(container, points) {
   const labelEvery = Math.max(1, Math.ceil(points.length / 8));
 
   container.innerHTML = `
-    <div class="column-chart" role="img" aria-label="Выручка по дням">
+    <div class="column-chart" role="img" aria-label="Revenue by day">
       ${points
         .map((point, index) => {
           const height = Math.max((Number(point.revenue) / max) * 100, Number(point.revenue) > 0 ? 2 : 0);
-          const date = new Date(point.date).toLocaleDateString("ru-RU", { day: "2-digit", month: "2-digit" });
-          const tooltip = `${date}: ${formatMoneyShort(point.revenue)}, заказов: ${point.orders ?? 0}`;
+          const date = new Date(point.date).toLocaleDateString("en-US", { day: "2-digit", month: "2-digit" });
+          const tooltip = `${date}: ${formatMoneyShort(point.revenue)}, orders: ${point.orders ?? 0}`;
 
           return `
             <div class="column-chart-col" title="${escapeHtml(tooltip)}">
@@ -127,10 +127,10 @@ function renderRevenueChart(container, points) {
 async function loadDashboard() {
   dashboardNotice.hidden = true;
   dashboardCards.innerHTML = [
-    statCard("Выручка сегодня", "…"),
-    statCard("Заказов сегодня", "…"),
-    statCard("Средний чек", "…"),
-    statCard("Новых клиентов", "…"),
+    statCard("Revenue today", "…"),
+    statCard("Orders today", "…"),
+    statCard("Average order value", "…"),
+    statCard("New customers", "…"),
   ].join("");
 
   const [overviewResult, usersResult, productsResult] = await Promise.allSettled([
@@ -146,27 +146,27 @@ async function loadDashboard() {
     const active = ACTIVE_ORDER_STATUSES.reduce((sum, status) => sum + Number(overview.orders_by_status?.[status] ?? 0), 0);
 
     cards.push(
-      statCard("Выручка сегодня", formatMoneyShort(overview.revenue)),
-      statCard("Заказов сегодня", formatInt(overview.orders_count)),
-      statCard("Активных заказов", formatInt(active), "оплачены, готовятся или ждут выдачи"),
-      statCard("Средний чек", formatMoneyShort(overview.average_check)),
-      statCard("Новых клиентов", formatInt(overview.new_users), "зарегистрировались сегодня")
+      statCard("Revenue today", formatMoneyShort(overview.revenue)),
+      statCard("Orders today", formatInt(overview.orders_count)),
+      statCard("Active orders", formatInt(active), "paid, in progress or waiting for pickup"),
+      statCard("Average order value", formatMoneyShort(overview.average_check)),
+      statCard("New customers", formatInt(overview.new_users), "registered today")
     );
 
     renderBarList(dashboardStatuses, statusRows(overview.orders_by_status), (row) => formatInt(row.value));
-    renderBarList(dashboardTopProducts, topProductRows(overview.top_products), (row) => `${formatInt(row.value)} шт.`);
+    renderBarList(dashboardTopProducts, topProductRows(overview.top_products), (row) => `${formatInt(row.value)} pcs`);
   } else {
-    dashboardStatuses.innerHTML = '<p class="user-detail-empty">Нет данных.</p>';
-    dashboardTopProducts.innerHTML = '<p class="user-detail-empty">Нет данных.</p>';
+    dashboardStatuses.innerHTML = '<p class="user-detail-empty">No data.</p>';
+    dashboardTopProducts.innerHTML = '<p class="user-detail-empty">No data.</p>';
     dashboardNotice.textContent = noticeForError(overviewResult.reason, "GET /admin/stats/overview");
     dashboardNotice.hidden = false;
   }
 
   if (usersResult.status === "fulfilled") {
-    cards.push(statCard("Всего пользователей", formatInt(usersResult.value.total)));
+    cards.push(statCard("Total users", formatInt(usersResult.value.total)));
   }
   if (productsResult.status === "fulfilled") {
-    cards.push(statCard("Товаров в каталоге", formatInt(productsResult.value.total)));
+    cards.push(statCard("Products in catalog", formatInt(productsResult.value.total)));
   }
 
   dashboardCards.innerHTML = cards.join("");
@@ -178,16 +178,16 @@ let statsPeriod = "7d";
 
 async function loadStats() {
   statsNotice.hidden = true;
-  statsCards.innerHTML = statCard("Загрузка", "…");
+  statsCards.innerHTML = statCard("Loading", "…");
 
   try {
     const overview = await apiRequest(`/admin/stats/overview?period=${statsPeriod}`);
 
     statsCards.innerHTML = [
-      statCard("Выручка", formatMoneyShort(overview.revenue)),
-      statCard("Заказов", formatInt(overview.orders_count)),
-      statCard("Средний чек", formatMoneyShort(overview.average_check)),
-      statCard("Новых клиентов", formatInt(overview.new_users)),
+      statCard("Revenue", formatMoneyShort(overview.revenue)),
+      statCard("Orders", formatInt(overview.orders_count)),
+      statCard("Average order value", formatMoneyShort(overview.average_check)),
+      statCard("New customers", formatInt(overview.new_users)),
     ].join("");
 
     renderRevenueChart(statsChart, overview.revenue_by_day);
@@ -195,7 +195,7 @@ async function loadStats() {
     renderBarList(
       statsTopProducts,
       topProductRows(overview.top_products),
-      (row) => `${formatInt(row.value)} шт. · ${formatMoneyShort(row.revenue)}`
+      (row) => `${formatInt(row.value)} pcs · ${formatMoneyShort(row.revenue)}`
     );
   } catch (error) {
     statsCards.innerHTML = "";

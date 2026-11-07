@@ -46,7 +46,7 @@ function showToast(message, type = "info", duration = 4000) {
 // button was pressed. Any page that includes this file and one of the
 // project's modal stylesheets (auth.css/profile.css/cart.css/panel.css)
 // can call it without extra markup.
-function confirmDialog(message, { confirmLabel = "Подтвердить", cancelLabel = "Отмена" } = {}) {
+function confirmDialog(message, { confirmLabel = "Confirm", cancelLabel = "Cancel" } = {}) {
   return new Promise((resolve) => {
     const overlay = document.createElement("div");
     overlay.className = "modal-overlay";

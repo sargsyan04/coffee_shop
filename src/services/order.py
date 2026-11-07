@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.enums import OrderStatus
 from src.models import Product
-from src.models.order import Order  # ← добавили
+from src.models.order import Order
 
 
 async def complete_order(db: AsyncSession, order: Order):

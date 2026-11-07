@@ -10,8 +10,8 @@ const PUBLIC_ONLY_PAGES = [
 ];
 
 const NAV_LINKS = [
-  { href: "catalog.html", label: "Меню" },
-  { href: "cart.html", label: "Корзина", cartBadge: true },
+  { href: "catalog.html", label: "Menu" },
+  { href: "cart.html", label: "Cart", cartBadge: true },
 ];
 
 function currentPageName() {
@@ -20,8 +20,8 @@ function currentPageName() {
 
 function renderGuestActions() {
   return `
-    <a href="login.html" class="btn-nav btn-nav-ghost">Войти</a>
-    <a href="register.html" class="btn-nav btn-nav-solid">Регистрация</a>
+    <a href="login.html" class="btn-nav btn-nav-ghost">Log in</a>
+    <a href="register.html" class="btn-nav btn-nav-solid">Sign up</a>
   `;
 }
 
@@ -29,10 +29,10 @@ function renderGuestActions() {
 // as requested: customers get their profile, staff/admins get a link to
 // their own panel instead (they still reach the profile page too).
 function renderAccountActions(user) {
-  const staffLink = `<a href="staff.html" class="btn-nav btn-nav-ghost">Панель сотрудника</a>`;
+  const staffLink = `<a href="staff.html" class="btn-nav btn-nav-ghost">Staff panel</a>`;
   const panelLink =
     user.role === "admin"
-      ? `<a href="admin.html" class="btn-nav btn-nav-ghost">Админ-панель</a>${staffLink}`
+      ? `<a href="admin.html" class="btn-nav btn-nav-ghost">Admin panel</a>${staffLink}`
       : user.role === "barista"
         ? staffLink
         : "";
@@ -42,8 +42,8 @@ function renderAccountActions(user) {
   return `
     ${roleTag}
     ${panelLink}
-    <a href="profile.html" class="btn-nav btn-nav-ghost">Профиль</a>
-    <button type="button" class="btn-nav btn-nav-solid" id="logout-button">Выйти</button>
+    <a href="profile.html" class="btn-nav btn-nav-ghost">Profile</a>
+    <button type="button" class="btn-nav btn-nav-solid" id="logout-button">Log out</button>
   `;
 }
 
@@ -91,7 +91,7 @@ function bindLogoutButton() {
     }
 
     clearTokens();
-    if (typeof setFlashMessage === "function") setFlashMessage("Вы вышли из аккаунта", "info");
+    if (typeof setFlashMessage === "function") setFlashMessage("You have logged out", "info");
     window.location.href = "index.html";
   });
 }
@@ -111,12 +111,12 @@ function renderFooter() {
           <span>Coffee Shop</span>
         </div>
         <nav class="footer-links">
-          <a href="index.html">Главная</a>
-          <a href="catalog.html">Меню</a>
-          <a href="cart.html">Корзина</a>
+          <a href="index.html">Home</a>
+          <a href="catalog.html">Menu</a>
+          <a href="cart.html">Cart</a>
         </nav>
       </div>
-      <p class="footer-copy">© Coffee Shop, ${year}. Все права защищены.</p>
+      <p class="footer-copy">© Coffee Shop, ${year}. All rights reserved.</p>
     </footer>
   `;
 }

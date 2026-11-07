@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,34 +9,34 @@
     <link rel="stylesheet" href="../css/toast.css">
     <link rel="stylesheet" href="../css/auth.css">
     <link rel="stylesheet" href="../css/cart.css">
-    <title>Coffee Shop — Корзина</title>
+    <title>Coffee Shop — Cart</title>
 </head>
 <body>
 
     <div id="site-header-root"></div>
 
     <main class="cart-main">
-        <h1 class="cart-title">Корзина</h1>
+        <h1 class="cart-title">Cart</h1>
 
         <!-- Shown only to guests — informational, not blocking -->
         <p class="cart-guest-note" id="cart-guest-note" hidden>
-            Вы не вошли в аккаунт. Можно собрать корзину и оформить заказ как гость,
-            либо <a href="login.html">войти</a> / <a href="register.html">зарегистрироваться</a>,
-            чтобы видеть историю заказов и копить бонусы.
+            You are not logged in. You can build a cart and check out as a guest,
+            or <a href="login.html">log in</a> / <a href="register.html">sign up</a>,
+            to see your order history and earn bonus points.
         </p>
 
-        <p class="cart-loading" id="cart-loading">Загрузка корзины...</p>
-        <p class="cart-empty" id="cart-empty" hidden>Корзина пуста. <a href="catalog.html">Перейти в меню →</a></p>
+        <p class="cart-loading" id="cart-loading">Loading cart...</p>
+        <p class="cart-empty" id="cart-empty" hidden>Your cart is empty. <a href="catalog.html">Go to the menu →</a></p>
 
         <div class="cart-layout" id="cart-layout" hidden>
             <ul class="cart-items" id="cart-items"></ul>
 
             <aside class="cart-summary">
                 <div class="cart-summary-row">
-                    <span>Итого</span>
+                    <span>Total</span>
                     <span id="cart-total">0 ֏</span>
                 </div>
-                <button type="button" class="btn-checkout" id="checkout-button">Оформить заказ</button>
+                <button type="button" class="btn-checkout" id="checkout-button">Checkout</button>
                 <p class="cart-summary-hint" id="checkout-hint" hidden></p>
             </aside>
         </div>
@@ -45,7 +45,7 @@
              POST /cart/guest/checkout (see js/cart.js) -->
         <div class="modal-overlay" id="guest-checkout-overlay" hidden>
             <div class="modal guest-modal" role="dialog" aria-modal="true" aria-labelledby="guest-checkout-title">
-                <button type="button" class="modal-close" id="guest-checkout-close" aria-label="Закрыть">&times;</button>
+                <button type="button" class="modal-close" id="guest-checkout-close" aria-label="Close">&times;</button>
 
                 <div class="guest-modal-head">
                     <span class="guest-modal-icon" aria-hidden="true">
@@ -55,8 +55,8 @@
                             <path d="M7.3 6.3c.3-.9 1.2-1 1.2-1.9s-.9-1-.9-1.9M11.3 6.3c.3-.9 1.2-1 1.2-1.9s-.9-1-.9-1.9"/>
                         </svg>
                     </span>
-                    <h2 id="guest-checkout-title">Оформление заказа</h2>
-                    <p class="guest-modal-sub">Оставьте контакты — так мы сообщим, когда заказ будет готов.</p>
+                    <h2 id="guest-checkout-title">Checkout</h2>
+                    <p class="guest-modal-sub">Leave your contact details so we can let you know when your order is ready.</p>
                 </div>
 
                 <div class="guest-summary">
@@ -66,26 +66,26 @@
 
                 <form class="guest-form" id="guest-checkout-form" novalidate>
                     <div class="guest-field">
-                        <label for="guest-name">Имя</label>
-                        <input type="text" id="guest-name" name="guest-name" placeholder="Как к вам обращаться" autocomplete="name" required>
+                        <label for="guest-name">Name</label>
+                        <input type="text" id="guest-name" name="guest-name" placeholder="How should we address you" autocomplete="name" required>
                     </div>
                     <div class="guest-field">
-                        <label for="guest-phone">Телефон</label>
+                        <label for="guest-phone">Phone</label>
                         <input type="tel" id="guest-phone" name="guest-phone" placeholder="+374 00 000000" autocomplete="tel" required>
                     </div>
                     <div class="guest-field">
-                        <label for="guest-email">Email <span class="optional_label">(необязательно)</span></label>
+                        <label for="guest-email">Email <span class="optional_label">(optional)</span></label>
                         <input type="email" id="guest-email" name="guest-email" placeholder="name@example.com" autocomplete="email">
                     </div>
 
                     <p class="guest-status" id="guest-checkout-status" role="alert" hidden></p>
 
                     <button type="submit" class="guest-submit" id="guest-submit">
-                        <span>Оплатить и оформить</span>
+                        <span>Pay and place order</span>
                         <span class="guest-submit-total" id="guest-submit-total"></span>
                     </button>
 
-                    <p class="guest-login-hint">Уже есть аккаунт? <a href="login.html">Войти</a> — и копите бонусы за заказы.</p>
+                    <p class="guest-login-hint">Already have an account? <a href="login.html">Log in</a> — and earn bonus points for your orders.</p>
                 </form>
             </div>
         </div>

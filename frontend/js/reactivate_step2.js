@@ -22,8 +22,8 @@ if (pendingEmail) {
 }
 
 if (isForgotPassword) {
-  stepEyebrow.textContent = "Восстановление пароля";
-  submitButton.textContent = "Сохранить новый пароль";
+  stepEyebrow.textContent = "Password recovery";
+  submitButton.textContent = "Save new password";
 }
 
 reactivateForm.addEventListener("submit", async (event) => {
@@ -34,7 +34,7 @@ reactivateForm.addEventListener("submit", async (event) => {
   const newPasswordConfirm = document.getElementById("new_password_confirm").value;
 
   if (newPassword !== newPasswordConfirm) {
-    formStatus.textContent = "Пароли не совпадают.";
+    formStatus.textContent = "Passwords do not match.";
     formStatus.hidden = false;
     return;
   }
@@ -48,8 +48,8 @@ reactivateForm.addEventListener("submit", async (event) => {
     sessionStorage.removeItem("pending_verification_email");
     sessionStorage.removeItem("recovery_context");
     formStatus.textContent = isForgotPassword
-      ? "Пароль обновлён! Перенаправляем на вход..."
-      : "Аккаунт восстановлен! Перенаправляем на вход...";
+      ? "Password updated! Redirecting to login..."
+      : "Account restored! Redirecting to login...";
     formStatus.hidden = false;
 
     setTimeout(() => {
@@ -69,7 +69,7 @@ resendButton.addEventListener("click", async () => {
       method: "POST",
       body: JSON.stringify({ email: pendingEmail }),
     });
-    formStatus.textContent = "Код отправлен повторно.";
+    formStatus.textContent = "Code sent again.";
     formStatus.hidden = false;
   } catch (error) {
     formStatus.textContent = error.message;

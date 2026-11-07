@@ -46,8 +46,7 @@
     margin: 0 0 20px;
 }
 
-/* ===== Form — self-contained, since auth.css / main.css
-   are not linked on this page ===== */
+
 .settings-form {
     max-width: 380px;
     display: flex;
@@ -175,8 +174,7 @@
     object-fit: cover;
 }
 
-/* Purely visual highlight — the avatar itself isn't clickable anymore,
-   changing the photo only happens through the "Загрузить фото" button */
+
 .avatar-preview-overlay {
     position: absolute;
     inset: 0;

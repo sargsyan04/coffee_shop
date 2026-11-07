@@ -46,10 +46,10 @@ function renderProfile(user) {
 
   const verifiedBadge = document.getElementById("profile-verified");
   if (user.is_email_verified) {
-    verifiedBadge.textContent = "Email подтверждён";
+    verifiedBadge.textContent = "Email verified";
     verifiedBadge.classList.remove("unverified");
   } else {
-    verifiedBadge.textContent = "Email не подтверждён";
+    verifiedBadge.textContent = "Email not verified";
     verifiedBadge.classList.add("unverified");
   }
 
@@ -114,7 +114,7 @@ deactivateModalConfirm.addEventListener("click", async () => {
   try {
     await apiRequest("/user/profile", { method: "DELETE" });
     clearTokens();
-    setFlashMessage("Аккаунт деактивирован. Восстановить его можно в течение 30 дней.", "info");
+    setFlashMessage("Account deactivated. You can restore it within 30 days.", "info");
     window.location.href = "index.html";
   } catch (error) {
     showToast(error.message, "error");
@@ -165,13 +165,13 @@ async function loadReviews() {
     const reviews = await apiRequest("/review/user_reviews");
     renderReviews(reviews);
   } catch (error) {
-    reviewsEmpty.textContent = "Не удалось загрузить отзывы";
+    reviewsEmpty.textContent = "Could not load reviews";
   }
 }
 
 function renderReviews(reviews) {
   if (!reviews.length) {
-    reviewsEmpty.textContent = "Вы пока не оставили ни одного отзыва";
+    reviewsEmpty.textContent = "You haven't left any reviews yet";
     return;
   }
 
@@ -201,12 +201,12 @@ function renderReviews(reviews) {
 // These map to whatever string value OrderStatus serializes to; compared
 // case-insensitively below in case the enum values aren't upper-case
 const ORDER_STATUS_LABELS = {
-  CREATED: "Оформляется",
-  PAID: "Оплачен",
-  IN_PROGRESS: "Готовится",
-  READY: "Готов к выдаче",
-  COMPLETED: "Выполнен",
-  CANCELLED: "Отменён",
+  CREATED: "Being placed",
+  PAID: "Paid",
+  IN_PROGRESS: "In progress",
+  READY: "Ready for pickup",
+  COMPLETED: "Completed",
+  CANCELLED: "Cancelled",
 };
 
 const NON_CANCELLABLE_STATUSES = ["COMPLETED", "CANCELLED"];
@@ -219,7 +219,7 @@ function formatOrderDate(isoString) {
   if (!isoString) return "";
   const date = new Date(isoString);
   if (Number.isNaN(date.getTime())) return isoString;
-  return date.toLocaleString("ru-RU", {
+  return date.toLocaleString("en-US", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -239,7 +239,7 @@ async function loadOrders() {
     renderOrders(orders);
   } catch (error) {
     ordersEmpty.hidden = false;
-    ordersEmpty.textContent = "Не удалось загрузить заказы";
+    ordersEmpty.textContent = "Could not load orders";
   }
 }
 
@@ -248,7 +248,7 @@ function renderOrders(orders) {
 
   if (!orders.length) {
     ordersEmpty.hidden = false;
-    ordersEmpty.textContent = "У вас пока нет заказов";
+    ordersEmpty.textContent = "You have no orders yet";
     orderList.hidden = true;
     return;
   }
@@ -263,14 +263,14 @@ function renderOrders(orders) {
 
     item.innerHTML = `
       <div class="order-header">
-        <span class="order-id">Заказ №${order.id}</span>
+        <span class="order-id">Order #${order.id}</span>
         <span class="order-date"></span>
       </div>
       <div class="order-footer">
         <span class="badge badge-role"></span>
         <span class="order-total"></span>
       </div>
-      <button type="button" class="order-more-button" data-order-id="${order.id}">Подробнее</button>
+      <button type="button" class="order-more-button" data-order-id="${order.id}">Details</button>
     `;
     item.querySelector(".order-date").textContent = formatOrderDate(order.created_at);
     item.querySelector(".badge").textContent = orderStatusLabel(order.status);
@@ -360,7 +360,7 @@ document.addEventListener("keydown", (event) => {
 
 modalCancelButton.addEventListener("click", async () => {
   const orderId = modalCancelButton.dataset.orderId;
-  const confirmed = await confirmDialog("Вы уверены, что хотите отменить заказ?", { confirmLabel: "Отменить заказ" });
+  const confirmed = await confirmDialog("Are you sure you want to cancel this order?", { confirmLabel: "Cancel order" });
   if (!confirmed) return;
 
   try {
@@ -368,7 +368,7 @@ modalCancelButton.addEventListener("click", async () => {
     ordersById.set(updatedOrder.id, updatedOrder);
     renderOrders(Array.from(ordersById.values()));
     openOrderModal(updatedOrder);
-    showToast("Заказ отменён", "success");
+    showToast("Order cancelled", "success");
   } catch (error) {
     showToast(error.message, "error");
   }

@@ -102,7 +102,7 @@ personalForm.addEventListener("submit", async (event) => {
       body: JSON.stringify(payload),
     });
 
-    showToast(result.detail || "Изменения сохранены", "success");
+    showToast(result.detail || "Changes saved", "success");
   } catch (error) {
     showToast(error.message, "error");
   }
@@ -123,7 +123,7 @@ passwordForm.addEventListener("submit", async (event) => {
       body: JSON.stringify(payload),
     });
 
-    showToast(result.detail || "Пароль успешно изменён", "success");
+    showToast(result.detail || "Password changed successfully", "success");
     passwordForm.reset();
   } catch (error) {
     showToast(error.message, "error");
@@ -145,13 +145,13 @@ avatarInput.addEventListener("change", async () => {
   if (!file) return;
 
   if (!ALLOWED_AVATAR_TYPES.includes(file.type)) {
-    showToast("Допустимые форматы: JPG, PNG, WEBP", "error");
+    showToast("Allowed formats: JPG, PNG, WEBP", "error");
     avatarInput.value = "";
     return;
   }
 
   if (file.size > MAX_AVATAR_SIZE_BYTES) {
-    showToast("Файл слишком большой (максимум 5 МБ)", "error");
+    showToast("File is too large (5 MB maximum)", "error");
     avatarInput.value = "";
     return;
   }
@@ -162,7 +162,7 @@ avatarInput.addEventListener("change", async () => {
   try {
     const user = await apiUploadFile("/user/image", file);
     renderAvatarPreview(user);
-    showToast("Аватар обновлён", "success");
+    showToast("Avatar updated", "success");
   } catch (error) {
     showToast(error.message, "error");
   } finally {

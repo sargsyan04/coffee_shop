@@ -6,8 +6,6 @@ from src.core import UserRole, settings
 
 
 def get_super_admin_fixture() -> dict:
-    """The single default admin account, created via `manage.py createsuperuser`
-    or as part of `manage.py loaddata --models users`."""
     return {
         "name": settings.ADMIN_NAME,
         "email": settings.ADMIN_EMAIL,
@@ -47,9 +45,9 @@ def get_users_fixtures() -> list[dict]:
 
 def get_categories_fixtures() -> list[dict]:
     return [
-        {"name": "Напитки"},
-        {"name": "Десерты"},
-        {"name": "Еда"},
+        {"name": "Drinks"},
+        {"name": "Desserts"},
+        {"name": "Food"},
     ]
 
 
@@ -58,64 +56,62 @@ def get_categories_fixtures() -> list[dict]:
 
 def get_tags_fixtures() -> list[dict]:
     return [
-        {"name": "Хит продаж", "slug": "hit-prodazha"},
-        {"name": "Новинка", "slug": "novinka"},
-        {"name": "Веган", "slug": "vegan"},
+        {"name": "Bestseller", "slug": "bestseller"},
+        {"name": "New", "slug": "new"},
+        {"name": "Vegan", "slug": "vegan"},
     ]
 
 
 # Products
-# "category" references Category.name, "tags" references Tag.slug —
-# the loader resolves these to real foreign keys after categories/tags exist
 
 
 def get_products_fixtures() -> list[dict]:
     return [
         {
-            "name": "Капучино",
-            "description": "Классический капучино на молоке средней жирности",
+            "name": "Cappuccino",
+            "description": "Classic cappuccino made with semi-skimmed milk",
             "price": Decimal(1200),
-            "category": "Напитки",
+            "category": "Drinks",
             "tags": ["bestseller"],
             "is_available": True,
         },
         {
-            "name": "Латте",
-            "description": "Мягкий латте с бархатной молочной пенкой",
+            "name": "Latte",
+            "description": "Smooth latte with velvety milk foam",
             "price": Decimal(1300),
-            "category": "Напитки",
+            "category": "Drinks",
             "tags": [],
             "is_available": True,
         },
         {
-            "name": "Раф",
-            "description": "Раф на сливках с ванильным сиропом",
+            "name": "Raf coffee",
+            "description": "Raf coffee with cream and vanilla syrup",
             "price": Decimal(1500),
-            "category": "Напитки",
+            "category": "Drinks",
             "tags": ["new"],
             "is_available": True,
         },
         {
-            "name": "Чизкейк Нью-Йорк",
-            "description": "Классический чизкейк на песочной основе",
+            "name": "New York Cheesecake",
+            "description": "Classic cheesecake on a shortbread base",
             "price": Decimal(2200),
-            "category": "Десерты",
+            "category": "Desserts",
             "tags": ["bestseller"],
             "is_available": True,
         },
         {
-            "name": "Овсяное печенье",
-            "description": "Домашнее печенье с овсяными хлопьями",
+            "name": "Oatmeal Cookie",
+            "description": "Homemade cookie with rolled oats",
             "price": Decimal(800),
-            "category": "Десерты",
+            "category": "Desserts",
             "tags": ["vegan"],
             "is_available": True,
         },
         {
-            "name": "Сэндвич с курицей",
-            "description": "Сэндвич с куриной грудкой и свежими овощами",
+            "name": "Chicken Sandwich",
+            "description": "Sandwich with chicken breast and fresh vegetables",
             "price": Decimal(2800),
-            "category": "Еда",
+            "category": "Food",
             "tags": [],
             "is_available": True,
         },

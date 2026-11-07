@@ -47,8 +47,8 @@ loginForm.addEventListener("submit", async (event) => {
     if (error.detail?.reactivation_available !== undefined) {
       reactivateModalRestore.hidden = !error.detail.reactivation_available;
       reactivateModalText.textContent = error.detail.reactivation_available
-        ? "Этот аккаунт деактивирован, но его ещё можно восстановить."
-        : "Этот аккаунт деактивирован, и срок восстановления истёк. Вы можете создать новый аккаунт с этим email.";
+        ? "This account is deactivated, but it can still be restored."
+        : "This account is deactivated and the restoration period has expired. You can create a new account with this email.";
       reactivateModalOverlay.hidden = false;
       return;
     }
