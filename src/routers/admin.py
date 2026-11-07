@@ -19,12 +19,12 @@ router = APIRouter(prefix="/admin", tags=["Admin"])
 
 # Admin Dashboard
 
-
 @router.get("/dashboard")
 async def admin_dashboard(current_admin: User = Depends(require_admin)):
     return {
         "message": f"Welcome, {current_admin.name}. This is the admin dashboard.",
     }
+
 
 
 # User Management
@@ -160,15 +160,6 @@ async def get_user_stats(
     session: AsyncSession = Depends(db_session),
     _: User = Depends(require_admin),
 ):
-    """Powers the "Подробнее" popup on the admin Users page.
-
-    Policy:
-      - CREATED orders are still carts/drafts, not real orders yet, so
-        they're excluded everywhere (orders_count and total_spent).
-      - CANCELLED orders did happen, so they count towards orders_count,
-        but not towards total_spent since nothing was actually paid.
-      - PAID / IN_PROGRESS / READY / COMPLETED count towards both.
-    """
     user = await session.scalar(
         select(User)
         .options(

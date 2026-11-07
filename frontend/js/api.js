@@ -1,9 +1,9 @@
 const API_BASE_URL = "http://localhost:8080";
 
 const ROLE_LABELS = {
-  customer: "Клиент",
-  barista: "Бариста",
-  admin: "Админ",
+  customer: "Customer",
+  barista: "Barista",
+  admin: "Admin",
 };
 
 function roleLabel(role) {

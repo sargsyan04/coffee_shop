@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/toast.css">
     <link rel="stylesheet" href="../css/panel.css">
-    <title>Coffee Shop — Панель сотрудника</title>
+    <title>Coffee Shop — Staff panel</title>
 </head>
 <body>
 
@@ -16,21 +16,21 @@
 
     <!-- Shown only if a non-staff account somehow lands here -->
     <p class="panel-guard-message" id="panel-guard-message" hidden>
-        Эта страница доступна только сотрудникам кофейни.
+        This page is available to coffee shop staff only.
     </p>
 
     <main class="panel-main" id="panel-content" hidden>
         <div class="panel-header panel-header-row">
             <div>
-                <p class="panel-eyebrow">Панель сотрудника</p>
-                <h1 class="panel-title">Очередь заказов</h1>
+                <p class="panel-eyebrow">Staff panel</p>
+                <h1 class="panel-title">Order queue</h1>
             </div>
 
-            <div class="queue-filter-tabs" id="queue-filter-tabs" role="tablist" aria-label="Фильтр по статусу">
-                <button type="button" class="queue-filter-btn active" data-status="all">Все</button>
-                <button type="button" class="queue-filter-btn" data-status="paid">Оплачен</button>
-                <button type="button" class="queue-filter-btn" data-status="in_progress">Готовится</button>
-                <button type="button" class="queue-filter-btn" data-status="ready">Готов к выдаче</button>
+            <div class="queue-filter-tabs" id="queue-filter-tabs" role="tablist" aria-label="Filter by status">
+                <button type="button" class="queue-filter-btn active" data-status="all">All</button>
+                <button type="button" class="queue-filter-btn" data-status="paid">Paid</button>
+                <button type="button" class="queue-filter-btn" data-status="in_progress">In progress</button>
+                <button type="button" class="queue-filter-btn" data-status="ready">Ready for pickup</button>
             </div>
         </div>
 

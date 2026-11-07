@@ -13,9 +13,6 @@ _conf: ConnectionConfig | None = None
 
 
 def _get_mail_config() -> ConnectionConfig:
-    # built on first use, not at import - ConnectionConfig validates
-    # MAIL_FROM right away, and this file gets imported a lot more often
-    # than mail actually gets sent
     global _conf
     if _conf is None:
         _conf = ConnectionConfig(
@@ -44,12 +41,11 @@ def render_email(template_name: str, **context) -> str:
 
 # Email Sending
 
-
 async def send_verification_email(email_to: str, code: str):
     print(f"[DEV] Verification code for {email_to}: {code}")
 
     message = MessageSchema(
-        subject="Coffee Shop — код подтверждения",
+        subject="Coffee Shop — verification code",
         recipients=[email_to],
         body=render_email(
             "verify_email.html",

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,22 +8,22 @@
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/auth.css">
     <link rel="stylesheet" href="../css/toast.css">
-    <title>Coffee Shop — Регистрация</title>
+    <title>Coffee Shop — Sign up</title>
 </head>
 <body>
 
     <div class="central_block auth_block">
         <div class="central_header">
-            <span class="eyebrow">Шаг 1 из 2</span>
+            <span class="eyebrow">Step 1 of 2</span>
             <img src="../media/big_logo.png" alt="Coffee Shop">
-            <h1>Регистрация</h1>
+            <h1>Sign up</h1>
         </div>
 
     <a href="index.html" class="back_link">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        Назад
+        Back
     </a>
 
         <!-- Progress dots — step 1 of 2 is active -->
@@ -37,8 +37,8 @@
              see register.js -->
         <form class="auth_form" id="register-form" novalidate>
             <div class="form_group">
-                <label for="name">Имя</label>
-                <input type="text" id="name" name="name" placeholder="Как к вам обращаться" required>
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="How should we address you" required>
             </div>
 
             <div class="form_group">
@@ -47,52 +47,52 @@
             </div>
 
             <div class="form_group">
-                <label for="password">Пароль</label>
+                <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="••••••••" required>
             </div>
 
             <div class="form_group">
-                <label for="password_confirm">Повторите пароль</label>
+                <label for="password_confirm">Repeat password</label>
                 <input type="password" id="password_confirm" name="password_confirm" placeholder="••••••••" required>
             </div>
 
             <div class="form_group">
-                <label for="birth_date">Дата рождения <span class="optional_label">(необязательно)</span></label>
+                <label for="birth_date">Date of birth <span class="optional_label">(optional)</span></label>
                 <input type="date" id="birth_date" name="birth_date">
             </div>
 
             <div class="form_group">
-                <label for="phone">Телефон <span class="optional_label">(необязательно)</span></label>
+                <label for="phone">Phone <span class="optional_label">(optional)</span></label>
                 <input type="tel" id="phone" name="phone" placeholder="+374 XX XXX XXX">
             </div>
 
             <div class="form_group full_row">
-                <label for="address">Адрес <span class="optional_label">(необязательно)</span></label>
-                <input type="text" id="address" name="address" placeholder="Понадобится при доставке">
+                <label for="address">Address <span class="optional_label">(optional)</span></label>
+                <input type="text" id="address" name="address" placeholder="Needed for delivery">
             </div>
 
-            <button type="submit" class="button_s sign_in full_width full_row">Создать аккаунт</button>
+            <button type="submit" class="button_s sign_in full_width full_row">Create account</button>
 
             <!-- Filled in by register.js — e.g. password mismatch -->
             <p class="form_status full_row" id="form-status" hidden></p>
         </form>
 
-        <p class="switch_text">Уже есть аккаунт? <a href="login.html">Войти</a></p>
+        <p class="switch_text">Already have an account? <a href="login.html">Log in</a></p>
     </div>
 
     <!-- Shown when /user/register responds 409: this email belongs to a
          deactivated account that's still within its recovery window -->
     <div class="modal-overlay" id="reactivate-modal-overlay" hidden>
         <div class="modal modal-narrow" id="reactivate-modal" role="dialog" aria-modal="true" aria-labelledby="reactivate-modal-title">
-            <button type="button" class="modal-close" id="reactivate-modal-close" aria-label="Закрыть">&times;</button>
-            <h2 id="reactivate-modal-title">Этот email уже занят</h2>
+            <button type="button" class="modal-close" id="reactivate-modal-close" aria-label="Close">&times;</button>
+            <h2 id="reactivate-modal-title">This email is already taken</h2>
             <p class="modal-text">
-                Аккаунт с этим адресом был деактивирован недавно, и его ещё можно восстановить.
-                Хотите вернуть старый аккаунт или создать новый на этот же email?
+                An account with this address was deactivated recently and can still be restored.
+                Do you want to restore the old account or create a new one with the same email?
             </p>
             <div class="modal-actions">
-                <button type="button" class="btn-secondary" id="reactivate-modal-new">Создать новый</button>
-                <button type="button" class="button_s sign_in" id="reactivate-modal-restore">Восстановить старый</button>
+                <button type="button" class="btn-secondary" id="reactivate-modal-new">Create new</button>
+                <button type="button" class="button_s sign_in" id="reactivate-modal-restore">Restore old</button>
             </div>
         </div>
     </div>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../css/auth.css">
     <link rel="stylesheet" href="../css/toast.css">
     <link rel="stylesheet" href="../css/panel.css">
-    <title>Coffee Shop — Админ-панель</title>
+    <title>Coffee Shop — Admin panel</title>
 </head>
 <body>
 
@@ -17,7 +17,7 @@
 
     <!-- Shown only if a non-admin account somehow lands here -->
     <p class="panel-guard-message" id="panel-guard-message" hidden>
-        Эта страница доступна только администраторам.
+        This page is available to administrators only.
     </p>
 
     <!-- Icon sprite for the sidebar nav — referenced below via <use> -->
@@ -60,9 +60,9 @@
 
     <div class="panel-shell" id="panel-content" hidden>
 
-        <nav class="panel-sidebar" aria-label="Разделы админ-панели">
+        <nav class="panel-sidebar" aria-label="Admin panel sections">
             <div class="panel-sidebar-brand">
-                <p class="panel-sidebar-eyebrow">Админ-панель</p>
+                <p class="panel-sidebar-eyebrow">Admin panel</p>
                 <p class="panel-sidebar-title">Coffee Shop</p>
             </div>
             <div class="panel-nav-list" id="panel-nav-list"></div>
@@ -70,8 +70,8 @@
 
         <main class="panel-body">
             <div class="panel-header">
-                <p class="panel-eyebrow" id="panel-page-eyebrow">Админ-панель</p>
-                <h1 class="panel-title" id="panel-page-title">Дашборд</h1>
+                <p class="panel-eyebrow" id="panel-page-eyebrow">Admin panel</p>
+                <h1 class="panel-title" id="panel-page-title">Dashboard</h1>
             </div>
 
             <!-- Landing section: summary cards filled by js/admin_stats.js -->
@@ -80,11 +80,11 @@
 
                 <div class="dash-columns">
                     <div class="dash-card">
-                        <h2 class="panel-subheading">Заказы сегодня по статусам</h2>
+                        <h2 class="panel-subheading">Today's orders by status</h2>
                         <div id="dashboard-statuses"></div>
                     </div>
                     <div class="dash-card">
-                        <h2 class="panel-subheading">Популярные товары сегодня</h2>
+                        <h2 class="panel-subheading">Popular products today</h2>
                         <div id="dashboard-top-products"></div>
                     </div>
                 </div>
@@ -94,49 +94,49 @@
             <section class="panel-page" id="panel-page-users" data-panel-page="users" hidden>
                 <div class="users-toolbar">
                     <label class="search-box" for="users-search">
-                        <input type="text" id="users-search" placeholder="Поиск по ID, email или имени" autocomplete="off">
+                        <input type="text" id="users-search" placeholder="Search by ID, email or name" autocomplete="off">
                     </label>
 
-                    <select id="users-filter-role" title="Роль">
-                        <option value="">Роль</option>
-                        <option value="customer">Клиент</option>
-                        <option value="barista">Бариста</option>
-                        <option value="admin">Администратор</option>
+                    <select id="users-filter-role" title="Role">
+                        <option value="">Role</option>
+                        <option value="customer">Customer</option>
+                        <option value="barista">Barista</option>
+                        <option value="admin">Admin</option>
                     </select>
 
-                    <select id="users-filter-active" title="Статус аккаунта">
-                        <option value="">Статус</option>
-                        <option value="true">Активен</option>
-                        <option value="false">Деактивирован</option>
+                    <select id="users-filter-active" title="Account status">
+                        <option value="">Status</option>
+                        <option value="true">Active</option>
+                        <option value="false">Deactivated</option>
                     </select>
 
-                    <select id="users-filter-verified" title="Подтверждение email">
+                    <select id="users-filter-verified" title="Email verification">
                         <option value="">Email</option>
-                        <option value="true">Email подтверждён</option>
-                        <option value="false">Email не подтверждён</option>
+                        <option value="true">Email verified</option>
+                        <option value="false">Email not verified</option>
                     </select>
 
-                    <select id="users-filter-orders" title="Наличие заказов">
-                        <option value="">Заказы</option>
-                        <option value="true">Есть заказы</option>
-                        <option value="false">Нет заказов</option>
+                    <select id="users-filter-orders" title="Has orders">
+                        <option value="">Orders</option>
+                        <option value="true">Has orders</option>
+                        <option value="false">No orders</option>
                     </select>
 
-                    <select id="users-filter-reviews" title="Наличие отзывов">
-                        <option value="">Отзывы</option>
-                        <option value="true">Есть отзывы</option>
-                        <option value="false">Нет отзывов</option>
+                    <select id="users-filter-reviews" title="Has reviews">
+                        <option value="">Reviews</option>
+                        <option value="true">Has reviews</option>
+                        <option value="false">No reviews</option>
                     </select>
 
-                    <select id="users-sort-by" title="Сортировка">
-                        <option value="id">По ID</option>
-                        <option value="created_at">По дате регистрации</option>
-                        <option value="orders_count">По количеству заказов</option>
-                        <option value="total_spent">По сумме покупок</option>
-                        <option value="reviews_count">По количеству отзывов</option>
+                    <select id="users-sort-by" title="Sort by">
+                        <option value="id">By ID</option>
+                        <option value="created_at">By registration date</option>
+                        <option value="orders_count">By number of orders</option>
+                        <option value="total_spent">By total spent</option>
+                        <option value="reviews_count">By number of reviews</option>
                     </select>
 
-                    <button type="button" class="btn-secondary" id="users-sort-order" data-order="asc" title="Направление сортировки">По возрастанию</button>
+                    <button type="button" class="btn-secondary" id="users-sort-order" data-order="asc" title="Sort direction">Ascending</button>
                 </div>
 
                 <div class="users-table-wrap">
@@ -144,15 +144,15 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Имя</th>
+                                <th>Name</th>
                                 <th>Email</th>
-                                <th>Роль</th>
-                                <th>Статус</th>
-                                <th>Действия</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="users-table-body">
-                            <tr><td colspan="6" class="users-loading">Загрузка...</td></tr>
+                            <tr><td colspan="6" class="users-loading">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -161,10 +161,10 @@
 
             <section class="panel-page" id="panel-page-products" data-panel-page="products" hidden>
                 <div class="panel-toolbar">
-                    <h2 class="panel-subheading panel-toolbar-title">Товары</h2>
+                    <h2 class="panel-subheading panel-toolbar-title">Products</h2>
                     <button type="button" class="btn-add" id="product-add-btn">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-                        Добавить товар
+                        Add product
                     </button>
                 </div>
 
@@ -172,15 +172,15 @@
                     <table class="data-table" id="products-table">
                         <thead>
                             <tr>
-                                <th>Фото</th>
-                                <th>Название</th>
-                                <th>Цена</th>
-                                <th>Категория</th>
-                                <th>Теги</th>
+                                <th>Photo</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Category</th>
+                                <th>Tags</th>
                             </tr>
                         </thead>
                         <tbody id="products-table-body">
-                            <tr><td colspan="5" class="users-loading">Загрузка...</td></tr>
+                            <tr><td colspan="5" class="users-loading">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -188,30 +188,30 @@
 
             <section class="panel-page" id="panel-page-categories" data-panel-page="categories" hidden>
                 <div class="panel-subsection">
-                    <h2 class="panel-subheading">Категории</h2>
+                    <h2 class="panel-subheading">Categories</h2>
                     <div class="data-table-wrap">
                         <table class="data-table" id="categories-table">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Название</th>
+                                    <th>Name</th>
                                 </tr>
                             </thead>
                             <tbody id="categories-table-body">
-                                <tr><td colspan="2" class="users-loading">Загрузка...</td></tr>
+                                <tr><td colspan="2" class="users-loading">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
                 <div class="panel-subsection">
-                    <h2 class="panel-subheading">Новая категория</h2>
+                    <h2 class="panel-subheading">New category</h2>
                     <form class="panel-form" id="category-form" novalidate>
                         <div class="form_group full_row">
-                            <label for="category-name">Название</label>
+                            <label for="category-name">Name</label>
                             <input type="text" id="category-name" name="category-name" required>
                         </div>
-                        <button type="submit" class="button_s sign_in full_row" style="width:fit-content;">Создать категорию</button>
+                        <button type="submit" class="button_s sign_in full_row" style="width:fit-content;">Create category</button>
                         <p class="form_status full_row" id="category-form-status" hidden></p>
                     </form>
                 </div>
@@ -219,31 +219,31 @@
 
             <section class="panel-page" id="panel-page-tags" data-panel-page="tags" hidden>
                 <div class="panel-subsection">
-                    <h2 class="panel-subheading">Теги</h2>
+                    <h2 class="panel-subheading">Tags</h2>
                     <div class="data-table-wrap">
                         <table class="data-table" id="tags-table">
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Название</th>
+                                    <th>Name</th>
                                     <th>Slug</th>
                                 </tr>
                             </thead>
                             <tbody id="tags-table-body">
-                                <tr><td colspan="3" class="users-loading">Загрузка...</td></tr>
+                                <tr><td colspan="3" class="users-loading">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
                 <div class="panel-subsection">
-                    <h2 class="panel-subheading">Новый тег</h2>
+                    <h2 class="panel-subheading">New tag</h2>
                     <form class="panel-form" id="tag-form" novalidate>
                         <div class="form_group full_row">
-                            <label for="tag-name">Название</label>
+                            <label for="tag-name">Name</label>
                             <input type="text" id="tag-name" name="tag-name" required>
                         </div>
-                        <button type="submit" class="button_s sign_in full_row" style="width:fit-content;">Создать тег</button>
+                        <button type="submit" class="button_s sign_in full_row" style="width:fit-content;">Create tag</button>
                         <p class="form_status full_row" id="tag-form-status" hidden></p>
                     </form>
                 </div>
@@ -254,86 +254,86 @@
             <section class="panel-page" id="panel-page-orders" data-panel-page="orders" hidden>
                 <div class="users-toolbar">
                     <label class="search-box" for="orders-search">
-                        <input type="text" id="orders-search" placeholder="Поиск по № заказа, имени или телефону" autocomplete="off">
+                        <input type="text" id="orders-search" placeholder="Search by order #, name or phone" autocomplete="off">
                     </label>
 
-                    <select id="orders-filter-status" title="Статус заказа">
-                        <option value="">Статус</option>
-                        <option value="paid">Оплачен</option>
-                        <option value="in_progress">Готовится</option>
-                        <option value="ready">Готов к выдаче</option>
-                        <option value="completed">Завершён</option>
-                        <option value="cancelled">Отменён</option>
+                    <select id="orders-filter-status" title="Order status">
+                        <option value="">Status</option>
+                        <option value="paid">Paid</option>
+                        <option value="in_progress">In progress</option>
+                        <option value="ready">Ready for pickup</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
                     </select>
 
-                    <select id="orders-filter-payment" title="Способ оплаты">
-                        <option value="">Оплата</option>
-                        <option value="online">Онлайн</option>
-                        <option value="cash">Наличными</option>
+                    <select id="orders-filter-payment" title="Payment method">
+                        <option value="">Payment</option>
+                        <option value="online">Online</option>
+                        <option value="cash">Cash</option>
                     </select>
 
-                    <select id="orders-sort-by" title="Сортировка">
-                        <option value="created_at">По дате</option>
-                        <option value="total_price">По сумме</option>
-                        <option value="id">По номеру</option>
+                    <select id="orders-sort-by" title="Sort by">
+                        <option value="created_at">By date</option>
+                        <option value="total_price">By amount</option>
+                        <option value="id">By number</option>
                     </select>
 
-                    <button type="button" class="btn-secondary" id="orders-sort-order" data-order="desc" title="Направление сортировки">По убыванию</button>
+                    <button type="button" class="btn-secondary" id="orders-sort-order" data-order="desc" title="Sort direction">Descending</button>
                 </div>
 
                 <div class="users-table-wrap">
                     <table class="users-table" id="orders-table">
                         <thead>
                             <tr>
-                                <th>№</th>
-                                <th>Дата</th>
-                                <th>Клиент</th>
-                                <th>Сумма</th>
-                                <th>Оплата</th>
-                                <th>Статус</th>
-                                <th>Действия</th>
+                                <th>#</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="orders-table-body">
-                            <tr><td colspan="7" class="users-loading">Загрузка...</td></tr>
+                            <tr><td colspan="7" class="users-loading">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="pager" id="orders-pager" hidden>
-                    <button type="button" class="btn-secondary" id="orders-prev">← Назад</button>
+                    <button type="button" class="btn-secondary" id="orders-prev">← Previous</button>
                     <span class="pager-info" id="orders-pager-info"></span>
-                    <button type="button" class="btn-secondary" id="orders-next">Вперёд →</button>
+                    <button type="button" class="btn-secondary" id="orders-next">Next →</button>
                 </div>
                 <p class="form_status full_row" id="orders-form-status" hidden></p>
             </section>
 
             <section class="panel-page" id="panel-page-stats" data-panel-page="stats" hidden>
                 <div class="panel-toolbar">
-                    <h2 class="panel-subheading panel-toolbar-title">Показатели за период</h2>
-                    <div class="queue-filter-tabs" id="stats-period-tabs" role="tablist" aria-label="Период">
-                        <button type="button" class="queue-filter-btn" data-period="today">Сегодня</button>
-                        <button type="button" class="queue-filter-btn active" data-period="7d">7 дней</button>
-                        <button type="button" class="queue-filter-btn" data-period="30d">30 дней</button>
-                        <button type="button" class="queue-filter-btn" data-period="90d">90 дней</button>
-                        <button type="button" class="queue-filter-btn" data-period="all">Всё время</button>
+                    <h2 class="panel-subheading panel-toolbar-title">Metrics for the period</h2>
+                    <div class="queue-filter-tabs" id="stats-period-tabs" role="tablist" aria-label="Period">
+                        <button type="button" class="queue-filter-btn" data-period="today">Today</button>
+                        <button type="button" class="queue-filter-btn active" data-period="7d">7 days</button>
+                        <button type="button" class="queue-filter-btn" data-period="30d">30 days</button>
+                        <button type="button" class="queue-filter-btn" data-period="90d">90 days</button>
+                        <button type="button" class="queue-filter-btn" data-period="all">All time</button>
                     </div>
                 </div>
 
                 <div class="stat-grid" id="stats-cards"></div>
 
                 <div class="dash-card dash-card-wide">
-                    <h2 class="panel-subheading">Выручка по дням</h2>
+                    <h2 class="panel-subheading">Revenue by day</h2>
                     <div id="stats-chart"></div>
                 </div>
 
                 <div class="dash-columns">
                     <div class="dash-card">
-                        <h2 class="panel-subheading">Заказы по статусам</h2>
+                        <h2 class="panel-subheading">Orders by status</h2>
                         <div id="stats-statuses"></div>
                     </div>
                     <div class="dash-card">
-                        <h2 class="panel-subheading">Топ товаров</h2>
+                        <h2 class="panel-subheading">Top products</h2>
                         <div id="stats-top-products"></div>
                     </div>
                 </div>
@@ -349,25 +349,25 @@
          a chance to copy it before closing -->
     <div class="modal-overlay" id="temp-password-modal-overlay" hidden>
         <div class="modal modal-password" id="temp-password-modal" role="dialog" aria-modal="true" aria-labelledby="temp-password-modal-title">
-            <button type="button" class="modal-close" id="temp-password-modal-close" aria-label="Закрыть">&times;</button>
-            <h2 id="temp-password-modal-title">Пароль сброшен</h2>
-            <p class="modal-text">Временный пароль для <strong id="temp-password-email"></strong> — передайте его пользователю, при входе система попросит его сменить.</p>
+            <button type="button" class="modal-close" id="temp-password-modal-close" aria-label="Close">&times;</button>
+            <h2 id="temp-password-modal-title">Password reset</h2>
+            <p class="modal-text">Temporary password for <strong id="temp-password-email"></strong> — give it to the user; they will be asked to change it at login.</p>
             <div class="temp-password-value" id="temp-password-value"></div>
             <div class="modal-actions">
-                <button type="button" class="btn-secondary" id="temp-password-copy">Скопировать</button>
-                <button type="button" class="button_s sign_in" id="temp-password-modal-ok">Готово</button>
+                <button type="button" class="btn-secondary" id="temp-password-copy">Copy</button>
+                <button type="button" class="button_s sign_in" id="temp-password-modal-ok">Done</button>
             </div>
         </div>
     </div>
 
-    <!-- Opened by the "Подробнее" button in the users table. The main card and
+    <!-- Opened by the "Details" button in the users table. The main card and
          the side panel sit in a flex row inside the centered overlay, so
          revealing the side panel naturally shifts the main card left instead
          of covering it or navigating to a separate page. -->
     <div class="modal-overlay" id="user-details-modal-overlay" hidden>
         <div class="user-details-modal-group" id="user-details-modal-group">
             <div class="modal modal-wide" id="user-details-modal" role="dialog" aria-modal="true" aria-labelledby="user-details-modal-title">
-                <button type="button" class="modal-close" id="user-details-modal-close" aria-label="Закрыть">&times;</button>
+                <button type="button" class="modal-close" id="user-details-modal-close" aria-label="Close">&times;</button>
 
                 <div class="user-detail-header">
                     <div class="user-detail-avatar">
@@ -375,7 +375,7 @@
                         <img class="user-detail-avatar-image" id="user-detail-avatar-image" src="" alt="" hidden>
                     </div>
                     <div class="user-detail-heading">
-                        <h2 id="user-details-modal-title">Пользователь</h2>
+                        <h2 id="user-details-modal-title">User</h2>
                         <p class="user-detail-email" id="user-details-modal-email"></p>
                     </div>
                 </div>
@@ -384,75 +384,75 @@
 
                 <div class="user-detail-toggles">
                     <button type="button" class="btn-secondary user-detail-toggle-btn" id="user-details-orders-toggle" disabled>
-                        Заказы
+                        Orders
                     </button>
                     <button type="button" class="btn-secondary user-detail-toggle-btn" id="user-details-reviews-toggle" disabled>
-                        Отзывы
+                        Reviews
                     </button>
                 </div>
             </div>
 
             <div class="modal modal-side-panel" id="user-details-side-panel" hidden role="dialog" aria-modal="true" aria-labelledby="user-details-side-panel-title">
-                <button type="button" class="modal-close" id="user-details-side-panel-close" aria-label="Закрыть">&times;</button>
-                <h2 id="user-details-side-panel-title">Заказы</h2>
+                <button type="button" class="modal-close" id="user-details-side-panel-close" aria-label="Close">&times;</button>
+                <h2 id="user-details-side-panel-title">Orders</h2>
                 <div class="user-detail-sublist" id="user-details-side-panel-content"></div>
             </div>
         </div>
     </div>
 
-    <!-- New product popup — opened by the "Добавить товар" button above the table -->
+    <!-- New product popup — opened by the "Add product" button above the table -->
     <div class="modal-overlay" id="product-modal-overlay" hidden>
         <div class="modal modal-form" id="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-title">
-            <button type="button" class="modal-close" id="product-modal-close" aria-label="Закрыть">&times;</button>
-            <h2 id="product-modal-title">Новый товар</h2>
-            <p class="modal-text">Заполните данные — товар сразу появится в каталоге.</p>
+            <button type="button" class="modal-close" id="product-modal-close" aria-label="Close">&times;</button>
+            <h2 id="product-modal-title">New product</h2>
+            <p class="modal-text">Fill in the details — the product appears in the catalog right away.</p>
 
             <form class="modal-form-grid" id="product-form" novalidate>
                 <div class="form_group full_row">
-                    <label for="product-name">Название</label>
-                    <input type="text" id="product-name" name="product-name" placeholder="Например, Латте с карамелью" required>
+                    <label for="product-name">Name</label>
+                    <input type="text" id="product-name" name="product-name" placeholder="E.g., Caramel latte" required>
                 </div>
                 <div class="form_group">
-                    <label for="product-price">Цена, ֏</label>
+                    <label for="product-price">Price, ֏</label>
                     <input type="number" id="product-price" name="product-price" min="1" step="1" placeholder="1200" required>
                 </div>
                 <div class="form_group">
-                    <label for="product-category">Категория</label>
+                    <label for="product-category">Category</label>
                     <select id="product-category" name="product-category">
-                        <option value="">Без категории</option>
+                        <option value="">No category</option>
                     </select>
                 </div>
                 <div class="form_group full_row">
-                    <label for="product-image">Фото <span class="optional_label">(необязательно)</span></label>
+                    <label for="product-image">Photo <span class="optional_label">(optional)</span></label>
                     <label class="file-drop" for="product-image" id="product-image-drop">
                         <img class="file-drop-preview" id="product-image-preview" src="" alt="" hidden>
-                        <span class="file-drop-text" id="product-image-text">Нажмите, чтобы выбрать изображение</span>
+                        <span class="file-drop-text" id="product-image-text">Click to choose an image</span>
                     </label>
                     <input type="file" id="product-image" name="product-image" accept="image/*" hidden>
                 </div>
                 <div class="form_group full_row">
-                    <label>Теги</label>
+                    <label>Tags</label>
                     <div class="checkbox-grid" id="product-tags-checkboxes">
-                        <p class="users-empty" id="product-tags-empty">Тегов пока нет — создайте их в разделе «Теги».</p>
+                        <p class="users-empty" id="product-tags-empty">No tags yet — create them in the Tags section.</p>
                     </div>
                 </div>
 
                 <p class="form_status full_row" id="product-form-status" hidden></p>
 
                 <div class="modal-actions full_row">
-                    <button type="button" class="btn-secondary" id="product-modal-cancel">Отмена</button>
-                    <button type="submit" class="button_s sign_in">Создать товар</button>
+                    <button type="button" class="btn-secondary" id="product-modal-cancel">Cancel</button>
+                    <button type="submit" class="button_s sign_in">Create product</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Order details popup — opened by "Подробнее" in the orders table -->
+    <!-- Order details popup — opened by "Details" in the orders table -->
     <div class="modal-overlay" id="order-details-modal-overlay" hidden>
         <div class="modal modal-wide" id="order-details-modal" role="dialog" aria-modal="true" aria-labelledby="order-details-title">
-            <button type="button" class="modal-close" id="order-details-close" aria-label="Закрыть">&times;</button>
+            <button type="button" class="modal-close" id="order-details-close" aria-label="Close">&times;</button>
             <div class="order-detail-head">
-                <h2 id="order-details-title">Заказ</h2>
+                <h2 id="order-details-title">Order</h2>
                 <span class="badge" id="order-details-status"></span>
             </div>
             <div id="order-details-body"></div>

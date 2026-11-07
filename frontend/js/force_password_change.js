@@ -20,7 +20,7 @@ forcePasswordForm.addEventListener("submit", async (event) => {
     });
 
     if (typeof setFlashMessage === "function") {
-      setFlashMessage("Пароль обновлён. Добро пожаловать!", "success");
+      setFlashMessage("Password updated. Welcome!", "success");
     }
 
     // Route straight to the right home base for the account's role instead

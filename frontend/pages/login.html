@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,22 +8,22 @@
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/auth.css">
     <link rel="stylesheet" href="../css/toast.css">
-    <title>Coffee Shop — Вход</title>
+    <title>Coffee Shop — Log in</title>
 </head>
 <body>
 
     <div class="central_block auth_block">
         <div class="central_header">
-            <span class="eyebrow">С возвращением</span>
+            <span class="eyebrow">Welcome back</span>
             <img src="../media/big_logo.png" alt="Coffee Shop">
-            <h1>Вход</h1>
+            <h1>Log in</h1>
         </div>
 
     <a href="index.html" class="back_link">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        Назад
+        Back
     </a>
 
         <!-- Login form — handled client-side, see login.js -->
@@ -34,31 +34,31 @@
             </div>
 
             <div class="form_group">
-                <label for="password">Пароль</label>
+                <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="••••••••" required>
             </div>
 
-            <a href="forgot_password.html" class="forgot_link">Забыли пароль?</a>
+            <a href="forgot_password.html" class="forgot_link">Forgot your password?</a>
 
-            <button type="submit" class="button_s sign_in full_width">Войти</button>
+            <button type="submit" class="button_s sign_in full_width">Log in</button>
 
             <!-- Filled in by login.js once the form is submitted -->
             <p class="form_status" id="form-status" hidden></p>
         </form>
 
-        <p class="switch_text">Нет аккаунта? <a href="register.html">Зарегистрироваться</a></p>
+        <p class="switch_text">Don't have an account? <a href="register.html">Sign up</a></p>
     </div>
 
     <!-- Shown when POST /user/login responds with a deactivated-account
          detail (same shape as the 409 from /user/register) -->
     <div class="modal-overlay" id="reactivate-modal-overlay" hidden>
         <div class="modal modal-narrow" id="reactivate-modal" role="dialog" aria-modal="true" aria-labelledby="reactivate-modal-title">
-            <button type="button" class="modal-close" id="reactivate-modal-close" aria-label="Закрыть">&times;</button>
-            <h2 id="reactivate-modal-title">Аккаунт деактивирован</h2>
+            <button type="button" class="modal-close" id="reactivate-modal-close" aria-label="Close">&times;</button>
+            <h2 id="reactivate-modal-title">Account deactivated</h2>
             <p class="modal-text" id="reactivate-modal-text"></p>
             <div class="modal-actions">
-                <button type="button" class="btn-secondary" id="reactivate-modal-new">Создать новый аккаунт</button>
-                <button type="button" class="button_s sign_in" id="reactivate-modal-restore">Восстановить аккаунт</button>
+                <button type="button" class="btn-secondary" id="reactivate-modal-new">Create a new account</button>
+                <button type="button" class="button_s sign_in" id="reactivate-modal-restore">Restore account</button>
             </div>
         </div>
     </div>

@@ -3,7 +3,7 @@ async function loadProduct() {
   const productId = new URLSearchParams(window.location.search).get("id");
 
   if (!productId) {
-    container.innerHTML = `<p class="error-text">Товар не указан. Вернитесь в меню и выберите товар.</p>`;
+    container.innerHTML = `<p class="error-text">No product specified. Go back to the menu and choose a product.</p>`;
     return;
   }
 
@@ -12,7 +12,7 @@ async function loadProduct() {
 
     if (!response.ok) {
       if (response.status === 404) {
-        throw new Error("Такой товар не найден");
+        throw new Error("Product not found");
       }
       throw new Error(`Server error: ${response.status}`);
     }
@@ -21,7 +21,7 @@ async function loadProduct() {
     renderProduct(product);
 
   } catch (error) {
-    container.innerHTML = `<p class="error-text">Не удалось загрузить товар: ${error.message}</p>`;
+    container.innerHTML = `<p class="error-text">Could not load the product: ${error.message}</p>`;
     console.error("Failed to load product:", error);
   }
 }
@@ -68,20 +68,20 @@ function renderProduct(product) {
         ${tagsHtml}
         <p class="detail-price" id="detail-price"></p>
         <div class="detail-quantity">
-          <button type="button" class="qty-button" id="qty-decrease" aria-label="Уменьшить количество">−</button>
+          <button type="button" class="qty-button" id="qty-decrease" aria-label="Decrease quantity">−</button>
           <span id="qty-value">1</span>
-          <button type="button" class="qty-button" id="qty-increase" aria-label="Увеличить количество">+</button>
+          <button type="button" class="qty-button" id="qty-increase" aria-label="Increase quantity">+</button>
         </div>
-        <button class="detail-add-button" type="button" id="add-to-cart-button">Добавить в корзину</button>
+        <button class="detail-add-button" type="button" id="add-to-cart-button">Add to cart</button>
       </div>
 
       <div class="reviews-section">
         <h2 class="reviews-heading">
-          Отзывы
+          Reviews
           <span class="reviews-count" id="reviews-count"></span>
         </h2>
         <div id="reviews-list" class="reviews-list">
-          <p class="reviews-loading-text">Загрузка отзывов...</p>
+          <p class="reviews-loading-text">Loading reviews...</p>
         </div>
         <div id="review-form-slot"></div>
       </div>
@@ -94,7 +94,7 @@ function renderProduct(product) {
   setupReviewForm(product.id);
 }
 
-// Adds the category and product name as extra crumbs after "Меню" —
+// Adds the category and product name as extra crumbs after "Menu" —
 // the first crumb is already in the page shell (product.html) since it
 // doesn't depend on the fetched product.
 function extendBreadcrumb(product) {
@@ -110,7 +110,7 @@ function extendBreadcrumb(product) {
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      Меню
+      Menu
     </a>
     ${categoryCrumb}
   `;
@@ -138,7 +138,7 @@ function renderRatingSummary(product) {
     return `
       <div class="detail-rating">
         ${renderStars(0)}
-        <span class="rating-count no-reviews">Пока нет отзывов</span>
+        <span class="rating-count no-reviews">No reviews yet</span>
       </div>
     `;
   }
@@ -151,12 +151,7 @@ function renderRatingSummary(product) {
 }
 
 function pluralizeReviews(count) {
-  const mod10 = count % 10;
-  const mod100 = count % 100;
-  let word = "отзывов";
-  if (mod10 === 1 && mod100 !== 11) word = "отзыв";
-  else if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) word = "отзыва";
-  return `${count} ${word}`;
+  return `${count} ${count === 1 ? "review" : "reviews"}`;
 }
 
 // Reviews list
@@ -172,19 +167,19 @@ async function loadReviews(productId) {
     countEl.textContent = reviews.length ? `(${reviews.length})` : "";
 
     if (!reviews.length) {
-      listEl.innerHTML = `<p class="reviews-empty-text">Отзывов пока нет — станьте первым, кто оставит отзыв на этот товар.</p>`;
+      listEl.innerHTML = `<p class="reviews-empty-text">No reviews yet — be the first to review this product.</p>`;
       return;
     }
 
     listEl.innerHTML = reviews.map(renderReviewCard).join("");
   } catch (error) {
-    listEl.innerHTML = `<p class="error-text">Не удалось загрузить отзывы: ${error.message}</p>`;
+    listEl.innerHTML = `<p class="error-text">Could not load reviews: ${error.message}</p>`;
     console.error("Failed to load reviews:", error);
   }
 }
 
 function renderReviewCard(review) {
-  const author = review.user?.name || "Гость";
+  const author = review.user?.name || "Guest";
   const initial = author.trim().charAt(0).toUpperCase() || "?";
   const avatarUrl = review.user?.image_url ? `${API_BASE_URL}${review.user.image_url}` : null;
 
@@ -192,7 +187,7 @@ function renderReviewCard(review) {
     ? `<img src="${avatarUrl}" alt="${escapeHtml(author)}" class="review-avatar">`
     : `<span class="review-avatar-fallback">${initial}</span>`;
 
-  const date = new Date(review.created_at).toLocaleDateString("ru-RU", {
+  const date = new Date(review.created_at).toLocaleDateString("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -219,7 +214,7 @@ async function setupReviewForm(productId) {
   const slot = document.getElementById("review-form-slot");
 
   if (!getAccessToken()) {
-    slot.innerHTML = `<p class="review-status-text">Войдите в аккаунт, чтобы оставить отзыв.</p>`;
+    slot.innerHTML = `<p class="review-status-text">Log in to leave a review.</p>`;
     return;
   }
 
@@ -227,12 +222,12 @@ async function setupReviewForm(productId) {
     const eligibility = await apiRequest(`/review/${productId}/eligibility`);
 
     if (eligibility.already_reviewed) {
-      slot.innerHTML = `<p class="review-status-text">Вы уже оставили отзыв на этот товар. Спасибо!</p>`;
+      slot.innerHTML = `<p class="review-status-text">You have already reviewed this product. Thank you!</p>`;
       return;
     }
 
     if (!eligibility.can_review) {
-      slot.innerHTML = `<p class="review-status-text">Оставить отзыв можно после получения заказа с этим товаром.</p>`;
+      slot.innerHTML = `<p class="review-status-text">You can leave a review after receiving an order with this product.</p>`;
       return;
     }
 
@@ -247,13 +242,13 @@ async function setupReviewForm(productId) {
 function renderReviewForm(slot, productId) {
   slot.innerHTML = `
     <div class="review-form-box">
-      <p class="review-form-title">Оставить отзыв</p>
+      <p class="review-form-title">Leave a review</p>
       <div class="star-input" id="star-input">
-        ${[1, 2, 3, 4, 5].map((n) => `<button type="button" data-value="${n}" aria-label="${n} звёзд">★</button>`).join("")}
+        ${[1, 2, 3, 4, 5].map((n) => `<button type="button" data-value="${n}" aria-label="${n} stars">★</button>`).join("")}
       </div>
-      <textarea class="review-textarea" id="review-comment" placeholder="Расскажите, что понравилось (или нет)..."></textarea>
+      <textarea class="review-textarea" id="review-comment" placeholder="Tell us what you liked (or didn't)..."></textarea>
       <div>
-        <button type="button" class="review-submit-button" id="review-submit-button">Отправить отзыв</button>
+        <button type="button" class="review-submit-button" id="review-submit-button">Submit review</button>
       </div>
     </div>
   `;
@@ -281,11 +276,11 @@ function renderReviewForm(slot, productId) {
     const comment = document.getElementById("review-comment").value.trim();
 
     if (!selectedRating) {
-      showToast("Поставьте оценку от 1 до 5 звёзд", "error");
+      showToast("Choose a rating from 1 to 5 stars", "error");
       return;
     }
     if (!comment) {
-      showToast("Напишите короткий комментарий к отзыву", "error");
+      showToast("Write a short comment for your review", "error");
       return;
     }
 
@@ -295,8 +290,8 @@ function renderReviewForm(slot, productId) {
         method: "POST",
         body: JSON.stringify({ rating: selectedRating, comment }),
       });
-      showToast("Спасибо за отзыв!", "success");
-      slot.innerHTML = `<p class="review-status-text">Вы уже оставили отзыв на этот товар. Спасибо!</p>`;
+      showToast("Thank you for your review!", "success");
+      slot.innerHTML = `<p class="review-status-text">You have already reviewed this product. Thank you!</p>`;
       loadReviews(productId);
     } catch (error) {
       showToast(error.message, "error");
@@ -330,7 +325,7 @@ function setupAddToCart(product) {
     addButton.disabled = true;
     try {
       await addProductToCart(product, quantity);
-      showToast(`«${product.name}» добавлен в корзину`, "success");
+      showToast(`"${product.name}" added to cart`, "success");
     } catch (error) {
       showToast(error.message, "error");
     } finally {
@@ -344,7 +339,7 @@ function setupAddToCart(product) {
 // unitPrice can arrive as a string from the API (Decimal serialization),
 // hence the Number() conversion.
 function formatAmount(amount) {
-  return Number(amount).toLocaleString("ru-RU");
+  return Number(amount).toLocaleString("en-US");
 }
 
 function updatePriceDisplay(unitPrice, quantity) {

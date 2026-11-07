@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,15 +8,15 @@
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/auth.css">
     <link rel="stylesheet" href="../css/toast.css">
-    <title>Coffee Shop — Подтверждение email</title>
+    <title>Coffee Shop — Email verification</title>
 </head>
 <body>
 
     <div class="central_block auth_block">
         <div class="central_header">
-            <span class="eyebrow" id="step-eyebrow">Шаг 2 из 2</span>
+            <span class="eyebrow" id="step-eyebrow">Step 2 of 2</span>
             <img src="../media/big_logo.png" alt="Coffee Shop">
-            <h1>Подтвердите email</h1>
+            <h1>Verify your email</h1>
         </div>
 
         <!-- Progress dots — only relevant right after registration; hidden
@@ -28,17 +28,17 @@
         </div>
 
         <!-- Filled in by register_step2.js from sessionStorage -->
-        <p class="confirm_text">Мы отправили 6-значный код на <strong id="user-email">вашу почту</strong></p>
+        <p class="confirm_text">We sent a 6-digit code to <strong id="user-email">your email</strong></p>
 
         <form class="auth_form" id="verify-form" novalidate>
             <div class="form_group full_row">
-                <label for="code">Код подтверждения</label>
+                <label for="code">Verification code</label>
                 <input type="text" id="code" name="code" maxlength="6" placeholder="000000" inputmode="numeric" required>
             </div>
 
-            <button type="submit" class="button_s sign_in full_width full_row">Подтвердить</button>
+            <button type="submit" class="button_s sign_in full_width full_row">Verify</button>
             <!-- /user/resend-code issues a fresh code for an unverified account -->
-            <button type="button" class="skip_link" id="resend-code">Отправить код повторно</button>
+            <button type="button" class="skip_link" id="resend-code">Resend code</button>
 
             <p class="form_status full_row" id="form-status" hidden></p>
         </form>

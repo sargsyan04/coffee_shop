@@ -8,7 +8,7 @@ from src.models.review import Review
 
 
 async def can_leave_review(db: AsyncSession, user_id: int, product_id: int) -> bool:
-    """Проверяет, покупал ли пользователь этот товар в завершённом заказе."""
+    """Checks whether the user bought this product in a completed order."""
     result = await db.execute(
         select(OrderItem)
         .join(Order)
@@ -28,10 +28,9 @@ async def create_review(
     rating: int,
     comment: str | None,
 ) -> Review:
-    """Создаёт отзыв — но только если пользователь имеет на это право."""
-
+    """Creates a review — but only if the user is allowed to."""
     if not await can_leave_review(db, user_id, product_id):
-        raise PermissionError("Отзыв можно оставить только на купленный и полученный товар")
+        raise PermissionError("A review can only be left for a product you have purchased and received")
 
     review = Review(
         user_id=user_id,
@@ -49,7 +48,7 @@ async def create_review(
 
 
 async def recalculate_product_rating(db: AsyncSession, product_id: int) -> None:
-    """Пересчитывает средний рейтинг и количество отзывов товара после изменений."""
+    """Recalculates the product's average rating and review count after changes."""
     result = await db.execute(select(func.avg(Review.rating), func.count(Review.id)).where(Review.product_id == product_id))
     avg_rating, count = result.one()
 

@@ -8,13 +8,13 @@ const panelPageTitle = document.getElementById("panel-page-title");
 // is visible, no page reload
 
 const PANEL_PAGES = [
-  { id: "dashboard", icon: "icon-dashboard", label: "Дашборд" },
-  { id: "users", icon: "icon-users", label: "Пользователи" },
-  { id: "products", icon: "icon-products", label: "Товары" },
-  { id: "categories", icon: "icon-categories", label: "Категории" },
-  { id: "tags", icon: "icon-tags", label: "Теги" },
-  { id: "orders", icon: "icon-orders", label: "Заказы" },
-  { id: "stats", icon: "icon-stats", label: "Статистика" },
+  { id: "dashboard", icon: "icon-dashboard", label: "Dashboard" },
+  { id: "users", icon: "icon-users", label: "Users" },
+  { id: "products", icon: "icon-products", label: "Products" },
+  { id: "categories", icon: "icon-categories", label: "Categories" },
+  { id: "tags", icon: "icon-tags", label: "Tags" },
+  { id: "orders", icon: "icon-orders", label: "Orders" },
+  { id: "stats", icon: "icon-stats", label: "Statistics" },
 ];
 
 // Sections register a loader here (see admin_orders.js / admin_stats.js) —
@@ -43,7 +43,7 @@ function selectPanelPage(id) {
   });
 
   const page = PANEL_PAGES.find((p) => p.id === id);
-  panelPageEyebrow.textContent = "Админ-панель";
+  panelPageEyebrow.textContent = "Admin panel";
   panelPageTitle.textContent = page.label;
 
   if (typeof PANEL_PAGE_HOOKS[id] === "function") {
@@ -92,7 +92,6 @@ const ROLE_OPTIONS = ["customer", "barista", "admin"];
 // avoids a confusing round-trip error)
 let currentAdminId = null;
 
-// Filled in by renderUsersTable — lets the "Подробнее" button look up the
 // full user object (bonus points, email, etc.) by id without another request
 let usersById = {};
 
@@ -133,7 +132,7 @@ async function loadCategories() {
 
 function renderCategoriesTable(categories) {
   if (categories.length === 0) {
-    categoriesTableBody.innerHTML = '<tr><td colspan="2" class="users-empty">Категорий пока нет</td></tr>';
+    categoriesTableBody.innerHTML = '<tr><td colspan="2" class="users-empty">No categories yet</td></tr>';
     return;
   }
 
@@ -147,7 +146,7 @@ function renderCategoriesTable(categories) {
 function populateCategorySelect(categories) {
   const previousValue = productCategorySelect.value;
 
-  productCategorySelect.innerHTML = '<option value="">Без категории</option>';
+  productCategorySelect.innerHTML = '<option value="">No category</option>';
   categories.forEach((category) => {
     const option = document.createElement("option");
     option.value = category.id;
@@ -169,7 +168,7 @@ categoryForm.addEventListener("submit", async (event) => {
       method: "POST",
       body: JSON.stringify({ name: document.getElementById("category-name").value }),
     });
-    showToast("Категория создана", "success");
+    showToast("Category created", "success");
     categoryForm.reset();
     loadCategories();
   } catch (error) {
@@ -192,7 +191,7 @@ async function loadTags() {
 
 function renderTagsTable(tags) {
   if (tags.length === 0) {
-    tagsTableBody.innerHTML = '<tr><td colspan="3" class="users-empty">Тегов пока нет</td></tr>';
+    tagsTableBody.innerHTML = '<tr><td colspan="3" class="users-empty">No tags yet</td></tr>';
     return;
   }
 
@@ -208,7 +207,7 @@ function renderTagsTable(tags) {
 // for a product right away without a page reload.
 function renderProductTagCheckboxes(tags) {
   if (tags.length === 0) {
-    productTagsCheckboxes.innerHTML = '<p class="users-empty">Тегов пока нет — создайте их в разделе «Теги».</p>';
+    productTagsCheckboxes.innerHTML = '<p class="users-empty">No tags yet — create them in the Tags section.</p>';
     return;
   }
 
@@ -233,7 +232,7 @@ tagForm.addEventListener("submit", async (event) => {
       method: "POST",
       body: JSON.stringify({ name: document.getElementById("tag-name").value }),
     });
-    showToast("Тег создан", "success");
+    showToast("Tag created", "success");
     tagForm.reset();
     loadTags();
   } catch (error) {
@@ -255,7 +254,7 @@ async function loadProducts() {
 
 function renderProductsTable(products) {
   if (products.length === 0) {
-    productsTableBody.innerHTML = '<tr><td colspan="5" class="users-empty">Товаров пока нет</td></tr>';
+    productsTableBody.innerHTML = '<tr><td colspan="5" class="users-empty">No products yet</td></tr>';
     return;
   }
 
@@ -362,11 +361,11 @@ productForm.addEventListener("submit", async (event) => {
       try {
         await apiUploadFile(`/products/${created.id}/image`, imageFile);
       } catch {
-        showToast("Товар создан, но фото загрузить не удалось", "error");
+        showToast("Product created, but the photo could not be uploaded", "error");
       }
     }
 
-    showToast("Товар создан", "success");
+    showToast("Product created", "success");
     closeProductModal();
     loadProducts();
   } catch (error) {
@@ -414,7 +413,7 @@ usersSearchInput.addEventListener("input", scheduleUsersReload);
 usersSortOrderBtn.addEventListener("click", () => {
   const nextOrder = usersSortOrderBtn.dataset.order === "asc" ? "desc" : "asc";
   usersSortOrderBtn.dataset.order = nextOrder;
-  usersSortOrderBtn.textContent = nextOrder === "asc" ? "По возрастанию" : "По убыванию";
+  usersSortOrderBtn.textContent = nextOrder === "asc" ? "Ascending" : "Descending";
   loadUsers();
 });
 
@@ -423,7 +422,7 @@ function renderUsersTable(users) {
   usersById = Object.fromEntries(users.map((user) => [user.id, user]));
 
   if (users.length === 0) {
-    usersTableBody.innerHTML = '<tr><td colspan="6" class="users-empty">Пользователей пока нет</td></tr>';
+    usersTableBody.innerHTML = '<tr><td colspan="6" class="users-empty">No users yet</td></tr>';
     return;
   }
 
@@ -442,14 +441,14 @@ function renderUsersTable(users) {
       <td>${escapeHtml(user.name)}</td>
       <td>${escapeHtml(user.email)}</td>
       <td>
-        <select class="users-role-select" data-user-id="${user.id}" ${isSelf ? 'title="Нельзя снять роль администратора с самого себя"' : ""}>
+        <select class="users-role-select" data-user-id="${user.id}" ${isSelf ? 'title="You cannot remove your own admin role"' : ""}>
           ${roleOptions}
         </select>
       </td>
-      <td><span class="badge">${user.is_active ? "Активен" : "Деактивирован"}</span></td>
+      <td><span class="badge">${user.is_active ? "Active" : "Deactivated"}</span></td>
       <td class="users-actions-cell">
-        <button type="button" class="btn-secondary users-details-btn" data-user-id="${user.id}">Подробнее</button>
-        <button type="button" class="btn-secondary users-reset-btn" data-user-id="${user.id}" data-user-email="${escapeHtml(user.email)}">Сбросить пароль</button>
+        <button type="button" class="btn-secondary users-details-btn" data-user-id="${user.id}">Details</button>
+        <button type="button" class="btn-secondary users-reset-btn" data-user-id="${user.id}" data-user-email="${escapeHtml(user.email)}">Reset password</button>
       </td>
     `;
 
@@ -490,7 +489,7 @@ async function onRoleChange(event) {
       body: JSON.stringify({ role: newRole }),
     });
     select.dataset.previousValue = newRole;
-    showToast("Роль обновлена", "success");
+    showToast("Role updated", "success");
   } catch (error) {
     select.value = previousValue;
     usersFormStatus.textContent = error.message;
@@ -505,8 +504,8 @@ async function onResetPassword(event) {
   const userId = button.dataset.userId;
   const userEmail = button.dataset.userEmail;
 
-  const confirmed = await confirmDialog(`Сбросить пароль для ${userEmail}? Текущий пароль перестанет работать.`, {
-    confirmLabel: "Сбросить",
+  const confirmed = await confirmDialog(`Reset the password for ${userEmail}? The current password will stop working.`, {
+    confirmLabel: "Reset",
   });
   if (!confirmed) {
     return;
@@ -545,9 +544,9 @@ tempPasswordModalOverlay.addEventListener("click", (event) => {
 tempPasswordCopy.addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(tempPasswordValue.textContent);
-    showToast("Пароль скопирован", "success");
+    showToast("Password copied", "success");
   } catch {
-    showToast("Не удалось скопировать — выделите вручную", "error");
+    showToast("Could not copy — select it manually", "error");
   }
 });
 
@@ -601,11 +600,11 @@ function renderUserDetailAvatar(user) {
 }
 
 const ORDER_STATUS_LABELS = {
-  created: "Оформлен",
-  paid: "Оплачен",
-  in_progress: "Готовится",
-  ready: "Готов",
-  completed: "Завершён",
+  created: "Placed",
+  paid: "Paid",
+  in_progress: "In progress",
+  ready: "Ready",
+  completed: "Completed",
 };
 
 function userDetailRow(label, value, isLoading = false) {
@@ -620,18 +619,18 @@ function userDetailRow(label, value, isLoading = false) {
 function renderUserDetailRows(user, stats) {
   return [
     userDetailRow("ID", user.id),
-    userDetailRow("Роль", roleLabel(user.role)),
-    userDetailRow("Статус", user.is_active ? "Активен" : "Деактивирован"),
-    userDetailRow("Бонусные очки", user.bonus_points),
+    userDetailRow("Role", roleLabel(user.role)),
+    userDetailRow("Status", user.is_active ? "Active" : "Deactivated"),
+    userDetailRow("Bonus points", user.bonus_points),
     stats
-      ? userDetailRow("Заказов", stats.orders_count)
-      : userDetailRow("Заказов", "Загрузка...", true),
+      ? userDetailRow("Orders", stats.orders_count)
+      : userDetailRow("Orders", "Loading...", true),
     stats
-      ? userDetailRow("Потрачено", `${stats.total_spent} ֏`)
-      : userDetailRow("Потрачено", "Загрузка...", true),
+      ? userDetailRow("Spent", `${stats.total_spent} ֏`)
+      : userDetailRow("Spent", "Loading...", true),
     stats
-      ? userDetailRow("Отзывов", stats.reviews_count)
-      : userDetailRow("Отзывов", "Загрузка...", true),
+      ? userDetailRow("Reviews", stats.reviews_count)
+      : userDetailRow("Reviews", "Loading...", true),
   ].join("");
 }
 
@@ -644,7 +643,7 @@ function renderOrdersList(stats) {
   const entries = Object.entries(stats.orders || {});
 
   if (!entries.length) {
-    return `<p class="user-detail-empty">Заказов пока нет.</p>`;
+    return `<p class="user-detail-empty">No orders yet.</p>`;
   }
 
   return entries
@@ -663,12 +662,12 @@ function renderReviewsList(stats) {
   const reviews = stats.reviews || [];
 
   if (!reviews.length) {
-    return `<p class="user-detail-empty">Отзывов пока нет.</p>`;
+    return `<p class="user-detail-empty">No reviews yet.</p>`;
   }
 
   return reviews
     .map((review) => {
-      const date = new Date(review.created_at).toLocaleDateString("ru-RU", {
+      const date = new Date(review.created_at).toLocaleDateString("en-US", {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -677,7 +676,7 @@ function renderReviewsList(stats) {
       return `
         <div class="user-detail-sublist-row user-detail-review-row">
           <div class="user-detail-review-header">
-            <span class="user-detail-review-product">${escapeHtml(review.product?.name || "Товар")}</span>
+            <span class="user-detail-review-product">${escapeHtml(review.product?.name || "Product")}</span>
             <span class="user-detail-review-rating">${"★".repeat(review.rating)}${"☆".repeat(5 - review.rating)}</span>
           </div>
           <p class="user-detail-review-comment">${escapeHtml(review.comment)}</p>
@@ -742,19 +741,19 @@ function openSidePanel(title, contentHtml) {
 }
 
 userDetailsOrdersToggle.addEventListener("click", () => {
-  if (!userDetailsSidePanel.hidden && userDetailsSidePanelTitle.textContent === "Заказы") {
+  if (!userDetailsSidePanel.hidden && userDetailsSidePanelTitle.textContent === "Orders") {
     closeSidePanel();
     return;
   }
-  openSidePanel("Заказы", renderOrdersList(currentUserStats));
+  openSidePanel("Orders", renderOrdersList(currentUserStats));
 });
 
 userDetailsReviewsToggle.addEventListener("click", () => {
-  if (!userDetailsSidePanel.hidden && userDetailsSidePanelTitle.textContent === "Отзывы") {
+  if (!userDetailsSidePanel.hidden && userDetailsSidePanelTitle.textContent === "Reviews") {
     closeSidePanel();
     return;
   }
-  openSidePanel("Отзывы", renderReviewsList(currentUserStats));
+  openSidePanel("Reviews", renderReviewsList(currentUserStats));
 });
 
 userDetailsSidePanelClose.addEventListener("click", closeSidePanel);

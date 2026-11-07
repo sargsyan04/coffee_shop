@@ -485,13 +485,11 @@
     white-space: normal;
 }
 
-/* ===== User details popup (opened from "Подробнее") ===== */
+/* ===== User details popup (opened from "Details") ===== */
 .modal-wide {
     max-width: 560px;
 }
 
-/* Flex row so revealing the side panel widens the group and re-centers it —
-   the main card ends up shifted left instead of the side panel overlapping it. */
 .user-details-modal-group {
     display: flex;
     align-items: flex-start;

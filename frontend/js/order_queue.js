@@ -1,20 +1,20 @@
 const NEXT_STATUS = {
-  paid: { next: "in_progress", label: "Взять в работу" },
-  in_progress: { next: "ready", label: "Готово к выдаче" },
-  ready: { next: "completed", label: "Выдан" },
+  paid: { next: "in_progress", label: "Start preparing" },
+  in_progress: { next: "ready", label: "Mark as ready" },
+  ready: { next: "completed", label: "Handed over" },
 };
 
 const STATUS_LABELS = {
-  created: "Создан",
-  paid: "Оплачен",
-  in_progress: "Готовится",
-  ready: "Готов к выдаче",
-  completed: "Завершён",
-  cancelled: "Отменён",
+  created: "Created",
+  paid: "Paid",
+  in_progress: "In progress",
+  ready: "Ready for pickup",
+  completed: "Completed",
+  cancelled: "Cancelled",
 };
 
 function formatOrderDate(iso) {
-  return new Date(iso).toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleString("en-US", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 }
 
 // containerId -> { orders: [...], filter: "all" | order status }. Keeping the
@@ -27,7 +27,7 @@ async function loadOrderQueue(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  container.innerHTML = `<p class="queue-loading">Загрузка заказов...</p>`;
+  container.innerHTML = `<p class="queue-loading">Loading orders...</p>`;
   queueState[containerId] = queueState[containerId] || { orders: [], filter: "all" };
 
   try {
@@ -35,7 +35,7 @@ async function loadOrderQueue(containerId) {
     queueState[containerId].orders = orders;
     renderQueueList(containerId);
   } catch (error) {
-    container.innerHTML = `<p class="queue-error">Не удалось загрузить заказы: ${error.message}</p>`;
+    container.innerHTML = `<p class="queue-error">Could not load orders: ${error.message}</p>`;
   }
 }
 
@@ -47,7 +47,7 @@ function renderQueueList(containerId) {
   const orders = state.filter === "all" ? state.orders : state.orders.filter((order) => order.status === state.filter);
 
   if (orders.length === 0) {
-    container.innerHTML = `<p class="queue-empty">${state.orders.length === 0 ? "Активных заказов нет." : "Нет заказов с этим статусом."}</p>`;
+    container.innerHTML = `<p class="queue-empty">${state.orders.length === 0 ? "There are no active orders." : "No orders with this status."}</p>`;
     return;
   }
 
@@ -72,7 +72,7 @@ function renderOrderCard(order) {
   return `
     <li class="queue-card" data-order-id="${order.id}">
       <div class="queue-card-header">
-        <span class="queue-order-id">Заказ №${order.id}</span>
+        <span class="queue-order-id">Order #${order.id}</span>
         <span class="badge badge-role">${STATUS_LABELS[order.status] || order.status}</span>
       </div>
       <ul class="queue-items">${itemsHtml}</ul>
@@ -101,7 +101,7 @@ function bindOrderQueueActions(containerId) {
           method: "PATCH",
           body: JSON.stringify({ status: nextStatus }),
         });
-        showToast(`Заказ №${orderId} обновлён`, "success");
+        showToast(`Order #${orderId} updated`, "success");
         loadOrderQueue(containerId);
       } catch (error) {
         showToast(error.message, "error");

@@ -19,7 +19,7 @@ if (!pendingEmail) {
 // if we got here because login said "email not confirmed", drop it.
 if (verificationContext === "login") {
   stepIndicator.hidden = true;
-  stepEyebrow.textContent = "Подтверждение email";
+  stepEyebrow.textContent = "Email verification";
 }
 
 verifyForm.addEventListener("submit", async (event) => {
@@ -35,7 +35,7 @@ verifyForm.addEventListener("submit", async (event) => {
 
     sessionStorage.removeItem("pending_verification_email");
     sessionStorage.removeItem("verification_context");
-    formStatus.textContent = "Email подтверждён! Перенаправляем на вход...";
+    formStatus.textContent = "Email verified! Redirecting to login...";
     formStatus.hidden = false;
 
     setTimeout(() => {
@@ -53,7 +53,7 @@ resendButton.addEventListener("click", async () => {
       method: "POST",
       body: JSON.stringify({ email: pendingEmail }),
     });
-    formStatus.textContent = "Код отправлен повторно.";
+    formStatus.textContent = "Code sent again.";
     formStatus.hidden = false;
   } catch (error) {
     formStatus.textContent = error.message;
