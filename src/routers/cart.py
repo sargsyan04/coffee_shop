@@ -17,11 +17,6 @@ from src.validators import get_current_active_user
 router = APIRouter(prefix="/cart", tags=["Cart"])
 
 
-# ============================================================
-# --> View Current Cart <--
-# ============================================================
-
-
 @router.get("/", response_model=OrderResponse)
 async def get_cart(
     current_user: User = Depends(get_current_active_user),
