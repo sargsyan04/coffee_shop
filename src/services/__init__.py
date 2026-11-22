@@ -26,6 +26,9 @@ from src.services.cart import (
     update_item_quantity,
 )
 from src.services.email import send_verification_email
+from src.services.order import complete_order, get_order, order_status_change
+from src.services.staff import orders_for_staff
+from src.services.user import user_orders_list
 
 __all__ = (
     "ACCESS_TOKEN_TYPE",
@@ -36,20 +39,25 @@ __all__ = (
     "checkout_cart",
     "checkout_cart_for_user",
     "checkout_cart_total_price",
+    "complete_order",
     "create_verification_token",
     "decode_jwt",
     "encode_jwt",
     "generate_tokens",
     "get_or_create_cart",
+    "get_order",
     "get_refresh_token_record",
     "guest_checkout_service",
     "hash_password",
     "oauth2_scheme",
     "optional_oauth2_scheme",
+    "order_status_change",
+    "orders_for_staff",
     "recalculate_cart_total",
     "remove_item_from_cart",
     "send_verification_email",
     "update_item_quantity",
+    "user_orders_list",
     "verify_email_code",
     "verify_token",
 )

@@ -1,11 +1,22 @@
 from fastapi import HTTPException, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from src.core import UserRole
 from src.core.enums import OrderStatus
-from src.models import Order, OrderItem, User
+from src.models import Order, User
+from src.repositories import get_order_by_id
+
+# Order Status Transitions
+
+ALLOWED_TRANSITIONS: dict[OrderStatus, set[OrderStatus]] = {
+    OrderStatus.CREATED: {OrderStatus.PAID, OrderStatus.CANCELLED},
+    OrderStatus.PAID: {OrderStatus.IN_PROGRESS, OrderStatus.CANCELLED},
+    OrderStatus.IN_PROGRESS: {OrderStatus.READY},
+    OrderStatus.READY: {OrderStatus.COMPLETED},
+    OrderStatus.COMPLETED: set(),
+    OrderStatus.CANCELLED: set(),
+}
+
 
 # Order Lookup
 
@@ -15,34 +26,19 @@ async def get_order_or_404(
     order_id: int,
     current_user: User,
 ) -> Order:
-    """Fetches an order by id, scoped to the current user unless they're staff.
-    Raises 404 if the order doesn't exist or doesn't belong to the caller."""
-
-    stmt = select(Order).where(Order.id == order_id).options(selectinload(Order.items).selectinload(OrderItem.product))
 
     if current_user.role not in (UserRole.BARISTA, UserRole.ADMIN):
-        stmt = stmt.where(Order.user_id == current_user.id)
-
-    order = await session.scalar(stmt)
+        order = await get_order_by_id(session, order_id, current_user.id)
+    else:
+        order = await get_order_by_id(
+            session,
+            order_id,
+        )
 
     if not order:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
 
     return order
-
-
-# Order Status Transitions
-
-# Allowed status transitions — staff can only move an order forward
-# along this path, or cancel it while it's still early enough
-ALLOWED_TRANSITIONS: dict[OrderStatus, set[OrderStatus]] = {
-    OrderStatus.CREATED: {OrderStatus.PAID, OrderStatus.CANCELLED},
-    OrderStatus.PAID: {OrderStatus.IN_PROGRESS, OrderStatus.CANCELLED},
-    OrderStatus.IN_PROGRESS: {OrderStatus.READY},
-    OrderStatus.READY: {OrderStatus.COMPLETED},
-    OrderStatus.COMPLETED: set(),
-    OrderStatus.CANCELLED: set(),
-}
 
 
 def validate_status_transition(current_status: OrderStatus, new_status: OrderStatus) -> None:

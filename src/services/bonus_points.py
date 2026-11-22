@@ -1,10 +1,9 @@
 from decimal import Decimal
 
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core import OrderStatus
 from src.models import Order
+from src.repositories import has_completed_order
 
 # Bonus Points Calculation
 
@@ -49,11 +48,8 @@ async def calculate_bonus_points(session: AsyncSession, order: Order, total_item
     # First-order bonus: check if this is the customer's first ever
     # COMPLETED order (this one doesn't count yet, since its status
     # hasn't been committed as COMPLETED at the time of this check)
-    stmt = select(Order).where(
-        Order.user_id == order.user_id,
-        Order.status == OrderStatus.COMPLETED,
-    )
-    has_previous_completed_order = (await session.scalar(stmt)) is not None
+
+    has_previous_completed_order = await has_completed_order(session, order)
 
     if not has_previous_completed_order:
         points += FIRST_ORDER_BONUS_POINTS
