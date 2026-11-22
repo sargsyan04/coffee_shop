@@ -175,3 +175,51 @@ async def test_verify_email_code_cannot_be_used_twice(db_session, user_factory):
         await verify_email_code(db_session, user.id, code)
 
     assert exc_info.value.status_code == 400
+
+
+async def test_create_verification_token_invalidates_previous_code(db_session, user_factory):
+    user = await user_factory()
+
+    old = VerificationToken(
+        user_id=user.id,
+        code="111111",
+        token_type=VerificationTokenType.EMAIL_CONFIRMATION,
+        expires_at=datetime.now(UTC) + timedelta(minutes=10),
+    )
+    db_session.add(old)
+    await db_session.commit()
+
+    await create_verification_token(db_session, user.id)
+
+    # the old, still-unused code must no longer be accepted
+    with pytest.raises(HTTPException) as exc_info:
+        await verify_email_code(db_session, user.id, "111111")
+
+    assert exc_info.value.status_code == 400
+
+
+async def test_create_verification_token_does_not_touch_other_users_codes(db_session, user_factory):
+    user = await user_factory()
+    other = await user_factory()
+
+    other_token = VerificationToken(
+        user_id=other.id,
+        code="222222",
+        token_type=VerificationTokenType.EMAIL_CONFIRMATION,
+        expires_at=datetime.now(UTC) + timedelta(minutes=10),
+    )
+    db_session.add(other_token)
+    await db_session.commit()
+
+    await create_verification_token(db_session, user.id)
+
+    assert await verify_email_code(db_session, other.id, "222222") is True
+
+
+async def test_create_verification_token_returns_six_digit_code(db_session, user_factory):
+    user = await user_factory()
+
+    code = await create_verification_token(db_session, user.id)
+
+    assert len(code) == 6
+    assert code.isdigit()

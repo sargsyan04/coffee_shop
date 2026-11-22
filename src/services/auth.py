@@ -1,4 +1,4 @@
-import random
+import secrets
 import uuid
 from datetime import UTC, datetime, timedelta
 
@@ -89,13 +89,13 @@ async def create_verification_token(session: AsyncSession, user_id: int) -> str:
         .where(
             VerificationToken.user_id == user_id,
             VerificationToken.token_type == VerificationTokenType.EMAIL_CONFIRMATION,
-            VerificationToken == False,
+            VerificationToken.is_used == False,
         )
         .values(is_used=True)
     )
 
     # Step 2: create the new code
-    code = f"{random.randint(0, 999999):06d}"
+    code = f"{secrets.randbelow(1_000_000):06d}"
 
     token = VerificationToken(
         user_id=user_id,
